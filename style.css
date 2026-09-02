@@ -1,1 +1,46 @@
-
+body {
+2
+font-family: Arial, sans-serif;
+3
+background: #f5f7fa;
+4
+padding: 20px;
+5
+}
+6
+ 
+7
+.dashboard {
+8
+display: flex;
+9
+gap: 20px;
+10
+flex-wrap: wrap;
+11
+}
+12
+ 
+13
+.card {
+14
+background: white;
+15
+width: 200px;
+16
+padding: 20px;
+17
+border-radius: 10px;
+18
+box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+19
+}
+20
+ 
+21
+.card h3 {
+22
+margin-top: 0;
+23
+}
+24
