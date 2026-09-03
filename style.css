@@ -1,72 +1,372 @@
+/* =========================
+GENERAL
+========================= */
+
 body {
-font-family: Arial, sans-serif;
-margin: 0;
-background-color: #f4f6f9;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+  margin: 0;
+  color: #1d1d1f;
+
+  background:
+    radial-gradient(circle at top left, rgba(30, 58, 138, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.10) 0%, transparent 35%),
+    linear-gradient(135deg, #f5f7fa 0%, #e4edf6 100%);
+
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* =========================
+HEADER (Apple-Grade Contrast & Vibrancy)
+========================= */
+
 header {
-background-color: #003366;
-color: white;
-padding: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  padding: 35px 30px;
+  border-bottom: 1px solid rgba(0, 51, 102, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 header h1 {
-margin: 0;
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: #002244; /* Deep, high-contrast crisp text */
 }
 
 header p {
-margin-top: 5px;
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #335577; /* Fully legible, sharp secondary tone replacing the faded grey */
+  letter-spacing: -0.01em;
 }
 
+/* =========================
+HERO BANNER
+========================= */
+
+.hero {
+  margin: 24px;
+  background: linear-gradient(
+    135deg,
+    #002244,
+    #0055aa
+  );
+  color: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 34, 68, 0.15);
+}
+
+.hero h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.hero p {
+  margin-top: 10px;
+  opacity: 0.95;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* =========================
+MENU
+========================= */
+
+.menu {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  padding: 16px 30px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.menu a {
+  text-decoration: none;
+  margin-right: 30px;
+  color: #003366;
+  font-weight: 600;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.menu a:hover {
+  color: #0066cc;
+}
+
+/* =========================
+KPI SECTION
+========================= */
+
 .kpi-container {
-display: flex;
-flex-wrap: wrap;
-gap: 20px;
-padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 24px;
 }
 
 .card {
-background: white;
-width: 220px;
-padding: 20px;
-border-radius: 10px;
-box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+
+  min-width: 220px;
+  flex: 1;
+
+  padding: 24px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.1);
 }
 
 .card h3 {
-margin-top: 0;
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .card p {
-font-size: 30px;
-color: #003366;
-font-weight: bold;
+  margin: 0;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
+
+/* KPI COLORS */
+
+.card:nth-child(1) p {
+  color: #1d4ed8;
+}
+
+.card:nth-child(2) p {
+  color: #0891b2;
+}
+
+.card:nth-child(3) p {
+  color: #15803d;
+}
+
+.card:nth-child(4) p {
+  color: #b45309;
+}
+
+.card:nth-child(5) p {
+  color: #dc2626;
+}
+
+.card:nth-child(6) p {
+  color: #7c3aed;
+}
+
+.card:nth-child(7) p {
+  color: #0f172a;
+}
+
+/* =========================
+SECTION CARDS
+========================= */
 
 .section-card {
-background: white;
-margin: 20px;
-padding: 20px;
-border-radius: 10px;
-box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+
+  margin: 24px;
+  padding: 28px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
+.section-card h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #002244;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* =========================
+TABLES
+========================= */
+
 table {
-width: 100%;
-border-collapse: collapse;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
 }
 
 th {
-background-color: #003366;
-color: white;
-text-align: left;
+  background: #0f172a;
+  color: white;
+  padding: 14px 18px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.02em;
 }
 
-th, td {
-border: 1px solid #ddd;
-padding: 10px;
+td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
 }
 
-tr:nth-child(even) {
-background-color: #f8f8f8;
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background: rgba(37, 99, 235, 0.04);
+}
+
+/* =========================
+LISTS
+========================= */
+
+ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.5;
+}
+
+/* =========================
+FILE UPLOADS
+========================= */
+
+input[type="file"] {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* =========================
+STATUS COLOURS
+========================= */
+
+.live {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.testing {
+  color: #d97706;
+  font-weight: 600;
+}
+
+.failed {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* =========================
+FOOTER
+========================= */
+
+footer {
+  text-align: center;
+  padding: 30px;
+  color: #64748b;
+  font-size: 13px;
+  margin-top: 20px;
+}
+
+/* =========================
+SCROLLBAR
+========================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* =========================
+MOBILE
+========================= */
+
+@media (max-width: 768px) {
+  .kpi-container {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .section-card {
+    margin: 16px;
+    padding: 20px;
+  }
+
+  .hero {
+    margin: 16px;
+    padding: 28px;
+  }
+
+  .menu a {
+    display: block;
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+
+  .card {
+    width: auto;
+  }
+
+  table {
+    font-size: 13px;
+  }
+
+  header h1 {
+    font-size: 26px;
+  }
+
+  .hero h2 {
+    font-size: 22px;
+  }
 }

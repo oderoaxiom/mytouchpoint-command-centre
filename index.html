@@ -20,6 +20,20 @@
 <a href="#actions">Actions</a>
 </nav>
 
+<section class="section-card">
+<h2>Data Upload</h2>
+<div style="display: flex; gap: 20px; flex-wrap: wrap;">
+<div>
+<label for="transactionsFile" style="display: block; font-weight: bold; margin-bottom: 5px;">Transactions CSV:</label>
+<input type="file" id="transactionsFile" accept=".csv">
+</div>
+<div>
+<label for="backlogFile" style="display: block; font-weight: bold; margin-bottom: 5px;">Backlog CSV:</label>
+<input type="file" id="backlogFile" accept=".csv">
+</div>
+</div>
+</section>
+
 <section id="dashboard" class="kpi-container">
 <div class="card">
 <h3>Transactions</h3>
@@ -27,31 +41,38 @@
 </div>
 
 <div class="card">
-<h3>Transaction Value</h3>
-<p id="value">$0</p>
+<h3>Volume</h3>
+<p id="volume">0</p>
 </div>
 
 <div class="card">
-<h3>Open Follow Ups</h3>
-<p id="followups">0</p>
+<h3>Revenue</h3>
+<p id="revenue">$0</p>
+</div>
+
+<div class="card">
+<h3>Success Rate</h3>
+<p id="successRate">0%</p>
+</div>
+
+<div class="card">
+<h3>Open Actions</h3>
+<p id="openActions">0</p>
 </div>
 
 <div class="card">
 <h3>Active Corridors</h3>
-<p id="corridors">0</p>
+<p id="activeCorridors">0</p>
 </div>
 </section>
 
 <section class="section-card">
 <h2>Management Summary</h2>
 <div id="summary">
+<ul>
+<li>Loading summary intelligence...</li>
+</ul>
 </div>
-</section>
-
-<section class="section-card">
-<h2>Data Upload</h2>
-<input type="file" id="transactionsFile">
-<input type="file" id="backlogFile">
 </section>
 
 <section id="portfolio" class="section-card">
@@ -75,27 +96,19 @@
 </section>
 
 <section id="corridors" class="section-card">
-<h2>Corridor Status</h2>
-<table>
+<h2>Corridor Command Centre</h2>
+<table id="corridorTable">
 <thead>
 <tr>
 <th>Corridor</th>
+<th>Volume</th>
+<th>Value</th>
 <th>Status</th>
+<th>Owner</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>Kenya → Uganda</td>
-<td>Live</td>
-</tr>
-<tr>
-<td>Kenya → Tanzania</td>
-<td>Live</td>
-</tr>
-<tr>
-<td>Nigeria → Kenya</td>
-<td>Testing</td>
-</tr>
+<!-- Populated dynamically via app.js -->
 </tbody>
 </table>
 </section>
@@ -107,12 +120,6 @@
 <li>🟢 Kenya → Tanzania : Live</li>
 <li>🟡 Nigeria → Kenya : Testing</li>
 </ul>
-</section>
-
-<section class="section-card">
-<h2>Corridor Command Centre</h2>
-<table id="corridorTable">
-</table>
 </section>
 
 <section id="actions" class="section-card">
@@ -128,6 +135,7 @@
 </tr>
 </thead>
 <tbody id="actionTable">
+<!-- Populated dynamically via app.js -->
 </tbody>
 </table>
 </section>
