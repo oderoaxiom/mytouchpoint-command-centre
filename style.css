@@ -1,71 +1,76 @@
 body {
-2
+background: red;
+}
+
+body {
 font-family: Arial, sans-serif;
-3
-background-color: #f4f6f9;
-4
 margin: 0;
-5
-padding: 30px;
-6
+background-color: #f4f6f9;
 }
-7
- 
-8
-h1 {
-9
-color: #1f2937;
-10
-}
-11
- 
-12
-.dashboard {
-13
-display: flex;
-14
-gap: 20px;
-15
-flex-wrap: wrap;
-16
-margin-top: 20px;
-17
-}
-18
- 
-19
-.card {
-20
-background: white;
-21
-width: 220px;
-22
+
+header {
+background-color: #003366;
+color: white;
 padding: 20px;
-23
-border-radius: 12px;
-24
+}
+
+header h1 {
+margin: 0;
+}
+
+header p {
+margin-top: 5px;
+}
+
+.kpi-container {
+display: flex;
+flex-wrap: wrap;
+gap: 20px;
+padding: 20px;
+}
+
+.card {
+background: white;
+width: 220px;
+padding: 20px;
+border-radius: 10px;
 box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-25
 }
-26
- 
-27
+
 .card h3 {
-28
 margin-top: 0;
-29
-color: #374151;
-30
 }
-31
- 
-32
+
 .card p {
-33
-font-size: 28px;
-34
+font-size: 30px;
+color: #003366;
 font-weight: bold;
-35
-color: #111827;
-36
+}
+
+.section-card {
+background: white;
+margin: 20px;
+padding: 20px;
+border-radius: 10px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+}
+
+th {
+background-color: #003366;
+color: white;
+text-align: left;
+}
+
+th, td {
+border: 1px solid #ddd;
+padding: 10px;
+}
+
+tr:nth-child(even) {
+background-color: #f8f8f8;
 }
