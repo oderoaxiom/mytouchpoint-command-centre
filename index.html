@@ -13,7 +13,14 @@
 <p>East Africa Product Management Dashboard</p>
 </header>
 
-<section class="kpi-container">
+<nav class="menu">
+<a href="#dashboard">Dashboard</a>
+<a href="#portfolio">Products</a>
+<a href="#corridors">Corridors</a>
+<a href="#actions">Actions</a>
+</nav>
+
+<section id="dashboard" class="kpi-container">
 <div class="card">
 <h3>Transactions</h3>
 <p id="transactions">0</p>
@@ -36,6 +43,18 @@
 </section>
 
 <section class="section-card">
+<h2>Management Summary</h2>
+<div id="summary">
+</div>
+</section>
+
+<section class="section-card">
+<h2>Data Upload</h2>
+<input type="file" id="transactionsFile">
+<input type="file" id="backlogFile">
+</section>
+
+<section id="portfolio" class="section-card">
 <h2>Product Portfolio</h2>
 <ul>
 <li>Cross Border Remittance</li>
@@ -46,6 +65,16 @@
 </section>
 
 <section class="section-card">
+<h2>Product KPIs</h2>
+<ul>
+<li>Cross Border Remittance</li>
+<li>Marketplace</li>
+<li>Collections</li>
+<li>Fuel Now Pay Later</li>
+</ul>
+</section>
+
+<section id="corridors" class="section-card">
 <h2>Corridor Status</h2>
 <table>
 <thead>
@@ -72,12 +101,29 @@
 </section>
 
 <section class="section-card">
+<h2>Corridor Health</h2>
+<ul>
+<li>🟢 Kenya → Uganda : Live</li>
+<li>🟢 Kenya → Tanzania : Live</li>
+<li>🟡 Nigeria → Kenya : Testing</li>
+</ul>
+</section>
+
+<section class="section-card">
+<h2>Corridor Command Centre</h2>
+<table id="corridorTable">
+</table>
+</section>
+
+<section id="actions" class="section-card">
 <h2>Action Tracker</h2>
 <table>
 <thead>
 <tr>
 <th>Task</th>
 <th>Owner</th>
+<th>Priority</th>
+<th>Due Date</th>
 <th>Status</th>
 </tr>
 </thead>
