@@ -13,18 +13,29 @@ let defaultBacklog = [
 
 function renderDashboard(txData, backlogData) {
   let totalTxCount = txData.length;
-  let totalValue = txData.reduce((acc, curr) => acc + Number(curr.Amount || 0), 0);
+  
+  // Safely sum amounts, stripping out any currency symbols or letters
+  let totalValue = txData.reduce((acc, curr) => {
+    let cleanAmount = String(curr.Amount || "0").replace(/[^0-9.-]+/g,"");
+    return acc + Number(cleanAmount);
+  }, 0);
   
   let corridorMap = {};
   txData.forEach(tx => {
-    let key = `${tx.Origin} → ${tx.Destination}`;
+    let key = `${tx.Origin || "Unknown"} → ${tx.Destination || "Unknown"}`;
+    let currentStatus = tx.Status || ""; 
+    
     if (!corridorMap[key]) {
-      corridorMap[key] = { volume: 0, value: 0, status: tx.Status, successes: 0 };
+      corridorMap[key] = { volume: 0, value: 0, status: currentStatus, successes: 0 };
     }
     corridorMap[key].volume += 1;
-    // FIXED: Changed 'curr.Amount' to 'tx.Amount' to prevent crashes
-    corridorMap[key].value += Number(tx.Amount || 0); 
-    if (tx.Status.toLowerCase() === "success" || tx.Status.toLowerCase() === "live") {
+    
+    // Remove non-numeric characters (like $ or KES) before calculating
+    let cleanAmount = String(tx.Amount || "0").replace(/[^0-9.-]+/g,"");
+    corridorMap[key].value += Number(cleanAmount); 
+    
+    // Safely check the status without crashing
+    if (currentStatus.toLowerCase() === "success" || currentStatus.toLowerCase() === "live") {
       corridorMap[key].successes += 1;
     }
   });
@@ -36,8 +47,8 @@ function renderDashboard(txData, backlogData) {
 
   let today = new Date();
   let overdue = backlogData.filter(x => {
-    let rawDate = x.DueDate || x["Due Date"]; // FIXED: Handles both formats seamlessly
-    return rawDate && new Date(rawDate) < today && x.Status.toLowerCase() !== "closed" && x.Status.toLowerCase() !== "completed";
+    let rawDate = x.DueDate || x["Due Date"]; 
+    return rawDate && new Date(rawDate) < today && x.Status && x.Status.toLowerCase() !== "closed" && x.Status.toLowerCase() !== "completed";
   }).length;
 
   let revenue = totalValue * feeRate;
@@ -47,7 +58,7 @@ function renderDashboard(txData, backlogData) {
   if(document.getElementById("volume")) document.getElementById("volume").innerText = totalValue.toLocaleString();
   if(document.getElementById("revenue")) document.getElementById("revenue").innerText = "KES " + revenue.toLocaleString();
   if(document.getElementById("successRate")) {
-    document.getElementById("successRate").innerText = totalTxCount > 0 ? ((txData.filter(t => t.Status.toLowerCase() === "success").length / totalTxCount) * 100).toFixed(1) + "%" : "0%";
+    document.getElementById("successRate").innerText = totalTxCount > 0 ? ((txData.filter(t => (t.Status || "").toLowerCase() === "success").length / totalTxCount) * 100).toFixed(1) + "%" : "0%";
   }
   if(document.getElementById("openActions")) document.getElementById("openActions").innerText = openActionsCount;
   
@@ -107,31 +118,52 @@ function renderDashboard(txData, backlogData) {
   if (actionTableBody) {
     actionTableBody.innerHTML = "";
     backlogData.forEach(action => {
-      let rawDate = action.DueDate || action["Due Date"]; // FIXED: Handles both variants for mapping table UI
+      let rawDate = action.DueDate || action["Due Date"]; 
       actionTableBody.innerHTML += `
         <tr>
-          <td>${action.Task}</td>
+          <td>${action.Task || "N/A"}</td>
           <td>${action.Owner || "N/A"}</td>
           <td>${action.Priority || "N/A"}</td>
           <td>${rawDate || "N/A"}</td>
-          <td>${action.Status}</td>
+          <td>${action.Status || "N/A"}</td>
         </tr>
       `;
     });
   }
 }
 
-// Simple fallback parser with spaces trimmed safely
+// Robust CSV parser with header normalization
 function parseCSV(text) {
   let lines = text.trim().split("\n");
   if (lines.length === 0) return [];
   
   let result = [];
-  let headers = lines[0].split(",").map(h => h.trim().replace(/^["']|["']$/g, ""));
+  
+  // Extract raw headers and clean up quotes/spaces
+  let rawHeaders = lines[0].split(",").map(h => h.trim().replace(/^["']|["']$/g, ""));
+  
+  // Normalize headers to strictly match what the dashboard expects
+  let headers = rawHeaders.map(h => {
+    let clean = h.toLowerCase().replace(/\s+/g, ''); // Lowercase and remove spaces
+    
+    // Map messy headers to standard Title Case keys
+    if (clean === "date") return "Date";
+    if (clean === "origin") return "Origin";
+    if (clean === "destination") return "Destination";
+    if (clean === "amount") return "Amount";
+    if (clean === "status") return "Status";
+    if (clean === "task") return "Task";
+    if (clean === "owner") return "Owner";
+    if (clean === "priority") return "Priority";
+    if (clean === "duedate") return "DueDate";
+    
+    return h; // Keep the original name for any unknown columns
+  });
   
   for (let i = 1; i < lines.length; i++) {
-    if (!lines[i].trim()) continue;
+    if (!lines[i].trim()) continue; // Skip empty rows
     let currentline = lines[i].split(",").map(val => val.trim().replace(/^["']|["']$/g, ""));
+    
     let obj = {};
     for (let j = 0; j < headers.length; j++) {
       obj[headers[j]] = currentline[j] || "";
