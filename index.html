@@ -31,7 +31,7 @@
   <section class="hero">
     <h2>Executive Command Centre</h2>
     <p>
-      Real-time operational health and business intelligence across corridors.
+      Real-time operational health and business intelligence across Kenya, Uganda, Tanzania and Nigeria.
     </p>
   </section>
 
@@ -47,44 +47,90 @@
   <!-- DASHBOARD STATUS -->
   <section class="dashboard-status">
     <h3>Dashboard Status</h3>
+
     <p>
       Last Updated:
       <span id="lastRefresh">Not Loaded</span>
     </p>
+
+    <p>
+      QoS Reporting Period:
+      <span id="qosReportingPeriod">No QoS data loaded</span>
+    </p>
   </section>
 
-  <!-- EXECUTIVE KPI SECTION (Operational Health Indicators & Traffic Lights) -->
+  <!-- EXECUTIVE DASHBOARD -->
   <section id="executiveDashboard">
-    <div class="kpi-container">
-      <div class="card">
-        <h3>Kenya QoS · 7-Day Avg</h3>
-        <p id="keQos">-</p>
+
+    <!-- WEEKLY QOS SUMMARY -->
+    <section class="section-card">
+      <h2>Weekly QoS Summary</h2>
+
+      <div class="kpi-container">
+
+        <div class="card">
+          <h3>Kenya QoS · Latest Week</h3>
+          <p id="keQos">-</p>
+        </div>
+
+        <div class="card">
+          <h3>Uganda QoS · Latest Week</h3>
+          <p id="ugQos">-</p>
+        </div>
+
+        <div class="card">
+          <h3>Tanzania QoS · Latest Week</h3>
+          <p id="tzQos">-</p>
+        </div>
+
+        <div class="card">
+          <h3>Nigeria QoS · Latest Week</h3>
+          <p id="ngQos">-</p>
+        </div>
+
       </div>
-      <div class="card">
-        <h3>Uganda QoS · 7-Day Avg</h3>
-        <p id="ugQos">-</p>
+    </section>
+
+    <!-- WEEKLY QOS TREND -->
+    <section class="section-card">
+      <h2>Weekly QoS Trend</h2>
+
+      <p>
+        Interactive comparison of weekly transaction success rates
+        across Kenya, Uganda, Tanzania and Nigeria.
+      </p>
+
+      <div
+        id="qosTrendChart"
+        role="img"
+        aria-label="Weekly QoS success-rate trend by country"
+      ></div>
+    </section>
+
+    <!-- ACTION TRACKER SUMMARY -->
+    <section class="section-card">
+      <h2>Action Tracker Summary</h2>
+
+      <div class="kpi-container">
+
+        <div class="card">
+          <h3>Open Actions</h3>
+          <p id="openActions">0</p>
+        </div>
+
+        <div class="card">
+          <h3>Follow-Ups Due</h3>
+          <p id="followUpsDue">0</p>
+        </div>
+
+        <div class="card">
+          <h3>Overdue Actions</h3>
+          <p id="overdueActions">0</p>
+        </div>
+
       </div>
-      <div class="card">
-        <h3>Tanzania QoS · 7-Day Avg</h3>
-        <p id="tzQos">-</p>
-      </div>
-      <div class="card">
-        <h3>Nigeria QoS · 7-Day Avg</h3>
-        <p id="ngQos">-</p>
-      </div>
-      <div class="card">
-        <h3>Open Actions</h3>
-        <p id="openActions">0</p>
-      </div>
-      <div class="card">
-        <h3>Follow-Ups Due</h3>
-        <p id="followUpsDue">0</p>
-      </div>
-      <div class="card">
-        <h3>Overdue Actions</h3>
-        <p id="overdueActions">0</p>
-      </div>
-    </div>
+    </section>
+
   </section>
 
   <!-- COUNTRY SUMMARY CARDS -->
@@ -195,7 +241,10 @@
   <!-- EXECUTIVE INSIGHT -->
   <section id="insight" class="section-card">
     <h2>Executive Insight</h2>
-    <p id="executiveInsight">Awaiting data upload for automated cross-corridor synthesis...</p>
+    <p id="executiveInsight">
+      Awaiting transaction, backlog and weekly QoS data for automated
+      cross-market synthesis.
+    </p>
   </section>
 
   <!-- ACTION CENTRE -->
@@ -242,22 +291,68 @@
     aria-hidden="true"
   >
     <h3>Data Administration</h3>
+
     <p>
-      Upload the latest source files to refresh the Command Centre.
+      Upload the latest Transactions, Backlog and weekly country QoS
+      files to refresh the Command Centre.
     </p>
+
     <div class="upload-grid">
+
       <div>
         <label for="transactionsFile">Transactions CSV</label>
-        <input type="file" id="transactionsFile" accept=".csv">
+        <input
+          type="file"
+          id="transactionsFile"
+          accept=".csv,text/csv"
+        >
       </div>
+
       <div>
         <label for="backlogFile">Backlog CSV</label>
-        <input type="file" id="backlogFile" accept=".csv">
+        <input
+          type="file"
+          id="backlogFile"
+          accept=".csv,text/csv"
+        >
       </div>
+
       <div>
-        <label for="qosFile">QoS CSV</label>
-        <input type="file" id="qosFile" accept=".csv">
+        <label for="keQosFile">Kenya QoS CSV</label>
+        <input
+          type="file"
+          id="keQosFile"
+          accept=".csv,text/csv"
+        >
       </div>
+
+      <div>
+        <label for="ugQosFile">Uganda QoS CSV</label>
+        <input
+          type="file"
+          id="ugQosFile"
+          accept=".csv,text/csv"
+        >
+      </div>
+
+      <div>
+        <label for="tzQosFile">Tanzania QoS CSV</label>
+        <input
+          type="file"
+          id="tzQosFile"
+          accept=".csv,text/csv"
+        >
+      </div>
+
+      <div>
+        <label for="ngQosFile">Nigeria QoS CSV</label>
+        <input
+          type="file"
+          id="ngQosFile"
+          accept=".csv,text/csv"
+        >
+      </div>
+
     </div>
   </div>
 
@@ -301,7 +396,9 @@
     });
   </script>
 
+  <script src="echarts.min.js"></script>
   <script src="app.js"></script>
+
 </body>
 
 </html>
