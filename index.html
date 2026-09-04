@@ -46,28 +46,24 @@
 
   <!-- DASHBOARD STATUS -->
   <section class="dashboard-status">
-    <h3>Dashboard Status</h3>
-
-    <p>
-      Last Updated:
-      <span id="lastRefresh">Not Loaded</span>
-    </p>
-
-    <p>
-      QoS Reporting Period:
-      <span id="qosReportingPeriod">No QoS data loaded</span>
-    </p>
+    <div>
+      <h3>Dashboard Status</h3>
+      <p>Last Updated: <span id="lastRefresh">Not Loaded</span></p>
+    </div>
+    <div>
+      <h3>QoS Reporting Period</h3>
+      <p><span id="qosReportingPeriod">No QoS data loaded</span></p>
+    </div>
   </section>
 
   <!-- EXECUTIVE DASHBOARD -->
   <section id="executiveDashboard">
 
     <!-- WEEKLY QOS SUMMARY -->
-    <section class="section-card">
+    <div class="section-card">
       <h2>Weekly QoS Summary</h2>
 
       <div class="kpi-container">
-
         <div class="card">
           <h3>Kenya QoS · Latest Week</h3>
           <p id="keQos">-</p>
@@ -87,49 +83,34 @@
           <h3>Nigeria QoS · Latest Week</h3>
           <p id="ngQos">-</p>
         </div>
-
       </div>
-    </section>
+    </div>
 
     <!-- WEEKLY QOS TREND -->
-    <section class="section-card">
+    <div class="section-card">
       <h2>Weekly QoS Trend</h2>
-
-      <p>
-        Interactive comparison of weekly transaction success rates
-        across Kenya, Uganda, Tanzania and Nigeria.
-      </p>
-
-      <div
-        id="qosTrendChart"
-        role="img"
-        aria-label="Weekly QoS success-rate trend by country"
-      ></div>
-    </section>
+      <p>Interactive comparison of weekly transaction success rates across Kenya, Uganda, Tanzania and Nigeria.</p>
+      <div id="qosTrendChart" role="img" aria-label="Weekly QoS success-rate trend by country"></div>
+    </div>
 
     <!-- ACTION TRACKER SUMMARY -->
-    <section class="section-card">
+    <div class="section-card">
       <h2>Action Tracker Summary</h2>
-
       <div class="kpi-container">
-
         <div class="card">
           <h3>Open Actions</h3>
           <p id="openActions">0</p>
         </div>
-
         <div class="card">
           <h3>Follow-Ups Due</h3>
           <p id="followUpsDue">0</p>
         </div>
-
         <div class="card">
           <h3>Overdue Actions</h3>
           <p id="overdueActions">0</p>
         </div>
-
       </div>
-    </section>
+    </div>
 
   </section>
 
@@ -211,12 +192,7 @@
   <!-- PRODUCT SNAPSHOT -->
   <section id="products" class="section-card">
     <h2>Product Performance Snapshot</h2>
-
-    <p>
-      Product volume and revenue are shown by country to preserve
-      local-currency integrity.
-    </p>
-
+    <p>Product volume and revenue are shown by country to preserve local-currency integrity.</p>
     <table>
       <thead>
         <tr>
@@ -227,12 +203,9 @@
           <th>Revenue</th>
         </tr>
       </thead>
-
       <tbody id="productSnapshot">
         <tr>
-          <td colspan="5">
-            Upload the Transactions CSV to display product performance.
-          </td>
+          <td colspan="5">Upload the Transactions CSV to display product performance.</td>
         </tr>
       </tbody>
     </table>
@@ -242,8 +215,7 @@
   <section id="insight" class="section-card">
     <h2>Executive Insight</h2>
     <p id="executiveInsight">
-      Awaiting transaction, backlog and weekly QoS data for automated
-      cross-market synthesis.
+      Awaiting transaction, backlog and weekly QoS data for automated cross-market synthesis.
     </p>
   </section>
 
@@ -285,74 +257,35 @@
   </footer>
 
   <!-- HIDDEN ADMINISTRATION DRAWER -->
-  <div
-    id="adminPanel"
-    class="admin-panel"
-    aria-hidden="true"
-  >
+  <div id="adminPanel" class="admin-panel" aria-hidden="true">
     <h3>Data Administration</h3>
-
-    <p>
-      Upload the latest Transactions, Backlog and weekly country QoS
-      files to refresh the Command Centre.
-    </p>
+    <p>Upload the latest Transactions, Backlog and weekly country QoS files to refresh the Command Centre.</p>
 
     <div class="upload-grid">
-
       <div>
         <label for="transactionsFile">Transactions CSV</label>
-        <input
-          type="file"
-          id="transactionsFile"
-          accept=".csv,text/csv"
-        >
+        <input type="file" id="transactionsFile" accept=".csv,text/csv">
       </div>
-
       <div>
         <label for="backlogFile">Backlog CSV</label>
-        <input
-          type="file"
-          id="backlogFile"
-          accept=".csv,text/csv"
-        >
+        <input type="file" id="backlogFile" accept=".csv,text/csv">
       </div>
-
       <div>
         <label for="keQosFile">Kenya QoS CSV</label>
-        <input
-          type="file"
-          id="keQosFile"
-          accept=".csv,text/csv"
-        >
+        <input type="file" id="keQosFile" accept=".csv,text/csv">
       </div>
-
       <div>
         <label for="ugQosFile">Uganda QoS CSV</label>
-        <input
-          type="file"
-          id="ugQosFile"
-          accept=".csv,text/csv"
-        >
+        <input type="file" id="ugQosFile" accept=".csv,text/csv">
       </div>
-
       <div>
         <label for="tzQosFile">Tanzania QoS CSV</label>
-        <input
-          type="file"
-          id="tzQosFile"
-          accept=".csv,text/csv"
-        >
+        <input type="file" id="tzQosFile" accept=".csv,text/csv">
       </div>
-
       <div>
         <label for="ngQosFile">Nigeria QoS CSV</label>
-        <input
-          type="file"
-          id="ngQosFile"
-          accept=".csv,text/csv"
-        >
+        <input type="file" id="ngQosFile" accept=".csv,text/csv">
       </div>
-
     </div>
   </div>
 
@@ -376,27 +309,20 @@
       const clickedInsidePanel = adminPanel.contains(event.target);
       const clickedAdminButton = adminButton.contains(event.target);
 
-      if (
-        panelIsOpen &&
-        !clickedInsidePanel &&
-        !clickedAdminButton
-      ) {
+      if (panelIsOpen && !clickedInsidePanel && !clickedAdminButton) {
         setAdminPanelState(false);
       }
     });
 
     document.addEventListener("keydown", function (event) {
-      if (
-        event.key === "Escape" &&
-        adminPanel.classList.contains("show")
-      ) {
+      if (event.key === "Escape" && adminPanel.classList.contains("show")) {
         setAdminPanelState(false);
         adminButton.focus();
       }
     });
   </script>
 
-  <script src="echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <script src="app.js"></script>
 
 </body>
