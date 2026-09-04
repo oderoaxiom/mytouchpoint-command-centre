@@ -426,7 +426,7 @@ function renderDashboard(txData, backlogData) {
   setDashboardText("actionOverdueCount", metrics.overdueBacklogCount);
   setDashboardText("blockedActionsCount", metrics.blockedBacklogCount);
 
-  // QoS Rendering
+  // QoS Rendering (Weekly Average)
   const qosConfig = {
     Kenya: "ke",
     Uganda: "ug",
@@ -445,7 +445,7 @@ function renderDashboard(txData, backlogData) {
       return itemCountry.toLowerCase() === country.toLowerCase();
     });
 
-    const values = records
+    const parsedRecords = records
       .map(item => {
         const rawValue = getFieldValue(item, [
           "QoS",
@@ -455,30 +455,48 @@ function renderDashboard(txData, backlogData) {
           "Percentage"
         ]);
 
-        if (rawValue === "") {
-          return null;
-        }
+        if (rawValue === "") return null;
 
         let value = parseAmount(rawValue);
-
         if (value > 0 && value <= 1) {
           value *= 100;
         }
 
-        return value;
+        const dateStr = getFieldValue(item, ["Day", "Date", "Timestamp"]);
+        const recordDate = parseRecordDate(dateStr);
+
+        return { value, recordDate };
       })
-      .filter(value => value !== null && Number.isFinite(value));
+      .filter(item => item !== null && Number.isFinite(item.value));
 
     const element = document.getElementById(`${prefix}Qos`);
 
-    if (!element || values.length === 0) {
+    if (!element || parsedRecords.length === 0) {
       setDashboardText(`${prefix}Qos`, "-");
       return;
     }
 
+    const validDates = parsedRecords
+      .map(r => r.recordDate)
+      .filter(Boolean)
+      .sort((a, b) => b - a);
+
+    const latestDate = validDates[0] ? new Date(validDates[0]) : new Date();
+    latestDate.setHours(23, 59, 59, 999);
+
+    const sevenDaysAgo = new Date(latestDate);
+    sevenDaysAgo.setDate(latestDate.getDate() - 7);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const weeklyRecords = validDates.length > 0
+      ? parsedRecords.filter(r => !r.recordDate || (r.recordDate >= sevenDaysAgo && r.recordDate <= latestDate))
+      : parsedRecords;
+
+    const valuesToAverage = weeklyRecords.length > 0 ? weeklyRecords : parsedRecords;
+
     const qos =
-      values.reduce((sum, value) => sum + value, 0) /
-      values.length;
+      valuesToAverage.reduce((sum, item) => sum + item.value, 0) /
+      valuesToAverage.length;
 
     element.classList.remove(
       "qos-good",
