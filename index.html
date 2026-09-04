@@ -1,159 +1,307 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyTouchPoint Product Command Centre</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyTouchPoint Command Centre</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<header>
-<h1>MyTouchPoint Product Command Centre</h1>
-<p>East Africa Product Management Dashboard</p>
-</header>
+  <!-- HEADER -->
+  <header>
+    <button
+      type="button"
+      id="adminBtn"
+      class="admin-btn"
+      aria-label="Open Data Administration"
+      aria-controls="adminPanel"
+      aria-expanded="false"
+      title="Data Administration"
+    >
+      ⚙️
+    </button>
+    <h1>MyTouchPoint Command Centre</h1>
+    <p>Executive Dashboard | Multi-Currency Operations &amp; QoS</p>
+  </header>
 
-<section class="hero">
-<h2>Product Command Centre</h2>
-<p>
-Cross-Border Remittance • Marketplace • Collections • Fuel Now Pay Later
-</p>
-</section>
+  <!-- HERO -->
+  <section class="hero">
+    <h2>Executive Command Centre</h2>
+    <p>
+      Real-time operational health and business intelligence across corridors.
+    </p>
+  </section>
 
-<nav class="menu">
-<a href="#dashboard">Dashboard</a>
-<a href="#portfolio">Products</a>
-<a href="#corridors">Corridors</a>
-<a href="#actions">Actions</a>
-</nav>
+  <!-- NAVIGATION -->
+  <nav class="menu">
+    <a href="#executiveDashboard">Dashboard</a>
+    <a href="#countries">Country Cards</a>
+    <a href="#watchlist">Growth Watchlist</a>
+    <a href="#products">Product Layer</a>
+    <a href="#actions">Action Centre</a>
+  </nav>
 
-<section class="section-card">
-<h2>Data Upload</h2>
-<div style="display: flex; gap: 20px; flex-wrap: wrap;">
-<div>
-<label for="transactionsFile" style="display: block; font-weight: bold; margin-bottom: 5px;">Transactions CSV:</label>
-<input type="file" id="transactionsFile" accept=".csv">
-</div>
-<div>
-<label for="backlogFile" style="display: block; font-weight: bold; margin-bottom: 5px;">Backlog CSV:</label>
-<input type="file" id="backlogFile" accept=".csv">
-</div>
-</div>
-</section>
+  <!-- DASHBOARD STATUS -->
+  <section class="dashboard-status">
+    <h3>Dashboard Status</h3>
+    <p>
+      Last Updated:
+      <span id="lastRefresh">Not Loaded</span>
+    </p>
+  </section>
 
-<section id="dashboard" class="kpi-container">
-<div class="card">
-<h3>Transactions</h3>
-<p id="transactions">0</p>
-</div>
+  <!-- EXECUTIVE KPI SECTION (Operational Health Indicators & Traffic Lights) -->
+  <section id="executiveDashboard">
+    <div class="kpi-container">
+      <div class="card">
+        <h3>Kenya QoS</h3>
+        <p id="keQos">-</p>
+      </div>
+      <div class="card">
+        <h3>Uganda QoS</h3>
+        <p id="ugQos">-</p>
+      </div>
+      <div class="card">
+        <h3>Tanzania QoS</h3>
+        <p id="tzQos">-</p>
+      </div>
+      <div class="card">
+        <h3>Nigeria QoS</h3>
+        <p id="ngQos">-</p>
+      </div>
+      <div class="card">
+        <h3>Open Actions</h3>
+        <p id="openActions">0</p>
+      </div>
+      <div class="card">
+        <h3>Follow-Ups Due</h3>
+        <p id="followUpsDue">0</p>
+      </div>
+      <div class="card">
+        <h3>Overdue Actions</h3>
+        <p id="overdueActions">0</p>
+      </div>
+    </div>
+  </section>
 
-<div class="card">
-<h3>Volume</h3>
-<p id="volume">0</p>
-</div>
+  <!-- COUNTRY SUMMARY CARDS -->
+  <section id="countries" class="section-card">
+    <h2>Country Summary Cards</h2>
+    <div class="country-card-grid">
 
-<div class="card">
-<h3>Revenue</h3>
-<p id="revenue">$0</p>
-</div>
+      <!-- Kenya Card -->
+      <div class="card" style="border-top: 4px solid #b30000;">
+        <h3>🇰🇪 Kenya</h3>
+        <p><strong>Period:</strong> MTD</p>
+        <p><strong>Status:</strong> <span id="keHealth">Awaiting data</span></p>
+        <p><strong>Transactions:</strong> <span id="keTx">-</span></p>
+        <p><strong>Volume:</strong> <span id="keVol">-</span></p>
+        <p><strong>Revenue:</strong> <span id="keRev">-</span></p>
+        <p><strong>WoW:</strong> <span id="keWoW">-</span></p>
+        <p><strong>MoM:</strong> <span id="keMoM">-</span></p>
+      </div>
 
-<div class="card">
-<h3>Success Rate</h3>
-<p id="successRate">0%</p>
-</div>
+      <!-- Uganda Card -->
+      <div class="card" style="border-top: 4px solid #ffcc00;">
+        <h3>🇺🇬 Uganda</h3>
+        <p><strong>Period:</strong> MTD</p>
+        <p><strong>Status:</strong> <span id="ugHealth">Awaiting data</span></p>
+        <p><strong>Transactions:</strong> <span id="ugTx">-</span></p>
+        <p><strong>Volume:</strong> <span id="ugVol">-</span></p>
+        <p><strong>Revenue:</strong> <span id="ugRev">-</span></p>
+        <p><strong>WoW:</strong> <span id="ugWoW">-</span></p>
+        <p><strong>MoM:</strong> <span id="ugMoM">-</span></p>
+      </div>
 
-<div class="card">
-<h3>Open Actions</h3>
-<p id="openActions">0</p>
-</div>
+      <!-- Tanzania Card -->
+      <div class="card" style="border-top: 4px solid #1eb53a;">
+        <h3>🇹🇿 Tanzania</h3>
+        <p><strong>Period:</strong> MTD</p>
+        <p><strong>Status:</strong> <span id="tzHealth">Awaiting data</span></p>
+        <p><strong>Transactions:</strong> <span id="tzTx">-</span></p>
+        <p><strong>Volume:</strong> <span id="tzVol">-</span></p>
+        <p><strong>Revenue:</strong> <span id="tzRev">-</span></p>
+        <p><strong>WoW:</strong> <span id="tzWoW">-</span></p>
+        <p><strong>MoM:</strong> <span id="tzMoM">-</span></p>
+      </div>
 
-<div class="card">
-<h3>Overdue Actions</h3>
-<p id="overdueActions">0</p>
-</div>
+      <!-- Nigeria Card -->
+      <div class="card" style="border-top: 4px solid #008751;">
+        <h3>🇳🇬 Nigeria</h3>
+        <p><strong>Period:</strong> MTD</p>
+        <p><strong>Status:</strong> <span id="ngHealth">Awaiting data</span></p>
+        <p><strong>Transactions:</strong> <span id="ngTx">-</span></p>
+        <p><strong>Volume:</strong> <span id="ngVol">-</span></p>
+        <p><strong>Revenue:</strong> <span id="ngRev">-</span></p>
+        <p><strong>WoW:</strong> <span id="ngWoW">-</span></p>
+        <p><strong>MoM:</strong> <span id="ngMoM">-</span></p>
+      </div>
 
-<div class="card">
-<h3>Active Corridors</h3>
-<p id="activeCorridors">0</p>
-</div>
-</section>
+    </div>
+  </section>
 
-<section class="section-card">
-<h2>Management Summary</h2>
-<div id="summary">
-<ul>
-<li>Loading summary intelligence...</li>
-</ul>
-</div>
-</section>
+  <!-- GROWTH WATCHLIST -->
+  <section id="watchlist" class="section-card">
+    <h2>Growth Watchlist &amp; Highlights</h2>
+    <div class="kpi-container">
+      <div class="card">
+        <h3>Top Revenue Performer</h3>
+        <p id="topPerformer">-</p>
+      </div>
+      <div class="card">
+        <h3>Most Active Market</h3>
+        <p id="mostActiveCountry">-</p>
+      </div>
+      <div class="card">
+        <h3>Fastest Growing Market</h3>
+        <p id="fastestGrowing">-</p>
+      </div>
+    </div>
+  </section>
 
-<section id="portfolio" class="section-card">
-<h2>Product Portfolio</h2>
-<ul>
-<li>Cross Border Remittance</li>
-<li>Marketplace</li>
-<li>Collections</li>
-<li>Fuel Now Pay Later</li>
-</ul>
-</section>
+  <!-- PRODUCT SNAPSHOT -->
+  <section id="products" class="section-card">
+    <h2>Product Performance Snapshot</h2>
 
-<section class="section-card">
-<h2>Product KPIs</h2>
-<ul>
-<li>Cross Border Remittance</li>
-<li>Marketplace</li>
-<li>Collections</li>
-<li>Fuel Now Pay Later</li>
-</ul>
-</section>
+    <p>
+      Product volume and revenue are shown by country to preserve
+      local-currency integrity.
+    </p>
 
-<section id="corridors" class="section-card">
-<h2>Corridor Command Centre</h2>
-<table id="corridorTable">
-<thead>
-<tr>
-<th>Corridor</th>
-<th>Volume</th>
-<th>Value</th>
-<th>Status</th>
-<th>Owner</th>
-</tr>
-</thead>
-<tbody>
-<!-- Populated dynamically via app.js -->
-</tbody>
-</table>
-</section>
+    <table>
+      <thead>
+        <tr>
+          <th>Country</th>
+          <th>Product</th>
+          <th>Transactions</th>
+          <th>Volume</th>
+          <th>Revenue</th>
+        </tr>
+      </thead>
 
-<section class="section-card">
-<h2>Corridor Health</h2>
-<ul id="corridorHealth"></ul>
-</section>
+      <tbody id="productSnapshot">
+        <tr>
+          <td colspan="5">
+            Upload the Transactions CSV to display product performance.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 
-<section id="actions" class="section-card">
-<h2>Action Tracker</h2>
-<table>
-<thead>
-<tr>
-<th>Task</th>
-<th>Owner</th>
-<th>Priority</th>
-<th>Due Date</th>
-<th>Status</th>
-</tr>
-</thead>
-<tbody id="actionTable">
-<!-- Populated dynamically via app.js -->
-</tbody>
-</table>
-</section>
+  <!-- EXECUTIVE INSIGHT -->
+  <section id="insight" class="section-card">
+    <h2>Executive Insight</h2>
+    <p id="executiveInsight">Awaiting data upload for automated cross-corridor synthesis...</p>
+  </section>
 
-<footer>
-MyTouchPoint Product Command Centre © 2026
-</footer>
+  <!-- ACTION CENTRE -->
+  <section id="actions" class="section-card">
+    <h2>Action Centre Summary</h2>
+    <p>Operations tracking backlog, aging, and priority escalations.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Open Actions</td>
+          <td id="actionOpenCount">0</td>
+        </tr>
+        <tr>
+          <td>Follow-Ups Due</td>
+          <td id="followUpsDueCount">0</td>
+        </tr>
+        <tr>
+          <td>Overdue Actions</td>
+          <td id="actionOverdueCount">0</td>
+        </tr>
+        <tr>
+          <td>Blocked Actions</td>
+          <td id="blockedActionsCount">0</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 
-<script src="app.js"></script>
+  <!-- FOOTER -->
+  <footer>
+    MyTouchPoint Command Centre © 2026
+  </footer>
 
+  <!-- HIDDEN ADMINISTRATION DRAWER -->
+  <div
+    id="adminPanel"
+    class="admin-panel"
+    aria-hidden="true"
+  >
+    <h3>Data Administration</h3>
+    <p>
+      Upload the latest source files to refresh the Command Centre.
+    </p>
+    <div class="upload-grid">
+      <div>
+        <label for="transactionsFile">Transactions CSV</label>
+        <input type="file" id="transactionsFile" accept=".csv">
+      </div>
+      <div>
+        <label for="backlogFile">Backlog CSV</label>
+        <input type="file" id="backlogFile" accept=".csv">
+      </div>
+      <div>
+        <label for="qosFile">QoS CSV</label>
+        <input type="file" id="qosFile" accept=".csv">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const adminButton = document.getElementById("adminBtn");
+    const adminPanel = document.getElementById("adminPanel");
+
+    function setAdminPanelState(isOpen) {
+      adminPanel.classList.toggle("show", isOpen);
+      adminPanel.setAttribute("aria-hidden", String(!isOpen));
+      adminButton.setAttribute("aria-expanded", String(isOpen));
+    }
+
+    adminButton.addEventListener("click", function () {
+      const isOpen = adminPanel.classList.contains("show");
+      setAdminPanelState(!isOpen);
+    });
+
+    document.addEventListener("click", function (event) {
+      const panelIsOpen = adminPanel.classList.contains("show");
+      const clickedInsidePanel = adminPanel.contains(event.target);
+      const clickedAdminButton = adminButton.contains(event.target);
+
+      if (
+        panelIsOpen &&
+        !clickedInsidePanel &&
+        !clickedAdminButton
+      ) {
+        setAdminPanelState(false);
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (
+        event.key === "Escape" &&
+        adminPanel.classList.contains("show")
+      ) {
+        setAdminPanelState(false);
+        adminButton.focus();
+      }
+    });
+  </script>
+
+  <script src="app.js"></script>
 </body>
+
 </html>
-```[cite: 3]
