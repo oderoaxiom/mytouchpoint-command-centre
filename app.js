@@ -22,65 +22,68 @@ function renderDashboard(txData, backlogData) {
       corridorMap[key] = { volume: 0, value: 0, status: tx.Status, successes: 0 };
     }
     corridorMap[key].volume += 1;
-    corridorMap[key].value += Number(currValue = curr.Amount || 0);
+    // FIXED: Changed 'curr.Amount' to 'tx.Amount' to prevent crashes
+    corridorMap[key].value += Number(tx.Amount || 0); 
     if (tx.Status.toLowerCase() === "success" || tx.Status.toLowerCase() === "live") {
       corridorMap[key].successes += 1;
     }
   });
 
-  // Re-adjusting the inner value addition logic properly
-  txData.forEach(tx => {
-    let key = `${tx.Origin} → ${tx.Destination}`;
-    corridorMap[key].value = txData.filter(t => `${t.Origin} → ${t.Destination}` === key).reduce((sum, t) => sum + Number(t.Amount || 0), 0);
-  });
-
   let activeCorridorsCount = Object.keys(corridorMap).length;
-  let openActionsCount = backlogData.filter(x => x.Status.toLowerCase() !== "closed" && x.Status.toLowerCase() !== "completed").length;
+  
+  // Normalize checking for both "Due Date" and "DueDate" fields safely
+  let openActionsCount = backlogData.filter(x => x.Status && x.Status.toLowerCase() !== "closed" && x.Status.toLowerCase() !== "completed").length;
 
   let today = new Date();
-  let overdue = backlogData.filter(x => new Date(x.DueDate) < today && x.Status.toLowerCase() !== "closed").length;
+  let overdue = backlogData.filter(x => {
+    let rawDate = x.DueDate || x["Due Date"]; // FIXED: Handles both formats seamlessly
+    return rawDate && new Date(rawDate) < today && x.Status.toLowerCase() !== "closed" && x.Status.toLowerCase() !== "completed";
+  }).length;
 
   let revenue = totalValue * feeRate;
 
-  document.getElementById("transactions").innerText = totalTxCount.toLocaleString();
-  document.getElementById("volume").innerText = totalValue.toLocaleString();
-  document.getElementById("revenue").innerText = "KES " + revenue.toLocaleString();
-  document.getElementById("successRate").innerText = totalTxCount > 0 ? ((txData.filter(t => t.Status.toLowerCase() === "success").length / totalTxCount) * 100).toFixed(1) + "%" : "0%";
-  document.getElementById("openActions").innerText = openActionsCount;
+  // DOM Elements Updates
+  if(document.getElementById("transactions")) document.getElementById("transactions").innerText = totalTxCount.toLocaleString();
+  if(document.getElementById("volume")) document.getElementById("volume").innerText = totalValue.toLocaleString();
+  if(document.getElementById("revenue")) document.getElementById("revenue").innerText = "KES " + revenue.toLocaleString();
+  if(document.getElementById("successRate")) {
+    document.getElementById("successRate").innerText = totalTxCount > 0 ? ((txData.filter(t => t.Status.toLowerCase() === "success").length / totalTxCount) * 100).toFixed(1) + "%" : "0%";
+  }
+  if(document.getElementById("openActions")) document.getElementById("openActions").innerText = openActionsCount;
   
   let overdueEl = document.getElementById("overdueActions");
   if (overdueEl) {
     overdueEl.innerText = overdue;
   }
   
-  document.getElementById("activeCorridors").innerText = activeCorridorsCount;
+  if(document.getElementById("activeCorridors")) document.getElementById("activeCorridors").innerText = activeCorridorsCount;
 
   let topCorridor = Object.entries(corridorMap).sort((a, b) => b[1].value - a[1].value)[0];
   let summaryEl = document.getElementById("summary");
-  summaryEl.innerHTML = `
-    <ul>
-      <li>Total Transactions: ${totalTxCount}</li>
-      <li>Total Value: KES ${totalValue.toLocaleString()}</li>
-      <li>Active Corridors: ${activeCorridorsCount}</li>
-      <li>Open Actions: ${openActionsCount}</li>
-      <li>Top Corridor: ${topCorridor ? topCorridor[0] : "N/A"}</li>
-    </ul>
-  `;
+  if (summaryEl) {
+    summaryEl.innerHTML = `
+      <ul>
+        <li>Total Transactions: ${totalTxCount}</li>
+        <li>Total Value: KES ${totalValue.toLocaleString()}</li>
+        <li>Active Corridors: ${activeCorridorsCount}</li>
+        <li>Open Actions: ${openActionsCount}</li>
+        <li>Top Corridor: ${topCorridor ? topCorridor[0] : "N/A"}</li>
+      </ul>
+    `;
+  }
 
   let health = document.getElementById("corridorHealth");
   if (health) {
     health.innerHTML = "";
     for (let [corridor, data] of Object.entries(corridorMap)) {
       let icon = "🟢";
-      if (data.status.toLowerCase() === "pending") {
+      if (data.status.toLowerCase() === "pending" || data.status.toLowerCase() === "in progress") {
         icon = "🟡";
       }
-      if (data.status.toLowerCase() === "failed") {
+      if (data.status.toLowerCase() === "failed" || data.status.toLowerCase() === "blocked") {
         icon = "🔴";
       }
-      health.innerHTML += `
-        <li>${icon} ${corridor} : ${data.status}</li>
-      `;
+      health.innerHTML += `<li>${icon} ${corridor} : ${data.status}</li>`;
     }
   }
 
@@ -104,12 +107,13 @@ function renderDashboard(txData, backlogData) {
   if (actionTableBody) {
     actionTableBody.innerHTML = "";
     backlogData.forEach(action => {
+      let rawDate = action.DueDate || action["Due Date"]; // FIXED: Handles both variants for mapping table UI
       actionTableBody.innerHTML += `
         <tr>
           <td>${action.Task}</td>
-          <td>${action.Owner}</td>
-          <td>${action.Priority}</td>
-          <td>${action.DueDate}</td>
+          <td>${action.Owner || "N/A"}</td>
+          <td>${action.Priority || "N/A"}</td>
+          <td>${rawDate || "N/A"}</td>
           <td>${action.Status}</td>
         </tr>
       `;
@@ -117,8 +121,11 @@ function renderDashboard(txData, backlogData) {
   }
 }
 
+// Simple fallback parser with spaces trimmed safely
 function parseCSV(text) {
   let lines = text.trim().split("\n");
+  if (lines.length === 0) return [];
+  
   let result = [];
   let headers = lines[0].split(",").map(h => h.trim().replace(/^["']|["']$/g, ""));
   
@@ -137,8 +144,10 @@ function parseCSV(text) {
 let currentTransactions = defaultTransactions;
 let currentBacklog = defaultBacklog;
 
+// Initial Draw
 renderDashboard(currentTransactions, currentBacklog);
 
+// Event Listeners
 document.getElementById("transactionsFile").addEventListener("change", function(e) {
   let file = e.target.files[0];
   if (!file) return;
