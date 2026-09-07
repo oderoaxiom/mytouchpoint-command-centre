@@ -186,6 +186,96 @@
             text-shadow: 0 0 10px var(--glow-green);
         }
 
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .kpi-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-blue);
+        }
+
+        .kpi-card.p1::after { background: var(--accent-red); }
+        .kpi-card.progress::after { background: var(--accent-yellow); }
+        .kpi-card.complete::after { background: var(--accent-green); }
+
+        .kpi-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Progress Bar Section */
+        .progress-banner {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: var(--control-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            height: 16px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+            border-radius: 9999px;
+            width: 80%;
+            box-shadow: 0 0 12px var(--glow-green);
+        }
+
         .exec-banner {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -224,55 +314,12 @@
             text-decoration-color: var(--accent-green);
         }
 
-        .action-grid {
+        /* Side-by-side Grids for Risk & Critical Actions */
+        .dashboard-grid-2 {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 2rem;
-        }
-
-        .action-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .action-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--accent-green);
-            box-shadow: 0 8px 25px var(--glow-green);
-        }
-
-        .action-card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .action-card h3 {
-            font-size: 1.05rem;
-            color: var(--text-main);
-        }
-
-        .action-card p {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .action-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border-color);
-            padding-top: 0.75rem;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
         }
 
         .table-container {
@@ -327,6 +374,7 @@
         .status-complete { background-color: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 0 10px var(--glow-green); }
         .status-inprogress { background-color: rgba(234, 179, 8, 0.15); color: var(--accent-yellow); border: 1px solid rgba(234, 179, 8, 0.4); box-shadow: 0 0 10px var(--glow-yellow); }
         .status-blocked { background-color: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.4); box-shadow: 0 0 10px var(--glow-red); }
+        .status-risk { background-color: rgba(245, 158, 11, 0.15); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 0 10px var(--glow-amber); }
 
         .controls-bar {
             padding: 1.25rem;
@@ -417,7 +465,7 @@
 </head>
 <body>
 
-    <a href="#" class="return-link">
+    <a href="index.html" class="return-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
         Return to Executive Dashboard
     </a>
@@ -438,18 +486,148 @@
         </div>
     </header>
 
+    <!-- KPI Summary Cards -->
     <section>
-        <div class="exec-banner">
-            <div class="exec-banner-header">
-                <div class="exec-banner-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-                    Action Center & Backlog Management Matrix
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <span class="kpi-label">Total Items</span>
+                <span class="kpi-value">152</span>
+            </div>
+            <div class="kpi-card p1">
+                <span class="kpi-label">P1 Critical</span>
+                <span class="kpi-value">79</span>
+            </div>
+            <div class="kpi-card progress">
+                <span class="kpi-label">In Progress</span>
+                <span class="kpi-value">52</span>
+            </div>
+            <div class="kpi-card complete">
+                <span class="kpi-label">Completed</span>
+                <span class="kpi-value">34</span>
+            </div>
+        </div>
+
+        <!-- Overall Progress Bar -->
+        <div class="progress-banner">
+            <div class="progress-header">
+                <span>Backlog Resolution Tracking</span>
+                <span style="color: var(--accent-green);">80% Complete</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Risk Register & Escalations Grid -->
+    <section>
+        <div class="dashboard-grid-2">
+            <div>
+                <h2>Risk Register</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Risk Indicator</th>
+                                <th>Impact Area</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Nigeria Corridor Closure</strong></td>
+                                <td>Commercial / Cross-Border</td>
+                                <td><span class="status-pill status-blocked">Escalated</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Wave Deactivation</strong></td>
+                                <td>Partner Infrastructure</td>
+                                <td><span class="status-pill status-blocked">Escalated</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Uganda Ebola Impact</strong></td>
+                                <td>Regional Operations</td>
+                                <td><span class="status-pill status-risk">At Risk</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tanzania Slowdown</strong></td>
+                                <td>Market Performance</td>
+                                <td><span class="status-pill status-inprogress">Monitoring</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div style="font-size: 0.75rem; color: var(--accent-green); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; text-shadow: 0 0 8px var(--glow-green);">Live Execution Queue</div>
             </div>
-            <div class="exec-banner-text">
-                This center coordinates all active remedial tasks, blocker resolutions, and feature enhancements managed by <strong>John Odero</strong>. Use the interactive filters below to instantly sort by department or status.
+
+            <div>
+                <h2>Escalations & Metrics</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Focus Element</th>
+                                <th>Category</th>
+                                <th>Health Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Nigeria Corridor</td>
+                                <td>Regulatory</td>
+                                <td><span class="status-pill status-blocked">🔴 Escalated</span></td>
+                            </tr>
+                            <tr>
+                                <td>Partner Delays</td>
+                                <td>Technical Integration</td>
+                                <td><span class="status-pill status-blocked">🔴 Escalated</span></td>
+                            </tr>
+                            <tr>
+                                <td>Tanzania Performance</td>
+                                <td>Commercial</td>
+                                <td><span class="status-pill status-risk">🟡 At Risk</span></td>
+                            </tr>
+                            <tr>
+                                <td>Kenya Volume Growth</td>
+                                <td>Market Expansion</td>
+                                <td><span class="status-pill status-complete">🟢 On Track</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Critical Actions Section -->
+    <section>
+        <h2>Critical Action Items</h2>
+        <div class="table-container" style="margin-bottom: 2.5rem;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Owner</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Nigeria Recovery</strong></td>
+                        <td>John Odero</td>
+                        <td><span class="status-pill status-inprogress">In Progress</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tanzania Reactivation</strong></td>
+                        <td>Team</td>
+                        <td><span class="status-pill status-inprogress">In Progress</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Uganda Recovery Program</strong></td>
+                        <td>Team</td>
+                        <td><span class="status-pill status-complete">Complete</span></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 

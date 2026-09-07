@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MyTouchpoint Performance & Backlog Dashboard - August 2026</title>
+<title>MyTouchpoint EA & NG Executive Command Center - August 2026</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
@@ -237,12 +237,12 @@ body::after {
 
 .executive-banner-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
 }
 
 .executive-banner-item {
-    font-size: 13.5px;
+    font-size: 13px;
     color: var(--text-main);
     line-height: 1.4;
     display: flex;
@@ -257,41 +257,28 @@ body::after {
 }
 
 .nav-tab {
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: var(--text-muted);
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 8px 18px;
     border-radius: 10px;
     font-weight: 600;
     font-size: 13px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 16px var(--glow-color);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
 }
 
-.nav-tab.active, .nav-tab:hover {
-    background: linear-gradient(135deg, var(--primary-light), var(--primary));
-    color: white;
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 6px 16px var(--glow-color);
+.nav-tab:hover {
     transform: translateY(-2px);
+    opacity: 0.9;
 }
 
 .section-content {
-    display: none;
-}
-
-.section-content.active {
     display: block;
-    animation: fadeIn 0.4s ease forwards;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
 }
 
 h2{
@@ -395,7 +382,7 @@ h3 {
 /* Country Cards Grid */
 .country-cards-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     margin: 24px 0;
 }
@@ -516,38 +503,6 @@ tr:hover td { background: rgba(37, 99, 235, 0.06); }
 .positive{ color: var(--success); font-weight: 700; text-shadow: 0 0 12px rgba(5, 150, 105, 0.3); }
 .negative{ color: var(--danger); font-weight: 700; text-shadow: 0 0 12px rgba(220, 38, 38, 0.3); }
 
-.insight{
-    background: var(--insight-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 20px 24px;
-    border-left: 4px solid var(--primary-light);
-    border-radius: 0 16px 16px 0;
-    margin: 24px 0;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08), 0 0 15px var(--glow-color);
-    border-top: 1px solid var(--border-color);
-    border-right: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-.highlight{
-    background: var(--highlight-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-left: 4px solid var(--warning);
-    border-radius: 0 16px 16px 0;
-    padding: 20px 24px;
-    margin: 24px 0;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08), 0 0 15px rgba(217, 119, 6, 0.15);
-    border-top: 1px solid var(--border-color);
-    border-right: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
-    font-size: 14px;
-    line-height: 1.6;
-}
-
 .chart-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -601,16 +556,6 @@ tr:hover td { background: rgba(37, 99, 235, 0.06); }
     height: 100%;
 }
 
-.badge-status {
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-}
-.badge-in-progress { background: rgba(37, 99, 235, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-.badge-pending { background: rgba(217, 119, 6, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-.badge-completed { background: rgba(5, 150, 105, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-
 .footer{
     margin-top: 50px;
     padding-top: 24px;
@@ -625,7 +570,7 @@ ul { padding-left: 20px; margin: 8px 0; }
 li { margin-bottom: 6px; }
 
 @media (max-width: 900px) {
-    .market-leadership-grid, .events-grid, .scoreboard-grid, .country-cards-grid {
+    .market-leadership-grid, .events-grid, .scoreboard-grid, .country-cards-grid, .executive-banner-grid {
         grid-template-columns: 1fr;
     }
     .card-row {
@@ -638,9 +583,6 @@ li { margin-bottom: 6px; }
     .nav-tabs {
         width: 100%;
         justify-content: flex-end;
-    }
-    .executive-banner-grid {
-        grid-template-columns: 1fr;
     }
 }
 </style>
@@ -660,8 +602,8 @@ li { margin-bottom: 6px; }
 <div class="hero">
     <div class="hero-left">
         <div class="hero-text">
-            <h1>MyTouchpoint EA Hub & NG Command Center</h1>
-            <p>August 2026 Executive Performance Review &nbsp;|&nbsp; Owner: John Odero &nbsp;|&nbsp; Last Updated: 07 Sep 2026</p>
+            <h1>MyTouchpoint EA & NG Executive Command Center</h1>
+            <p>August 2026 Performance Review &nbsp;|&nbsp; Owner: John Odero &nbsp;|&nbsp; Last Updated: 07 Sep 2026</p>
         </div>
     </div>
     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px; z-index: 1;">
@@ -669,8 +611,7 @@ li { margin-bottom: 6px; }
             🟢 Regional Health: Stable
         </span>
         <div class="nav-tabs">
-            <a href="index.html" class="nav-tab active">Dashboard</a>
-            <a href="Backlog.html" class="nav-tab">Backlog & Actions</a>
+            <a href="Backlog.html" class="nav-tab">✅ Backlog & Actions</a>
         </div>
     </div>
 </div>
@@ -680,22 +621,22 @@ li { margin-bottom: 6px; }
     <h3>Executive Summary Insights</h3>
     <div class="executive-banner-grid">
         <div class="executive-banner-item">
-            <span>📈</span> <span><b>Kenya:</b> Remains the largest transaction market (50% share)</span>
+            <span>🚀</span> <span><b>Uganda:</b> Fastest growth market</span>
         </div>
         <div class="executive-banner-item">
-            <span>🚀</span> <span><b>Uganda:</b> Delivered the strongest August growth (+122% Volume and Revenue)</span>
+            <span>📈</span> <span><b>Kenya:</b> Largest transaction market</span>
         </div>
         <div class="executive-banner-item">
-            <span>⚠</span> <span><b>Nigeria:</b> Impacted by corridor deactivation</span>
+            <span>💰</span> <span><b>Tanzania:</b> Largest revenue market</span>
         </div>
         <div class="executive-banner-item">
-            <span>💰</span> <span><b>Tanzania:</b> Remains the largest revenue contributor (41% share)</span>
+            <span>⚠</span> <span><b>Nigeria:</b> Impacted by corridor shutdown</span>
         </div>
     </div>
 </div>
 
-<!-- SECTION 1: PERFORMANCE DASHBOARD -->
-<div id="performanceSection" class="section-content active">
+<!-- SECTION: PERFORMANCE DASHBOARD -->
+<div id="performanceSection" class="section-content">
 
     <!-- KPI Cards -->
     <div class="card-row">
@@ -707,7 +648,7 @@ li { margin-bottom: 6px; }
         </div>
          
         <div class="card green">
-            <h3>Volumes</h3>
+            <h3>Volume</h3>
             <h2>136.8M XOF</h2>
             <p>Total YTD</p>
             <div class="trend">▲ vs Previous Month</div>
@@ -742,7 +683,7 @@ li { margin-bottom: 6px; }
             <p><b>Impact:</b> Reduced transaction throughput following broader network-level service restrictions.</p>
         </div>
         <div class="event-card">
-            <h4>⚠ Nigeria Corridor Shutdown</h4>
+            <h4>⚠ Nigerian Corridor Shutdown</h4>
             <div class="event-meta">Nigeria &nbsp;|&nbsp; Late August 2026</div>
             <p><b>Impact:</b> Sharp decline in transactions, volume, and revenue due to sudden partner deactivation.</p>
         </div>
@@ -783,68 +724,28 @@ li { margin-bottom: 6px; }
         </tr>
     </table>
 
-    <!-- August Snapshot -->
-    <h2>August vs July Performance Snapshot</h2>
-    <table>
-        <tr>
-            <th>Country</th>
-            <th>Transactions</th>
-            <th>Volume (XOF)</th>
-            <th>Revenue (XOF)</th>
-            <th>Status</th>
-        </tr>
-        <tr>
-            <td><b>Kenya</b></td>
-            <td class="positive">+54%</td>
-            <td class="positive">+117%</td>
-            <td class="positive">+117%</td>
-            <td>🟢 Strong Growth</td>
-        </tr>
-        <tr>
-            <td><b>Uganda</b></td>
-            <td class="positive">+50%</td>
-            <td class="positive">+122%</td>
-            <td class="positive">+122%</td>
-            <td>🟢 Strong Growth</td>
-        </tr>
-        <tr>
-            <td><b>Nigeria</b></td>
-            <td class="negative">-38%</td>
-            <td class="negative">-28%</td>
-            <td class="negative">-28%</td>
-            <td>🔴 Declining</td>
-        </tr>
-        <tr>
-            <td><b>Tanzania</b></td>
-            <td class="negative">-59%</td>
-            <td class="negative">-36%</td>
-            <td class="negative">-36%</td>
-            <td>🔴 Declining</td>
-        </tr>
-    </table>
-
     <!-- Leadership Scoreboard -->
     <h2>Leadership Scoreboard</h2>
     <div class="scoreboard-grid">
         <div class="scoreboard-item">
             <div class="trophy">🏆</div>
-            <h5>Revenue Leader</h5>
-            <div class="leader-val">Tanzania (41%)</div>
+            <h5>Transaction Leader</h5>
+            <div class="leader-val">Kenya</div>
         </div>
         <div class="scoreboard-item">
             <div class="trophy">🏆</div>
             <h5>Volume Leader</h5>
-            <div class="leader-val">Nigeria (33%)</div>
+            <div class="leader-val">Nigeria</div>
         </div>
         <div class="scoreboard-item">
             <div class="trophy">🏆</div>
-            <h5>Transaction Leader</h5>
-            <div class="leader-val">Kenya (50%)</div>
+            <h5>Revenue Leader</h5>
+            <div class="leader-val">Tanzania</div>
         </div>
         <div class="scoreboard-item">
             <div class="trophy">🏆</div>
-            <h5>Fastest Growing</h5>
-            <div class="leader-val">Uganda (+122%)</div>
+            <h5>Fastest Growth</h5>
+            <div class="leader-val">Uganda</div>
         </div>
     </div>
 
@@ -882,43 +783,38 @@ li { margin-bottom: 6px; }
     <div class="country-cards-grid">
         <div class="country-card">
             <h4>🇰🇪 Kenya</h4>
-            <div class="country-badge-title">Transactions Leader</div>
+            <div class="country-badge-title">Transaction Market</div>
             <ul>
-                <li><b>50%</b> of all regional transactions YTD</li>
-                <li><b>August:</b> +54% Transactions, +117% Volume, +117% Revenue</li>
+                <li><b>50%</b> of all transactions</li>
             </ul>
-            <div class="focus-area"><b>Focus:</b> Improve monetization.</div>
+            <div class="focus-area"><b>Opportunity:</b><br>Improve yield</div>
         </div>
 
         <div class="country-card">
             <h4>🇺🇬 Uganda</h4>
-            <div class="country-badge-title">Fastest Growing Market</div>
+            <div class="country-badge-title">Growth Market</div>
             <ul>
-                <li><b>August:</b> +122% Volume</li>
-                <li><b>August:</b> +122% Revenue</li>
-                <li>Demonstrated high resilience against health disruption constraints.</li>
+                <li>Fastest growth</li>
             </ul>
-            <div class="focus-area"><b>Focus:</b> Scale growth momentum.</div>
-        </div>
-
-        <div class="country-card">
-            <h4>🇹🇿 Tanzania</h4>
-            <div class="country-badge-title">Revenue Leader</div>
-            <ul>
-                <li><b>41%</b> Revenue Share YTD</li>
-                <li>Maintains primary yield contribution despite August slowdown.</li>
-            </ul>
-            <div class="focus-area"><b>Focus:</b> Restore transaction growth.</div>
+            <div class="focus-area"><b>Opportunity:</b><br>Scale momentum</div>
         </div>
 
         <div class="country-card">
             <h4>🇳🇬 Nigeria</h4>
-            <div class="country-badge-title">Volume Leader</div>
+            <div class="country-badge-title">Volume Market</div>
             <ul>
-                <li><b>33%</b> Volume Share YTD</li>
-                <li>Impacted by corridor deactivation late in August.</li>
+                <li>Largest volume market</li>
             </ul>
-            <div class="focus-area"><b>Focus:</b> Recover corridor performance.</div>
+            <div class="focus-area"><b>Opportunity:</b><br>Recovery</div>
+        </div>
+
+        <div class="country-card">
+            <h4>🇹🇿 Tanzania</h4>
+            <div class="country-badge-title">Revenue Market</div>
+            <ul>
+                <li>Largest revenue contributor</li>
+            </ul>
+            <div class="focus-area"><b>Opportunity:</b><br>Restore transactions</div>
         </div>
     </div>
 
@@ -938,91 +834,14 @@ li { margin-bottom: 6px; }
             <td>🟢</td>
         </tr>
         <tr>
-            <td><b>Restore Nigeria Corridor</b></td>
+            <td><b>Recover Nigeria Corridor</b></td>
             <td>🔴</td>
         </tr>
         <tr>
-            <td><b>Recover Tanzania Activity</b></td>
+            <td><b>Restore Tanzania Activity</b></td>
             <td>🟡</td>
         </tr>
     </table>
-
-    <!-- Executive Conclusion -->
-    <div class="highlight">
-        <b>Executive Conclusion</b><br><br>
-        Kenya and Uganda demonstrated strong resilience and growth in August, offsetting some of the operational challenges experienced in Nigeria and Tanzania. While Kenya remains the region's transaction leader, Nigeria continues to lead volumes and Tanzania remains the largest revenue contributor (all financial figures standardised to XOF). Focus during Q4 should be centered on sustaining momentum in growth markets while accelerating recovery initiatives in impacted corridors and channels.
-    </div>
-
-    <!-- Quick Action Button to Backlog -->
-    <div style="margin-top: 35px;">
-        <a href="Backlog.html" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-sm shadow-lg hover:opacity-95 transition flex items-center justify-center text-center" style="text-decoration: none;">
-            View Backlog & Actions ➔
-        </a>
-    </div>
-
-</div>
-
-<!-- SECTION 2: BACKLOG & ACTIONS -->
-<div id="backlogSection" class="section-content">
-
-    <h2>Operational Backlog & Action Items</h2>
-    <p>Tracking pending items, technical remediation tasks, and corridor restoration efforts for Q4 2026.</p>
-
-    <table>
-    <tr>
-    <th>Task ID</th>
-    <th>Corridor / Region</th>
-    <th>Action Item Description</th>
-    <th>Priority</th>
-    <th>Status</th>
-    </tr>
-
-    <tr>
-    <td><b>TSK-01</b></td>
-    <td>Nigeria (NG)</td>
-    <td>Engage local banking partners to restore deactivated Nigerian payment corridor.</td>
-    <td class="negative">High</td>
-    <td><span class="badge-status badge-in-progress">In Progress</span></td>
-    </tr>
-
-    <tr>
-    <td><b>TSK-02</b></td>
-    <td>Uganda (UG)</td>
-    <td>Post-Ebola risk evaluation and volume recovery incentive program rollout.</td>
-    <td class="warning">Medium</td>
-    <td><span class="badge-status badge-pending">Pending</span></td>
-    </tr>
-
-    <tr>
-    <td><b>TSK-03</b></td>
-    <td>Kenya (KE)</td>
-    <td>Optimize merchant pricing structure to enhance revenue yields without hurting transaction volume.</td>
-    <td class="negative">High</td>
-    <td><span class="badge-status badge-in-progress">In Progress</span></td>
-    </tr>
-
-    <tr>
-    <td><b>TSK-04</b></td>
-    <td>Tanzania (TZ)</td>
-    <td>Investigate root cause of August transaction slowdown and conduct merchant outreach.</td>
-    <td class="negative">High</td>
-    <td><span class="badge-status badge-pending">Pending</span></td>
-    </tr>
-
-    <tr>
-    <td><b>TSK-05</b></td>
-    <td>Network-wide</td>
-    <td>Audit alternative liquidity rails following Wave network deactivations.</td>
-    <td class="negative">High</td>
-    <td><span class="badge-status badge-completed">Completed</span></td>
-    </tr>
-    </table>
-
-    <h2>Strategic Backlog Roadmap</h2>
-    <div class="insight">
-    <b>Corridor Recovery Protocol</b><br>
-    All engineering and compliance teams are directed to clear high-priority backlog tickets regarding corridor connectivity before the end of September 2026 to ensure uninterrupted Q4 trading volumes.
-    </div>
 
 </div>
  
