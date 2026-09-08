@@ -4,53 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Backlog & Action Center - Operations Steering Dashboard</title>
+    <!-- Include Papa Parse for robust CSV/Excel-exported text parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         :root[data-theme="dark"] {
-            --bg-color: #0b0f19;
-            --card-bg: #131d31;
-            --card-hover: #1a2744;
-            --border-color: #223456;
+            --bg-color: #05070c;
+            --card-bg: rgba(13, 20, 35, 0.75);
+            --card-hover: rgba(22, 33, 56, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(59, 130, 246, 0.3);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --accent-red: #ef4444;
-            --accent-amber: #f59e0b;
+            --accent-red: #f43f5e;
+            --accent-amber: #fbbf24;
             --accent-green: #10b981;
             --accent-blue: #3b82f6;
-            --accent-purple: #8b5cf6;
+            --accent-purple: #a855f7;
             --accent-cyan: #06b6d4;
-            --accent-yellow: #eab308;
-            --glow-blue: rgba(59, 130, 246, 0.4);
-            --glow-red: rgba(239, 68, 68, 0.4);
-            --glow-green: rgba(16, 185, 129, 0.4);
-            --glow-amber: rgba(245, 158, 11, 0.4);
-            --glow-cyan: rgba(6, 182, 212, 0.4);
-            --glow-yellow: rgba(234, 179, 8, 0.4);
-            --glow-purple: rgba(139, 92, 246, 0.4);
-            --control-bg: #0d1526;
+            --glow-blue: rgba(59, 130, 246, 0.25);
+            --glow-red: rgba(244, 63, 94, 0.25);
+            --glow-green: rgba(16, 185, 129, 0.25);
+            --glow-amber: rgba(251, 191, 36, 0.25);
+            --glow-cyan: rgba(6, 182, 212, 0.25);
+            --control-bg: rgba(8, 12, 22, 0.85);
+            --glass-blur: blur(16px);
         }
 
         :root[data-theme="light"] {
-            --bg-color: #f1f5f9;
-            --card-bg: #ffffff;
-            --card-hover: #f8fafc;
-            --border-color: #cbd5e1;
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-hover: rgba(241, 245, 249, 0.9);
+            --border-color: rgba(0, 0, 0, 0.08);
+            --border-glow: rgba(37, 99, 235, 0.2);
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --accent-red: #dc2626;
+            --accent-red: #e11d48;
             --accent-amber: #d97706;
             --accent-green: #059669;
             --accent-blue: #2563eb;
             --accent-purple: #7c3aed;
             --accent-cyan: #0891b2;
-            --accent-yellow: #ca8a04;
-            --glow-blue: rgba(37, 99, 235, 0.25);
-            --glow-red: rgba(220, 38, 38, 0.25);
-            --glow-green: rgba(5, 150, 105, 0.25);
-            --glow-amber: rgba(217, 119, 6, 0.25);
-            --glow-cyan: rgba(8, 145, 178, 0.25);
-            --glow-yellow: rgba(202, 138, 4, 0.25);
-            --glow-purple: rgba(124, 58, 237, 0.25);
-            --control-bg: #f8fafc;
+            --glow-blue: rgba(37, 99, 235, 0.15);
+            --glow-red: rgba(225, 29, 72, 0.15);
+            --glow-green: rgba(5, 150, 105, 0.15);
+            --glow-amber: rgba(217, 119, 6, 0.15);
+            --glow-cyan: rgba(8, 145, 178, 0.15);
+            --control-bg: rgba(241, 245, 249, 0.9);
+            --glass-blur: blur(16px);
         }
 
         * {
@@ -58,18 +58,20 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            padding: 2.5rem;
-            line-height: 1.5;
+            padding: 2.5rem 2rem;
+            line-height: 1.6;
             background-image: 
-                radial-gradient(circle at 15% 15%, var(--glow-green) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, var(--glow-blue) 0%, transparent 40%);
+                radial-gradient(circle at 10% 10%, var(--glow-green) 0%, transparent 45%),
+                radial-gradient(circle at 90% 90%, var(--glow-blue) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, var(--glow-cyan) 0%, transparent 60%);
             background-attachment: fixed;
+            min-height: 100vh;
         }
 
         .return-link {
@@ -78,21 +80,22 @@
             gap: 0.5rem;
             color: var(--text-muted);
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            margin-bottom: 1.25rem;
-            transition: color 0.2s ease, text-shadow 0.2s ease;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
         }
 
         .return-link:hover {
             color: var(--accent-green);
-            text-shadow: 0 0 10px var(--glow-green);
+            transform: translateX(-3px);
+            text-shadow: 0 0 12px var(--glow-green);
         }
 
         header {
             margin-bottom: 2.5rem;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
@@ -108,29 +111,33 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--accent-green);
-            background-color: rgba(16, 185, 129, 0.1);
+            background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 0.3rem 0.75rem;
-            border-radius: 6px;
+            padding: 0.3rem 0.8rem;
+            border-radius: 9999px;
             width: fit-content;
             font-weight: 600;
-            box-shadow: 0 0 10px var(--glow-green);
+            backdrop-filter: var(--glass-blur);
+            box-shadow: 0 0 15px var(--glow-green);
         }
 
         header h1 {
-            font-size: 2rem;
+            font-size: 2.25rem;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             color: var(--text-main);
-            text-shadow: 0 0 20px var(--glow-green);
+            background: linear-gradient(135deg, var(--text-main) 30%, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px var(--glow-blue);
         }
 
         header p {
             color: var(--text-muted);
             font-size: 0.95rem;
-            margin-top: 0.25rem;
         }
 
         .header-controls {
@@ -141,111 +148,264 @@
 
         .theme-toggle {
             background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 0.4rem 0.85rem;
-            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
             font-size: 0.8rem;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 0 10px var(--glow-blue);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
         }
 
         .theme-toggle:hover {
             border-color: var(--accent-green);
+            box-shadow: 0 0 15px var(--glow-green);
+            transform: translateY(-1px);
         }
 
         .header-tag {
-            background-color: var(--card-bg);
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
             color: var(--accent-green);
-            padding: 0.4rem 0.85rem;
-            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
             font-size: 0.75rem;
             font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
             border: 1px solid var(--border-color);
-            box-shadow: 0 0 12px var(--glow-green);
+            box-shadow: 0 4px 20px var(--glow-green);
         }
 
         section {
-            margin-bottom: 3rem;
-        }
-
-        h2 {
-            font-size: 1.25rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 1.25rem;
-            color: var(--text-muted);
-            border-left: 4px solid var(--accent-green);
-            padding-left: 0.75rem;
-            text-shadow: 0 0 10px var(--glow-green);
-        }
-
-        /* KPI Cards Grid */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.25rem;
             margin-bottom: 2.5rem;
         }
 
-        .kpi-card {
-            background-color: var(--card-bg);
+        h2 {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 1.25rem;
+            color: var(--text-muted);
+            border-left: 3px solid var(--accent-green);
+            padding-left: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* Bento Grid Layout Architecture */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .bento-card {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 16px;
             padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .kpi-card::after {
+        .bento-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--accent-blue);
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
         }
 
-        .kpi-card.p1::after { background: var(--accent-red); }
-        .kpi-card.progress::after { background: var(--accent-yellow); }
-        .kpi-card.complete::after { background: var(--accent-green); }
+        .bento-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-glow);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.3), 0 0 25px var(--glow-blue);
+        }
 
-        .kpi-label {
-            font-size: 0.85rem;
+        .bento-card:hover::before {
+            opacity: 1;
+        }
+
+        .bento-card.p1:hover {
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.3), 0 0 25px var(--glow-red);
+            border-color: rgba(244, 63, 94, 0.4);
+        }
+
+        .bento-card.progress:hover {
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.3), 0 0 25px var(--glow-amber);
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+
+        .bento-card.complete:hover {
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.3), 0 0 25px var(--glow-green);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .bento-label {
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: 1px;
             color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .bento-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .bento-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Bento Department Summary Grid */
+        .dept-bento-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .dept-bento-card {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dept-bento-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px var(--glow-blue);
+        }
+
+        .dept-bento-card.active {
+            border-color: var(--accent-green);
+            background: var(--card-hover);
+            box-shadow: 0 0 20px var(--glow-green);
+        }
+
+        .dept-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dept-badge {
+            font-size: 0.6rem;
+            background: var(--control-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            color: var(--text-muted);
+            width: fit-content;
             font-weight: 600;
         }
 
-        .kpi-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-main);
+        .weekly-banner {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.12), rgba(59, 130, 246, 0.12));
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            border-radius: 16px;
+            padding: 1.25rem 1.75rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(244, 63, 94, 0.15);
         }
 
-        /* Progress Bar Section */
-        .progress-banner {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem 2rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 2.5rem;
+        .weekly-banner-left {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.25rem;
+        }
+
+        .weekly-banner-title {
+            font-size: 1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--accent-red);
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .weekly-banner-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .weekly-toggle-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(244, 63, 94, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .weekly-toggle-btn:hover, .weekly-toggle-btn.active {
+            background: var(--accent-red);
+            color: white;
+            box-shadow: 0 0 20px var(--glow-red);
+            transform: translateY(-1px);
+        }
+
+        .progress-banner {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 420px;
         }
 
         .progress-header {
@@ -253,17 +413,17 @@
             justify-content: space-between;
             align-items: center;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.8px;
         }
 
         .progress-bar-container {
             width: 100%;
-            background-color: var(--control-bg);
+            background: var(--control-bg);
             border: 1px solid var(--border-color);
             border-radius: 9999px;
-            height: 16px;
+            height: 8px;
             overflow: hidden;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
@@ -272,142 +432,99 @@
             height: 100%;
             background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
             border-radius: 9999px;
-            width: 80%;
+            width: 57%;
             box-shadow: 0 0 12px var(--glow-green);
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .exec-banner {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2), 0 0 25px var(--glow-green);
-            margin-bottom: 2.5rem;
-        }
-
-        .exec-banner-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.25rem;
-        }
-
-        .exec-banner-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            text-shadow: 0 0 10px var(--glow-green);
-        }
-
-        .exec-banner-text {
-            color: var(--text-muted);
-            font-size: 1rem;
-            line-height: 1.7;
-        }
-
-        .exec-banner-text strong {
-            color: var(--text-main);
-            text-decoration: underline;
-            text-decoration-color: var(--accent-green);
-        }
-
-        /* Side-by-side Grids for Risk & Critical Actions */
-        .dashboard-grid-2 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
+        /* Glassmorphism Table Container */
         .table-container {
-            background-color: var(--card-bg);
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 8px 25px -4px rgba(0, 0, 0, 0.2), 0 0 20px var(--glow-green);
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.3), 0 0 30px var(--glow-blue);
+            margin: 0 auto;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        th, td {
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.9rem;
-        }
-
-        th {
-            background-color: var(--control-bg);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: 0.8px;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background-color: var(--card-hover);
-        }
-
-        .badge-p1 { background-color: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.4); padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
-
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 0.3rem 0.75rem;
-            border-radius: 9999px;
-            width: fit-content;
-        }
-
-        .status-complete { background-color: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 0 10px var(--glow-green); }
-        .status-inprogress { background-color: rgba(234, 179, 8, 0.15); color: var(--accent-yellow); border: 1px solid rgba(234, 179, 8, 0.4); box-shadow: 0 0 10px var(--glow-yellow); }
-        .status-blocked { background-color: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.4); box-shadow: 0 0 10px var(--glow-red); }
-        .status-risk { background-color: rgba(245, 158, 11, 0.15); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 0 10px var(--glow-amber); }
-
+        /* Sticky Glassmorphic Action & Controls Bar */
         .controls-bar {
-            padding: 1.25rem;
-            background-color: var(--control-bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1.25rem 1.5rem;
+            background: var(--control-bg);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             flex-wrap: wrap;
-            gap: 1.25rem;
+            gap: 1rem;
             justify-content: space-between;
             align-items: center;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        /* Segmented Status Tabs */
+        .status-tabs {
+            display: flex;
+            gap: 0.4rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.3rem;
+            border-radius: 12px;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .status-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .status-tab:hover {
+            color: var(--text-main);
+            background: var(--card-hover);
+        }
+
+        .status-tab.active {
+            background: var(--accent-green);
+            color: #05070c;
+            box-shadow: 0 0 15px var(--glow-green);
         }
 
         .search-wrapper {
             position: relative;
             flex: 1;
-            min-width: 300px;
+            min-width: 260px;
         }
 
         .search-wrapper input {
             width: 100%;
-            background-color: var(--card-bg);
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border-radius: 10px;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
             color: var(--text-main);
-            font-size: 0.9rem;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 0.85rem;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
         }
 
         .search-wrapper input:focus {
             outline: none;
             border-color: var(--accent-green);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 0 15px var(--glow-green);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1), 0 0 15px var(--glow-green);
         }
 
         .search-wrapper svg {
@@ -415,25 +532,27 @@
             left: 0.85rem;
             top: 50%;
             transform: translateY(-50%);
-            width: 16px;
-            height: 16px;
+            width: 15px;
+            height: 15px;
             fill: var(--text-muted);
         }
 
         .filter-group {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .filter-select {
-            background-color: var(--card-bg);
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            border-radius: 10px;
+            padding: 0.7rem 2.25rem 0.7rem 1rem;
             color: var(--text-main);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             appearance: none;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             cursor: pointer;
         }
 
@@ -443,37 +562,231 @@
             box-shadow: 0 0 15px var(--glow-green);
         }
 
+        .csv-upload-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 0.7rem 1.1rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px var(--glow-green);
+            transition: all 0.2s ease;
+        }
+
+        .csv-upload-btn:hover {
+            background: var(--accent-green);
+            color: #05070c;
+            transform: translateY(-1px);
+            box-shadow: 0 0 25px var(--glow-green);
+        }
+
+        .reset-filter-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.7rem 1.1rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .reset-filter-btn:hover {
+            color: var(--text-main);
+            border-color: var(--accent-green);
+            transform: translateY(-1px);
+        }
+
+        .table-scroll-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            table-layout: fixed;
+            min-width: 1100px;
+        }
+
+        th, td {
+            padding: 1rem 1.15rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        th:nth-child(1), td:nth-child(1) { width: 10%; }
+        th:nth-child(2), td:nth-child(2) { width: 9%; }
+        th:nth-child(3), td:nth-child(3) { width: 7%; }
+        th:nth-child(4), td:nth-child(4) { width: 11%; }
+        th:nth-child(5), td:nth-child(5) { width: 16%; }
+        th:nth-child(6), td:nth-child(6) { width: 16%; }
+        th:nth-child(7), td:nth-child(7) { width: 9%; }
+        th:nth-child(8), td:nth-child(8) { width: 6%; }
+        th:nth-child(9), td:nth-child(9) { width: 5%; }
+        th:nth-child(10), td:nth-child(10) { width: 9%; }
+        th:nth-child(11), td:nth-child(11) { width: 9%; }
+        th:nth-child(12), td:nth-child(12) { width: 6%; }
+
+        th {
+            background: var(--control-bg);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        th:hover {
+            color: var(--accent-green);
+            background: var(--card-hover);
+        }
+
+        th .sort-icon {
+            font-size: 0.7rem;
+            margin-left: 0.3rem;
+            opacity: 0.5;
+        }
+
+        th.sorted .sort-icon {
+            opacity: 1;
+            color: var(--accent-green);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr {
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        tr:hover td {
+            background: var(--card-hover);
+        }
+
+        .badge-p1 { 
+            background: rgba(244, 63, 94, 0.12); 
+            color: var(--accent-red); 
+            border: 1px solid rgba(244, 63, 94, 0.35); 
+            padding: 0.25rem 0.6rem; 
+            border-radius: 6px; 
+            font-weight: 700; 
+            font-size: 0.7rem; 
+            box-shadow: 0 0 10px rgba(244, 63, 94, 0.2); 
+            display: inline-block; 
+            text-align: center; 
+        }
+
+        .badge-p2 { 
+            background: rgba(251, 191, 36, 0.12); 
+            color: var(--accent-amber); 
+            border: 1px solid rgba(251, 191, 36, 0.35); 
+            padding: 0.25rem 0.6rem; 
+            border-radius: 6px; 
+            font-weight: 700; 
+            font-size: 0.7rem; 
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.2); 
+            display: inline-block; 
+            text-align: center; 
+        }
+
+        /* Minimalist Status Dots & Glow Pills */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.3rem 0.7rem;
+            border-radius: 9999px;
+            width: fit-content;
+        }
+
+        .status-pill::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-complete { 
+            background: rgba(16, 185, 129, 0.1); 
+            color: var(--accent-green); 
+            border: 1px solid rgba(16, 185, 129, 0.3); 
+            box-shadow: 0 0 10px var(--glow-green); 
+        }
+        .status-complete::before { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+
+        .status-inprogress { 
+            background: rgba(251, 191, 36, 0.1); 
+            color: var(--accent-amber); 
+            border: 1px solid rgba(251, 191, 36, 0.3); 
+            box-shadow: 0 0 10px var(--glow-amber); 
+        }
+        .status-inprogress::before { background: var(--accent-amber); box-shadow: 0 0 8px var(--accent-amber); }
+
+        .status-blocked { 
+            background: rgba(244, 63, 94, 0.1); 
+            color: var(--accent-red); 
+            border: 1px solid rgba(244, 63, 94, 0.3); 
+            box-shadow: 0 0 10px var(--glow-red); 
+        }
+        .status-blocked::before { background: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); }
+
+        .mono-text {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            letter-spacing: -0.5px;
+        }
+
         footer {
-            margin-top: 4rem;
+            margin-top: 3.5rem;
             border-top: 1px solid var(--border-color);
-            padding-top: 1.75rem;
+            padding-top: 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         footer .command-title {
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-main);
-            text-shadow: 0 0 10px var(--glow-green);
+            text-shadow: 0 0 12px var(--glow-green);
+        }
+
+        @media (max-width: 1024px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); }
+            .dept-bento-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
 <body>
 
     <a href="index.html" class="return-link">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
         Return to Executive Dashboard
     </a>
 
     <header>
         <div class="header-left">
             <div class="current-page-indicator">
-                <span>✅</span> Backlog & Action Center
+                <span>✦</span> Backlog & Action Center
             </div>
             <h1>Backlog & Action Center</h1>
             <p>Master Task Repository, Operational Remediation, and Action Item Tracking</p>
@@ -486,159 +799,95 @@
         </div>
     </header>
 
-    <!-- KPI Summary Cards -->
     <section>
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <span class="kpi-label">Total Items</span>
-                <span class="kpi-value">152</span>
+        <div class="bento-grid">
+            <div class="bento-card" onclick="resetFiltersAndScroll()">
+                <span class="bento-label">Total Items</span>
+                <span class="bento-value mono-text" id="kpiTotal">138</span>
+                <span class="bento-sub"><span>📈</span> Full register scope</span>
             </div>
-            <div class="kpi-card p1">
-                <span class="kpi-label">P1 Critical</span>
-                <span class="kpi-value">79</span>
+            <div class="bento-card p1" onclick="filterByPriority('P1')">
+                <span class="bento-label">P1 Critical</span>
+                <span class="bento-value mono-text" style="color: var(--accent-red);" id="kpiP1">65</span>
+                <span class="bento-sub"><span>⚡</span> High-priority triage</span>
             </div>
-            <div class="kpi-card progress">
-                <span class="kpi-label">In Progress</span>
-                <span class="kpi-value">52</span>
+            <div class="bento-card progress" onclick="filterByStatus('In Progress')">
+                <span class="bento-label">In Progress</span>
+                <span class="bento-value mono-text" style="color: var(--accent-amber);" id="kpiProgress">16</span>
+                <span class="bento-sub"><span>⚙️</span> Active sprint items</span>
             </div>
-            <div class="kpi-card complete">
-                <span class="kpi-label">Completed</span>
-                <span class="kpi-value">34</span>
+            <div class="bento-card complete" onclick="filterByStatus('Complete')">
+                <span class="bento-label">Completed</span>
+                <span class="bento-value mono-text" style="color: var(--accent-green);" id="kpiComplete">49</span>
+                <span class="bento-sub"><span>✅</span> Remediated milestones</span>
             </div>
         </div>
 
-        <!-- Overall Progress Bar -->
+        <div class="weekly-banner">
+            <div class="weekly-banner-left">
+                <span class="weekly-banner-title">
+                    <span>⚡</span> Weekly Follow-Up View Active
+                </span>
+                <span class="weekly-banner-desc">Showing P1 Critical Issues for executive review and operational sprint tracking.</span>
+            </div>
+            <button id="weeklyToggleBtn" class="weekly-toggle-btn" onclick="toggleWeeklyFilter()">Show All Master Items</button>
+        </div>
+
+        <h2>Filter by Department</h2>
+        <div class="dept-bento-grid">
+            <div class="dept-bento-card" id="dept-tech" onclick="filterByDepartment('Technical Support')">
+                <span class="dept-title">Technical Support</span>
+                <span class="dept-badge">Systems</span>
+            </div>
+            <div class="dept-bento-card" id="dept-compliance" onclick="filterByDepartment('Compliance')">
+                <span class="dept-title">Compliance</span>
+                <span class="dept-badge">Legal</span>
+            </div>
+            <div class="dept-bento-card" id="dept-commercial" onclick="filterByDepartment('Commercial')">
+                <span class="dept-title">Commercial</span>
+                <span class="dept-badge">Growth</span>
+            </div>
+            <div class="dept-bento-card" id="dept-analytics" onclick="filterByDepartment('Analytics')">
+                <span class="dept-title">Analytics</span>
+                <span class="dept-badge">Data & BI</span>
+            </div>
+            <div class="dept-bento-card" id="dept-customer" onclick="filterByDepartment('Customer Support')">
+                <span class="dept-title">Customer Support</span>
+                <span class="dept-badge">Ops</span>
+            </div>
+            <div class="dept-bento-card" id="dept-partner" onclick="filterByDepartment('Partner Support')">
+                <span class="dept-title">Partner Support</span>
+                <span class="dept-badge">B2B</span>
+            </div>
+        </div>
+
         <div class="progress-banner">
             <div class="progress-header">
                 <span>Backlog Resolution Tracking</span>
-                <span style="color: var(--accent-green);">80% Complete</span>
+                <span style="color: var(--accent-green);" class="mono-text" id="progressPercentageText">57% Complete</span>
             </div>
             <div class="progress-bar-container">
-                <div class="progress-bar-fill"></div>
+                <div class="progress-bar-fill" id="progressBarFill" style="width: 57%;"></div>
             </div>
         </div>
     </section>
 
-    <!-- Risk Register & Escalations Grid -->
-    <section>
-        <div class="dashboard-grid-2">
-            <div>
-                <h2>Risk Register</h2>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Risk Indicator</th>
-                                <th>Impact Area</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Nigeria Corridor Closure</strong></td>
-                                <td>Commercial / Cross-Border</td>
-                                <td><span class="status-pill status-blocked">Escalated</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Wave Deactivation</strong></td>
-                                <td>Partner Infrastructure</td>
-                                <td><span class="status-pill status-blocked">Escalated</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Uganda Ebola Impact</strong></td>
-                                <td>Regional Operations</td>
-                                <td><span class="status-pill status-risk">At Risk</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Tanzania Slowdown</strong></td>
-                                <td>Market Performance</td>
-                                <td><span class="status-pill status-inprogress">Monitoring</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div>
-                <h2>Escalations & Metrics</h2>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Focus Element</th>
-                                <th>Category</th>
-                                <th>Health Score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Nigeria Corridor</td>
-                                <td>Regulatory</td>
-                                <td><span class="status-pill status-blocked">🔴 Escalated</span></td>
-                            </tr>
-                            <tr>
-                                <td>Partner Delays</td>
-                                <td>Technical Integration</td>
-                                <td><span class="status-pill status-blocked">🔴 Escalated</span></td>
-                            </tr>
-                            <tr>
-                                <td>Tanzania Performance</td>
-                                <td>Commercial</td>
-                                <td><span class="status-pill status-risk">🟡 At Risk</span></td>
-                            </tr>
-                            <tr>
-                                <td>Kenya Volume Growth</td>
-                                <td>Market Expansion</td>
-                                <td><span class="status-pill status-complete">🟢 On Track</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Critical Actions Section -->
-    <section>
-        <h2>Critical Action Items</h2>
-        <div class="table-container" style="margin-bottom: 2.5rem;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Task</th>
-                        <th>Owner</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Nigeria Recovery</strong></td>
-                        <td>John Odero</td>
-                        <td><span class="status-pill status-inprogress">In Progress</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tanzania Reactivation</strong></td>
-                        <td>Team</td>
-                        <td><span class="status-pill status-inprogress">In Progress</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Uganda Recovery Program</strong></td>
-                        <td>Team</td>
-                        <td><span class="status-pill status-complete">Complete</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- Searchable Action & Backlog Table -->
-    <section>
+    <section id="masterRegisterSection">
         <h2>Master Action & Backlog Register</h2>
         <div class="table-container">
-            <div class="controls-bar">
+            <!-- Sticky Glassmorphic Action & Controls Bar -->
+            <div class="controls-bar" id="stickyControlsBar">
+                <!-- Segmented Status Tabs for instant filtering without scrolling up -->
+                <div class="status-tabs">
+                    <button class="status-tab active" onclick="setStatusTab('')">All Statuses</button>
+                    <button class="status-tab" onclick="setStatusTab('Complete')">Complete</button>
+                    <button class="status-tab" onclick="setStatusTab('In Progress')">In Progress</button>
+                    <button class="status-tab" onclick="setStatusTab('Blocked')">Blocked</button>
+                    <button class="status-tab" onclick="setStatusTab('Planned')">Planned</button>
+                </div>
                 <div class="search-wrapper">
                     <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2"/></svg>
-                    <input type="text" id="searchInput" placeholder="Search backlog items, owners, or action plans...">
+                    <input type="text" id="searchInput" placeholder="Search backlog items, categories, or action plans...">
                 </div>
                 <div class="filter-group">
                     <select id="departmentFilter" class="filter-select">
@@ -646,101 +895,74 @@
                         <option value="Technical Support">Technical Support</option>
                         <option value="Compliance">Compliance</option>
                         <option value="Commercial">Commercial</option>
+                        <option value="Analytics">Analytics</option>
+                        <option value="Customer Support">Customer Support</option>
+                        <option value="Partner Support">Partner Support</option>
                     </select>
-                    <select id="statusFilter" class="filter-select">
+                    <select id="statusFilter" class="filter-select" style="display: none;">
                         <option value="">All Statuses</option>
                         <option value="Complete">Complete</option>
                         <option value="In Progress">In Progress</option>
                         <option value="Blocked">Blocked</option>
+                        <option value="Planned">Planned</option>
                     </select>
+                    <label for="csvFileInput" class="csv-upload-btn">
+                        📂 Upload Master CSV
+                    </label>
+                    <input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="handleCsvUpload(event)">
+                    <button class="reset-filter-btn" onclick="resetFilters()">Reset</button>
                 </div>
             </div>
-            <table id="backlogTable">
-                <thead>
-                    <tr>
-                        <th>Department</th>
-                        <th>Task / Problem</th>
-                        <th>Owner</th>
-                        <th>Support</th>
-                        <th>Priority</th>
-                        <th>Status</th>
-                        <th>% Done</th>
-                        <th>Action Plan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Technical Support</strong></td>
-                        <td>Customer Support (WhatsApp EA)</td>
-                        <td>John Odero</td>
-                        <td>Aziz</td>
-                        <td><span class="badge-p1">P1</span></td>
-                        <td><span class="status-pill status-complete">Complete</span></td>
-                        <td><strong>100%</strong></td>
-                        <td>Number to be configured</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Technical Support</strong></td>
-                        <td>No contact number/email for EA</td>
-                        <td>John Odero</td>
-                        <td>Aziz</td>
-                        <td><span class="badge-p1">P1</span></td>
-                        <td><span class="status-pill status-complete">Complete</span></td>
-                        <td><strong>100%</strong></td>
-                        <td>Contact shared with Aziz to implement in LC</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Technical Support</strong></td>
-                        <td>Receipt lacks sender's details</td>
-                        <td>John Odero</td>
-                        <td>Alpha Diack</td>
-                        <td><span class="badge-p1">P1</span></td>
-                        <td><span class="status-pill status-inprogress">In Progress</span></td>
-                        <td><strong>5%</strong></td>
-                        <td>Sender's details should be activated</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Technical Support</strong></td>
-                        <td>Password Reset Notification Channel Mismatch</td>
-                        <td>John Odero</td>
-                        <td>Aziz</td>
-                        <td><span class="badge-p1">P1</span></td>
-                        <td><span class="status-pill status-inprogress">In Progress</span></td>
-                        <td><strong>30%</strong></td>
-                        <td>Ensure consistent delivery channel for reset emails</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Compliance</strong></td>
-                        <td>Sponsorship by Credit Bank</td>
-                        <td>John Odero</td>
-                        <td>-</td>
-                        <td><span class="badge-p1">P1</span></td>
-                        <td><span class="status-pill status-complete">Complete</span></td>
-                        <td><strong>100%</strong></td>
-                        <td>Finalize legal review and onboarding</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Compliance</strong></td>
-                        <td>Sponsorship by UBA</td>
-                        <td>John Odero</td>
-                        <td>-</td>
-                        <td><span class="badge-p1">P1</span></td>
-                        <td><span class="status-pill status-complete">Complete</span></td>
-                        <td><strong>100%</strong></td>
-                        <td>UBA sponsorship agreements executed</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Commercial</strong></td>
-                        <td>Nigerian - Pot of Jollof - Cross Border</td>
-                        <td>John Odero</td>
-                        <td>-</td>
-                        <td><span class="badge-p1">P1</span></td>
-                        <td><span class="status-pill status-blocked">Blocked</span></td>
-                        <td><strong>100%</strong></td>
-                        <td>Cross-border routing and settlement dependency</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-scroll-wrapper">
+                <table id="backlogTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Department <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(1)">Category <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(2)">Country <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(3)">Task / Problem <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(4)">Task Description <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(5)">Action Plan <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(6)">Support <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(7)">PR <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(8)">Ticket <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(9)">Ticket No <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(10)">Status <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(11)">% Done <span class="sort-icon">↕</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-priority="p2">
+                            <td><strong>Technical Support</strong></td>
+                            <td>Fixes on MYTP App</td>
+                            <td>Hub & NG</td>
+                            <td>Intermittent Service Switch When Clicking Pay Button</td>
+                            <td>An intermittent issue occurs when a customer clicks the Pay button. The transaction unexpectedly switches to a different service than the one originally selected.</td>
+                            <td>Identify root cause in session handling and ensure correct service persistence at payment</td>
+                            <td>Alpha Diack</td>
+                            <td><span class="badge-p2">P2</span></td>
+                            <td>Yes</td>
+                            <td class="mono-text">ISTD0626220925</td>
+                            <td><span class="status-pill status-complete">Complete</span></td>
+                            <td><strong class="mono-text">100%</strong></td>
+                        </tr>
+                        <tr data-priority="p1">
+                            <td><strong>Technical Support</strong></td>
+                            <td>Fixes on MYTP App</td>
+                            <td>Hub & NG</td>
+                            <td>Customer Support</td>
+                            <td>The WhatsApp number for East Africa has not yet been integrated into the MYTP app</td>
+                            <td>Number to be configured</td>
+                            <td>Aziz Fall</td>
+                            <td><span class="badge-p1">P1</span></td>
+                            <td>Yes</td>
+                            <td class="mono-text">ISTD0626209088</td>
+                            <td><span class="status-pill status-complete">Complete</span></td>
+                            <td><strong class="mono-text">100%</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 
@@ -749,13 +971,11 @@
             <div class="command-title">Backlog & Action Center</div>
         </div>
         <div>
-            Primary Owner: <strong>John Odero</strong><br>
-            Sync Date: <strong>07 Sep 2026</strong>
+            Sync Date: <strong class="mono-text">07 Sep 2026</strong>
         </div>
     </footer>
 
     <script>
-        // Theme Toggle Function
         function toggleTheme() {
             const htmlEl = document.documentElement;
             const currentTheme = htmlEl.getAttribute('data-theme');
@@ -774,11 +994,41 @@
             }
         }
 
-        // Table Filtering Script
         const searchInput = document.getElementById('searchInput');
         const departmentFilter = document.getElementById('departmentFilter');
         const statusFilter = document.getElementById('statusFilter');
-        const tableRows = document.querySelectorAll('#backlogTable tbody tr');
+        let tableRows = document.querySelectorAll('#backlogTable tbody tr');
+        let weeklyModeActive = false;
+
+        function updateKPIs() {
+            let total = tableRows.length;
+            let p1Count = 0;
+            let progressCount = 0;
+            let completeCount = 0;
+
+            tableRows.forEach(row => {
+                const priority = row.getAttribute('data-priority');
+                const statusText = row.cells[10].textContent.toLowerCase();
+
+                if (priority === 'p1') p1Count++;
+                if (statusText.includes('in progress')) progressCount++;
+                if (statusText.includes('complete')) completeCount++;
+            });
+
+            document.getElementById('kpiTotal').textContent = total;
+            document.getElementById('kpiP1').textContent = p1Count;
+            document.getElementById('kpiProgress').textContent = progressCount;
+            document.getElementById('kpiComplete').textContent = completeCount;
+
+            const pct = total > 0 ? Math.round((completeCount / total) * 100) : 0;
+            document.getElementById('progressPercentageText').textContent = pct + '% Complete';
+            document.getElementById('progressBarFill').style.width = pct + '%';
+        }
+
+        function scrollToTable() {
+            const section = document.getElementById('masterRegisterSection');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
 
         function filterTable() {
             const searchTerm = searchInput.value.toLowerCase();
@@ -788,16 +1038,171 @@
             tableRows.forEach(row => {
                 const departmentText = row.cells[0].textContent.toLowerCase();
                 const rowText = row.textContent.toLowerCase();
-                const statusText = row.cells[5].textContent.toLowerCase();
+                const statusText = row.cells[10].textContent.toLowerCase();
+                const priorityAttr = row.getAttribute('data-priority');
 
                 const matchesSearch = rowText.includes(searchTerm);
                 const matchesDept = selectedDept === "" || departmentText.includes(selectedDept);
                 const matchesStatus = selectedStatus === "" || statusText.includes(selectedStatus);
+                const matchesWeekly = !weeklyModeActive || (priorityAttr === 'p1');
 
-                if (matchesSearch && matchesDept && matchesStatus) {
+                if (matchesSearch && matchesDept && matchesStatus && matchesWeekly) {
                     row.style.display = "";
                 } else {
                     row.style.display = "none";
+                }
+            });
+            updateDeptCardActiveState();
+            updateTabActiveState();
+        }
+
+        function setStatusTab(statusVal) {
+            statusFilter.value = statusVal;
+            filterTable();
+            scrollToTable();
+        }
+
+        function toggleWeeklyFilter() {
+            weeklyModeActive = !weeklyModeActive;
+            const btn = document.getElementById('weeklyToggleBtn');
+            const bannerDesc = document.querySelector('.weekly-banner-desc');
+            
+            if (weeklyModeActive) {
+                btn.textContent = "Show All Master Items";
+                btn.classList.add('active');
+                bannerDesc.textContent = "Showing P1 Critical Issues for executive review and operational sprint tracking.";
+            } else {
+                btn.textContent = "Switch to Weekly P1 View";
+                btn.classList.remove('active');
+                bannerDesc.textContent = "Showing complete master backlog register across all priorities and departments.";
+            }
+            filterTable();
+            scrollToTable();
+        }
+
+        // Robust CSV Parser using PapaParse to correctly manage quoted multi-line breaks
+        function handleCsvUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: false,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    const data = results.data;
+                    const tbody = document.querySelector('#backlogTable tbody');
+                    tbody.innerHTML = "";
+
+                    // Start from index 1 assuming row 0 is headers
+                    for (let i = 1; i < data.length; i++) {
+                        const cols = data[i];
+                        if (cols.length >= 12) {
+                            const dept = cols[0] || '';
+                            const category = cols[1] || '';
+                            const country = cols[2] || '';
+                            const taskProblem = cols[3] || '';
+                            const desc = cols[4] || '';
+                            const actionPlan = cols[5] || '';
+                            const support = cols[6] || '';
+                            const pr = cols[7] || '';
+                            const ticket = cols[8] || '';
+                            const ticketNo = cols[9] || '';
+                            const status = cols[10] || '';
+                            const pctDone = cols[11] || '';
+
+                            const priorityKey = pr.toLowerCase().includes('p1') ? 'p1' : 'p2';
+                            const priorityClass = priorityKey === 'p1' ? 'badge-p1' : 'badge-p2';
+                            let statusClass = 'status-inprogress';
+                            if (status.toLowerCase().includes('complete')) statusClass = 'status-complete';
+                            if (status.toLowerCase().includes('blocked')) statusClass = 'status-blocked';
+
+                            const row = document.createElement('tr');
+                            row.setAttribute('data-priority', priorityKey);
+                            row.innerHTML = `
+                                <td><strong>${dept}</strong></td>
+                                <td>${category}</td>
+                                <td>${country}</td>
+                                <td>${taskProblem}</td>
+                                <td>${desc}</td>
+                                <td>${actionPlan}</td>
+                                <td>${support}</td>
+                                <td><span class="${priorityClass}">${pr}</span></td>
+                                <td>${ticket}</td>
+                                <td class="mono-text">${ticketNo}</td>
+                                <td><span class="status-pill ${statusClass}">${status}</span></td>
+                                <td><strong class="mono-text">${pctDone}</strong></td>
+                            `;
+                            tbody.appendChild(row);
+                        }
+                    }
+
+                    tableRows = document.querySelectorAll('#backlogTable tbody tr');
+                    updateKPIs();
+                    filterTable();
+                    scrollToTable();
+                    alert("Master backlog successfully updated with glassmorphic layout formatting!");
+                },
+                error: function(err) {
+                    alert("Error parsing file: " + err.message);
+                }
+            });
+        }
+
+        function filterByDepartment(deptName) {
+            if (departmentFilter.value === deptName) {
+                departmentFilter.value = "";
+            } else {
+                departmentFilter.value = deptName;
+            }
+            filterTable();
+            scrollToTable();
+        }
+
+        function filterByPriority(priorityVal) {
+            searchInput.value = priorityVal;
+            filterTable();
+            scrollToTable();
+        }
+
+        function filterByStatus(statusVal) {
+            statusFilter.value = statusVal;
+            filterTable();
+            scrollToTable();
+        }
+
+        function resetFiltersAndScroll() {
+            resetFilters();
+            scrollToTable();
+        }
+
+        function resetFilters() {
+            searchInput.value = "";
+            departmentFilter.value = "";
+            statusFilter.value = "";
+            filterTable();
+        }
+
+        function updateDeptCardActiveState() {
+            const val = departmentFilter.value.toLowerCase();
+            document.querySelectorAll('.dept-bento-card').forEach(card => card.classList.remove('active'));
+            if (val.includes('technical')) document.getElementById('dept-tech').classList.add('active');
+            if (val.includes('compliance')) document.getElementById('dept-compliance').classList.add('active');
+            if (val.includes('commercial')) document.getElementById('dept-commercial').classList.add('active');
+            if (val.includes('analytics')) document.getElementById('dept-analytics').classList.add('active');
+            if (val.includes('customer')) document.getElementById('dept-customer').classList.add('active');
+            if (val.includes('partner')) document.getElementById('dept-partner').classList.add('active');
+        }
+
+        function updateTabActiveState() {
+            const val = statusFilter.value.toLowerCase();
+            document.querySelectorAll('.status-tab').forEach(tab => {
+                const tabText = tab.textContent.toLowerCase();
+                if (val === "" && tabText.includes('all')) {
+                    tab.classList.add('active');
+                } else if (val !== "" && tabText.includes(val)) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
                 }
             });
         }
@@ -805,6 +1210,44 @@
         searchInput.addEventListener('keyup', filterTable);
         departmentFilter.addEventListener('change', filterTable);
         statusFilter.addEventListener('change', filterTable);
+
+        let sortDirections = {};
+        function sortTable(colIndex) {
+            const table = document.getElementById("backlogTable");
+            const tbody = table.tBodies[0];
+            const rowsArray = Array.from(tbody.rows);
+            
+            let currentDir = sortDirections[colIndex] || 'asc';
+            let newDir = currentDir === 'asc' ? 'desc' : 'asc';
+            sortDirections[colIndex] = newDir;
+
+            document.querySelectorAll('#backlogTable th').forEach((th) => {
+                th.classList.remove('sorted');
+                const icon = th.querySelector('.sort-icon');
+                if(icon) icon.textContent = '↕';
+            });
+
+            const activeTh = table.tHead.rows[0].cells[colIndex];
+            activeTh.classList.add('sorted');
+            activeTh.querySelector('.sort-icon').textContent = newDir === 'asc' ? '↑' : '↓';
+
+            rowsArray.sort((rowA, rowB) => {
+                let cellA = rowA.cells[colIndex].textContent.trim().toLowerCase();
+                let cellB = rowB.cells[colIndex].textContent.trim().toLowerCase();
+
+                if (!isNaN(cellA) && !isNaN(cellB)) {
+                    return newDir === 'asc' ? cellA - cellB : cellB - cellA;
+                }
+                return newDir === 'asc' ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+            });
+
+            rowsArray.forEach(row => tbody.appendChild(row));
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateKPIs();
+            filterTable();
+        });
     </script>
 </body>
 </html>
