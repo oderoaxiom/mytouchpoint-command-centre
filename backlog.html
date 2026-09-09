@@ -1045,7 +1045,7 @@
             console.log("Fetching data from Supabase started...");
             try {
                 const { data, error } = await supabaseClient
-                    .from(SUPABASE_TABLE_NAME)
+                    .from('backlog')
                     .select('*');
 
                 if (error) {
