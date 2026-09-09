@@ -959,7 +959,7 @@ li { margin-bottom: 6px; }
     </div>
 
     <div class="chart-grid">
-        <div class="chart-container">
+        <div class="chart-container" style="max-width: 600px; margin: 0 auto;">
             <h4>Consolidated Revenue Across All 4 Countries (XOF Converted - Bar Chart) — 2026</h4>
             <div class="canvas-wrapper"><canvas id="consolidatedRevenueChart"></canvas></div>
         </div>
@@ -1093,216 +1093,210 @@ const smoothAnimation = {
     animation: {
         duration: 2000,
         easing: 'easeInOutQuart'
-    },
-    transitions: {
-        active: {
-            animation: {
-                duration: 600
-            }
-        }
     }
 };
 
-const doughnutOptions = {
-    ...smoothAnimation,
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: '70%',
-    plugins: {
-        legend: { position: 'bottom', labels: { boxWidth: 8, usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '500' }, padding: 10, color: '#94a3b8' } },
-        tooltip: eliteTooltip
-    }
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
+
+const volumeDataOriginal = {
+    'Kenya': [6338555.22, 9259938.89, 8500000.00, 9016831.08, 10806372.76, 12571863.81, 6272042.78, 13612499.34],
+    'Tanzania': [1533874.25, 651357.94, 2100000.00, 3573788.63, 4293566.09, 1511179.40, 801107.94, 515566.52],
+    'Uganda': [147859.64, 104573.54, 500000.00, 1069604.63, 1479883.26, 1363132.29, 156244.84, 347311.36],
+    'Nigeria': [171176.07, 938936.75, 1500000.00, 2595012.82, 3750288.46, 4390464.96, 2688262.39, 1943815.81]
 };
 
-new Chart(document.getElementById('transactionsChart'), {
-    type: 'doughnut',
-    data: {
-        labels: ['Kenya', 'Other Markets'],
-        datasets: [{
-            data: [50, 50],
-            backgroundColor: ['#3b82f6', 'rgba(150, 150, 150, 0.15)'],
-            borderWidth: 0,
-            hoverOffset: 6
-        }]
-    },
-    options: doughnutOptions
-});
+let activeIsolatedCountry = null;
+let consolidatedVolumeChartInstance = null;
 
-new Chart(document.getElementById('volumesChart'), {
-    type: 'doughnut',
-    data: {
-        labels: ['Nigeria', 'Other Markets'],
-        datasets: [{
-            data: [33, 67],
-            backgroundColor: ['#f59e0b', 'rgba(150, 150, 150, 0.15)'],
-            borderWidth: 0,
-            hoverOffset: 6
-        }]
-    },
-    options: doughnutOptions
-});
-
-new Chart(document.getElementById('revenueChart'), {
-    type: 'doughnut',
-    data: {
-        labels: ['Kenya', 'Other Markets'],
-        datasets: [{
-            data: [42, 58],
-            backgroundColor: ['#3b82f6', 'rgba(150, 150, 150, 0.15)'],
-            borderWidth: 0,
-            hoverOffset: 6
-        }]
-    },
-    options: doughnutOptions
-});
-
-const months = ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-const getStandardOptions = (yAxisLabel) => ({
-    ...smoothAnimation,
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: {
-        mode: 'index',
-        intersect: false,
-    },
-    scales: {
-        x: {
-            grid: { display: false },
-            ticks: { font: { size: 11, weight: '500' }, color: '#94a3b8' }
+function initCharts() {
+    // 1. Consolidated Volume Bar Chart
+    const volCtx = document.getElementById('consolidatedVolumeChart').getContext('2d');
+    consolidatedVolumeChartInstance = new Chart(volCtx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [
+                { label: 'Kenya', data: volumeDataOriginal['Kenya'], backgroundColor: '#2563eb', borderRadius: 4 },
+                { label: 'Tanzania', data: volumeDataOriginal['Tanzania'], backgroundColor: '#7c3aed', borderRadius: 4 },
+                { label: 'Uganda', data: volumeDataOriginal['Uganda'], backgroundColor: '#059669', borderRadius: 4 },
+                { label: 'Nigeria', data: volumeDataOriginal['Nigeria'], backgroundColor: '#d97706', borderRadius: 4 }
+            ]
         },
-        y: {
-            type: 'linear',
-            position: 'left',
-            title: { display: true, text: yAxisLabel, font: { weight: '600', size: 11 }, color: '#cbd5e1' },
-            grid: { color: 'rgba(150, 150, 150, 0.08)', borderDash: [4, 4] },
-            ticks: { font: { size: 11 }, color: '#94a3b8' },
-            border: { display: false }
-        }
-    },
-    plugins: {
-        legend: {
-            position: 'bottom',
-            labels: { boxWidth: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 12, weight: '500' }, padding: 20, color: '#94a3b8' }
-        },
-        tooltip: eliteTooltip
-    }
-});
-
-const rawData = {
-    Kenya: {
-        volume: [6338555.22, 9259938.89, 8500000.00, 9016831.08, 10806372.76, 12571863.81, 6272042.78, 13612499.34, null, null, null, null],
-        revenue: [214347.45, 313147.10, 374164.12, 304914.88, 365434.31, 425137.49, 212103.88, 460327.37, null, null, null, null],
-        transactions: [350, 420, 400, 450, 500, 550, 320, 600, null, null, null, null],
-        color: '#3b82f6'
-    },
-    Tanzania: {
-        volume: [1533874.25, 651357.94, 2100000.00, 3573788.63, 4293566.09, 1511179.40, 801107.94, 515566.52, null, null, null, null],
-        revenue: [51870.17, 22026.61, 99210.52, 120852.36, 145193.13, 51102.79, 27090.56, 17434.55, null, null, null, null],
-        transactions: [120, 90, 150, 200, 220, 130, 95, 80, null, null, null, null],
-        color: '#10b981'
-    },
-    Uganda: {
-        volume: [147859.64, 104573.54, 500000.00, 1069604.63, 1479883.26, 1363132.29, 156244.84, 347311.36, null, null, null, null],
-        revenue: [5000.15, 5424.22, 16488.19, 36170.25, 50054.41, 46096.26, 5283.71, 11744.84, null, null, null, null],
-        transactions: [40, 35, 80, 150, 190, 175, 45, 90, null, null, null, null],
-        color: '#8b5cf6'
-    },
-    Nigeria: {
-        volume: [171176.07, 938936.75, 1500000.00, 2595012.82, 3750288.46, 4390464.96, 2688262.39, 1943815.81, null, null, null, null],
-        revenue: [5789.53, 31751.28, 80966.67, 87755.56, 126821.37, 148469.66, 90907.26, 65732.91, null, null, null, null],
-        transactions: [50, 180, 250, 310, 420, 480, 300, 210, null, null, null, null],
-        color: '#f59e0b'
-    }
-};
-
-let currentIsolatedCountry = null;
-
-// Initialize Consolidated Charts
-const consolidatedVolumeChart = new Chart(document.getElementById('consolidatedVolumeChart'), {
-    type: 'bar',
-    data: {
-        labels: months,
-        datasets: [
-            { label: 'Kenya', data: rawData.Kenya.volume, backgroundColor: rawData.Kenya.color, borderRadius: 4 },
-            { label: 'Tanzania', data: rawData.Tanzania.volume, backgroundColor: rawData.Tanzania.color, borderRadius: 4 },
-            { label: 'Uganda', data: rawData.Uganda.volume, backgroundColor: rawData.Uganda.color, borderRadius: 4 },
-            { label: 'Nigeria', data: rawData.Nigeria.volume, backgroundColor: rawData.Nigeria.color, borderRadius: 4 }
-        ]
-    },
-    options: getStandardOptions('Volume (XOF)')
-});
-
-const consolidatedRevenueChart = new Chart(document.getElementById('consolidatedRevenueChart'), {
-    type: 'bar',
-    data: {
-        labels: months,
-        datasets: [
-            { label: 'Kenya', data: rawData.Kenya.revenue, backgroundColor: rawData.Kenya.color, borderRadius: 4 },
-            { label: 'Tanzania', data: rawData.Tanzania.revenue, backgroundColor: rawData.Tanzania.color, borderRadius: 4 },
-            { label: 'Uganda', data: rawData.Uganda.revenue, backgroundColor: rawData.Uganda.color, borderRadius: 4 },
-            { label: 'Nigeria', data: rawData.Nigeria.revenue, backgroundColor: rawData.Nigeria.color, borderRadius: 4 }
-        ]
-    },
-    options: getStandardOptions('Revenue (XOF)')
-});
-
-const consolidatedTransactionsChart = new Chart(document.getElementById('consolidatedTransactionsChart'), {
-    type: 'line',
-    data: {
-        labels: months,
-        datasets: [
-            { label: 'Kenya', data: rawData.Kenya.transactions, borderColor: rawData.Kenya.color, backgroundColor: rawData.Kenya.color, tension: 0.3 },
-            { label: 'Tanzania', data: rawData.Tanzania.transactions, borderColor: rawData.Tanzania.color, backgroundColor: rawData.Tanzania.color, tension: 0.3 },
-            { label: 'Uganda', data: rawData.Uganda.transactions, borderColor: rawData.Uganda.color, backgroundColor: rawData.Uganda.color, tension: 0.3 },
-            { label: 'Nigeria', data: rawData.Nigeria.transactions, borderColor: rawData.Nigeria.color, backgroundColor: rawData.Nigeria.color, tension: 0.3 }
-        ]
-    },
-    options: getStandardOptions('Transactions')
-});
-
-function toggleIsolateCountry(countryName) {
-    const countries = ['Kenya', 'Tanzania', 'Uganda', 'Nigeria'];
-
-    if (currentIsolatedCountry === countryName) {
-        currentIsolatedCountry = null;
-    } else {
-        currentIsolatedCountry = countryName;
-    }
-
-    countries.forEach(c => {
-        const row = document.getElementById(`row-${c}`);
-        if (row) {
-            if (currentIsolatedCountry === c) {
-                row.classList.add('highlighted-row');
-            } else {
-                row.classList.remove('highlighted-row');
+        options: {
+            ...smoothAnimation,
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 12, weight: '600' }, color: '#94a3b8' } },
+                tooltip: eliteTooltip
+            },
+            scales: {
+                x: { stacked: false, grid: { display: false } },
+                y: { stacked: false, grid: { color: 'rgba(255,255,255,0.05)' } }
             }
         }
     });
 
-    const labelText = currentIsolatedCountry ? `(Isolating: ${currentIsolatedCountry} — Click row again to reset)` : '(Showing All Markets)';
-    document.getElementById('chartHighlightLabel').textContent = labelText;
+    // 2. Transactions Share (Doughnut) - Only leading country shown, rest grouped as 'Other Markets'
+    const txShareCtx = document.getElementById('transactionsChart').getContext('2d');
+    new Chart(txShareCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Kenya', 'Other Markets'],
+            datasets: [{
+                data: [50, 50],
+                backgroundColor: ['#2563eb', '#334155'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            ...smoothAnimation,
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 8, usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '500' }, padding: 10, color: '#94a3b8' } },
+                tooltip: eliteTooltip
+            }
+        }
+    });
 
-    const updateDatasets = (chart) => {
-        chart.data.datasets.forEach(dataset => {
-            if (!currentIsolatedCountry) {
-                dataset.hidden = false;
+    // 3. Volumes Share (Doughnut) - Only leading country shown, rest grouped as 'Other Markets'
+    const volShareCtx = document.getElementById('volumesChart').getContext('2d');
+    new Chart(volShareCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Kenya', 'Other Markets'],
+            datasets: [{
+                data: [62, 38],
+                backgroundColor: ['#2563eb', '#334155'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            ...smoothAnimation,
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 8, usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '500' }, padding: 10, color: '#94a3b8' } },
+                tooltip: eliteTooltip
+            }
+        }
+    });
+
+    // 4. Revenue Share (Doughnut) - Only leading country shown, rest grouped as 'Other Markets'
+    const revShareCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revShareCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Kenya', 'Other Markets'],
+            datasets: [{
+                data: [68, 32],
+                backgroundColor: ['#2563eb', '#334155'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            ...smoothAnimation,
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 8, usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '500' }, padding: 10, color: '#94a3b8' } },
+                tooltip: eliteTooltip
+            }
+        }
+    });
+
+    // 5. Consolidated Revenue Bar Chart
+    const revCtx = document.getElementById('consolidatedRevenueChart').getContext('2d');
+    new Chart(revCtx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [
+                { label: 'Kenya', data: [214347.45, 313147.10, 374164.12, 304914.88, 365434.31, 425137.49, 212103.88, 460327.37], backgroundColor: '#2563eb', borderRadius: 4 },
+                { label: 'Tanzania', data: [51870.17, 22026.61, 99210.52, 120852.36, 145193.13, 51102.79, 27090.56, 17434.55], backgroundColor: '#7c3aed', borderRadius: 4 },
+                { label: 'Uganda', data: [5000.15, 5424.22, 16488.19, 36170.25, 50054.41, 46096.26, 5283.71, 11744.84], backgroundColor: '#059669', borderRadius: 4 },
+                { label: 'Nigeria', data: [5789.53, 31751.28, 80966.67, 87755.56, 126821.37, 148469.66, 90907.26, 65732.91], backgroundColor: '#d97706', borderRadius: 4 }
+            ]
+        },
+        options: {
+            ...smoothAnimation,
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 12, weight: '600' }, color: '#94a3b8' } },
+                tooltip: eliteTooltip
+            },
+            scales: {
+                x: { stacked: true, grid: { display: false } },
+                y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' } }
+            }
+        }
+    });
+
+    // 6. Consolidated Transactions Line Chart
+    const txCtx = document.getElementById('consolidatedTransactionsChart').getContext('2d');
+    new Chart(txCtx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [
+                { label: 'Kenya', data: [450, 620, 580, 610, 720, 850, 430, 910], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true, tension: 0.3 },
+                { label: 'Tanzania', data: [120, 50, 160, 280, 340, 110, 60, 40], borderColor: '#7c3aed', backgroundColor: 'rgba(124, 58, 237, 0.1)', fill: true, tension: 0.3 },
+                { label: 'Uganda', data: [20, 15, 70, 150, 210, 190, 22, 50], borderColor: '#059669', backgroundColor: 'rgba(5, 150, 105, 0.1)', fill: true, tension: 0.3 },
+                { label: 'Nigeria', data: [30, 140, 220, 390, 550, 640, 390, 280], borderColor: '#d97706', backgroundColor: 'rgba(217, 119, 6, 0.1)', fill: true, tension: 0.3 }
+            ]
+        },
+        options: {
+            ...smoothAnimation,
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 12, weight: '600' }, color: '#94a3b8' } },
+                tooltip: eliteTooltip
+            },
+            scales: {
+                x: { grid: { display: false } },
+                y: { grid: { color: 'rgba(255,255,255,0.05)' } }
+            }
+        }
+    });
+}
+
+function toggleIsolateCountry(countryName) {
+    const rows = document.querySelectorAll('#monthlyVolumeTableBody tr');
+    const labelSpan = document.getElementById('chartHighlightLabel');
+    
+    if (activeIsolatedCountry === countryName) {
+        activeIsolatedCountry = null;
+        rows.forEach(r => r.classList.remove('highlighted-row'));
+        labelSpan.textContent = '(Showing All Markets)';
+        
+        consolidatedVolumeChartInstance.data.datasets.forEach(dataset => {
+            dataset.hidden = false;
+        });
+    } else {
+        activeIsolatedCountry = countryName;
+        rows.forEach(r => {
+            if (r.id === `row-${countryName}`) {
+                r.classList.add('highlighted-row');
             } else {
-                if (dataset.label === currentIsolatedCountry) {
-                    dataset.hidden = false;
-                } else {
-                    dataset.hidden = true;
-                }
+                r.classList.remove('highlighted-row');
             }
         });
-        chart.update();
-    };
-
-    updateDatasets(consolidatedVolumeChart);
-    updateDatasets(consolidatedRevenueChart);
-    updateDatasets(consolidatedTransactionsChart);
+        labelSpan.textContent = `(Isolating: ${countryName})`;
+        
+        consolidatedVolumeChartInstance.data.datasets.forEach(dataset => {
+            dataset.hidden = (dataset.label !== countryName);
+        });
+    }
+    consolidatedVolumeChartInstance.update();
 }
+
+window.addEventListener('DOMContentLoaded', initCharts);
 </script>
 </body>
 </html>
