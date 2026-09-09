@@ -1011,7 +1011,7 @@
         // ==========================================
         const SUPABASE_URL = 'https://oqfqnscxagccojduaido.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_1VKDPfLyX_V_QSDgJ0slCA_usE7b6fS';
-        const SUPABASE_TABLE_NAME = 'backlog_items'; // Replace with your table name if different
+        const SUPABASE_TABLE_NAME = 'Backlog'; // Updated to match your exact Supabase table name capitalization
 
         // Initialize Supabase Client
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -1064,19 +1064,19 @@
             tbody.innerHTML = "";
 
             records.forEach(item => {
-                // Map your database column names here (adjust keys if they differ in your table schema)
-                const dept = item.department || '';
-                const category = item.category || '';
-                const country = item.country || '';
-                const taskProblem = item.task_problem || item.task || '';
-                const desc = item.description || '';
-                const actionPlan = item.action_plan || '';
-                const support = item.support || '';
-                const pr = item.pr || item.priority || 'P2';
-                const ticket = item.ticket || 'N/A';
-                const ticketNo = item.ticket_no || 'N/A';
-                const status = item.status || 'Planned';
-                const pctDone = item.pct_done || item.progress || '0%';
+                // Map column fields (supporting both lowercase schema names and exact imported CSV field names)
+                const dept = item.department || item.Department || '';
+                const category = item.category || item.Category || '';
+                const country = item.country || item.Country || '';
+                const taskProblem = item.task_problem || item['Task/Problem'] || item.task || '';
+                const desc = item.description || item['Task Description'] || '';
+                const actionPlan = item.action_plan || item['Action Plan'] || '';
+                const support = item.support || item.Support || '';
+                const pr = item.pr || item.PR || item.priority || 'P2';
+                const ticket = item.ticket || item.Ticket || 'N/A';
+                const ticketNo = item.ticket_no || item['Ticket No'] || 'N/A';
+                const status = item.status || item.Status || 'Planned';
+                const pctDone = item.pct_done || item['% Done'] || item.progress || '0%';
 
                 const prLower = String(pr).toLowerCase().trim();
                 let priorityKey = 'p2';
