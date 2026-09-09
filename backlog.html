@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>backlog & Action Center - Operations Steering Dashboard</title>
+    <title>Backlog & Action Center - Operations Steering Dashboard</title>
     <!-- Include Papa Parse for robust CSV/Excel-exported text parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <!-- Include Supabase JS Client Library -->
@@ -76,7 +76,6 @@
             min-height: 100vh;
         }
 
-        /* Glowing Navigation Cards - Right side and bottom */
         .header-actions-bar {
             display: flex;
             justify-content: flex-end;
@@ -241,7 +240,6 @@
             font-weight: 700;
         }
 
-        /* Bento Grid Layout Architecture */
         .bento-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -327,7 +325,6 @@
             gap: 0.3rem;
         }
 
-        /* Bento Department Summary Grid */
         .dept-bento-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -382,7 +379,6 @@
             font-weight: 600;
         }
 
-        /* Weekly Banner Positioned Below Departments */
         .weekly-banner {
             background: linear-gradient(135deg, rgba(244, 63, 94, 0.12), rgba(59, 130, 246, 0.12));
             backdrop-filter: var(--glass-blur);
@@ -439,7 +435,6 @@
             transform: translateY(-1px);
         }
 
-        /* Glassmorphism Table Container */
         .table-container {
             background: var(--card-bg);
             backdrop-filter: var(--glass-blur);
@@ -451,7 +446,6 @@
             margin: 0 auto;
         }
 
-        /* Sticky Glassmorphic Action & Controls Bar */
         .controls-bar {
             position: sticky;
             top: 0;
@@ -469,7 +463,6 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
 
-        /* Segmented Status Tabs */
         .status-tabs {
             display: flex;
             gap: 0.4rem;
@@ -786,7 +779,6 @@
             letter-spacing: -0.5px;
         }
 
-        /* Bottom Navigation Bar Layout with Glowing Cards */
         .bottom-nav-container {
             margin-top: 2rem;
             border-top: 1px solid var(--border-color);
@@ -819,7 +811,6 @@
 </head>
 <body>
 
-    <!-- Right-side top navigation action bar -->
     <div class="header-actions-bar">
         <div class="nav-links-group">
             <a href="index.html" class="nav-card dashboard-card">
@@ -833,13 +824,12 @@
         </div>
     </div>
 
-    <!-- Ultra-Compact Executive Header -->
     <header>
         <div class="header-left">
             <div class="current-page-indicator">
-                <span>✦</span> backlog & Action Center
+                <span>✦</span> Backlog & Action Center
             </div>
-            <h1>backlog & Action Center</h1>
+            <h1>Backlog & Action Center</h1>
             <p>Master Task Repository, Operational Remediation, and Action Item Tracking</p>
         </div>
         <div class="header-controls">
@@ -851,7 +841,6 @@
     </header>
 
     <section>
-        <!-- Compact KPI Bento Grid -->
         <div class="bento-grid">
             <div class="bento-card" onclick="resetFiltersAndScroll()">
                 <span class="bento-label">Total Items</span>
@@ -903,7 +892,6 @@
             </div>
         </div>
 
-        <!-- Weekly Banner Moved Below Departments -->
         <div class="weekly-banner">
             <div class="weekly-banner-left">
                 <span class="weekly-banner-title">
@@ -915,13 +903,10 @@
         </div>
     </section>
 
-    <!-- Master Register Section with Immediate Table View Above the Fold -->
     <section id="masterRegisterSection">
-        <h2>Master Action & backlog Register</h2>
+        <h2>Master Action & Backlog Register</h2>
         <div class="table-container">
-            <!-- Sticky Glassmorphic Action & Controls Bar -->
             <div class="controls-bar" id="stickyControlsBar">
-                <!-- Segmented Status Tabs for instant filtering -->
                 <div class="status-tabs">
                     <button class="status-tab active" onclick="setStatusTab('')">All Statuses</button>
                     <button class="status-tab" onclick="setStatusTab('Complete')">Complete</button>
@@ -976,18 +961,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Data will load dynamically from Supabase -->
+                        <!-- Dynamic rows loaded via Supabase -->
                     </tbody>
                 </table>
             </div>
         </div>
     </section>
 
-    <!-- Bottom Navigation Bar with Glowing Cards -->
     <div class="bottom-nav-container">
         <footer>
             <div>
-                <div class="command-title">backlog & Action Center</div>
+                <div class="command-title">Backlog & Action Center</div>
             </div>
             <div>
                 Sync Date: <strong class="mono-text" id="syncDate">-</strong>
@@ -1006,14 +990,10 @@
     </div>
 
     <script>
-        // ==========================================
-        // SUPABASE CONFIGURATION
-        // ==========================================
         const SUPABASE_URL = 'https://oqfqnscxagccojduaido.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_1VKDPfLyX_V_QSDgJ0slCA_usE7b6fS';
-        const SUPABASE_TABLE_NAME = 'backlog'; // Updated to match your exact Supabase table name capitalization
+        const SUPABASE_TABLE_NAME = 'backlog';
 
-        // Initialize Supabase Client
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         function toggleTheme() {
@@ -1040,12 +1020,10 @@
         let tableRows = [];
         let weeklyModeActive = false;
 
-        // Fetch data from Supabase REST API endpoint
         async function fetchSupabaseData() {
-            console.log("Fetching data from Supabase started...");
             try {
                 const { data, error } = await supabaseClient
-                    .from('backlog')
+                    .from(SUPABASE_TABLE_NAME)
                     .select('*');
 
                 if (error) {
@@ -1053,7 +1031,6 @@
                     return;
                 }
 
-                console.log("Data received:", data);
                 populateTableFromData(data);
                 document.getElementById('syncDate').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
             } catch (err) {
@@ -1066,7 +1043,6 @@
             tbody.innerHTML = "";
 
             records.forEach(item => {
-                // Map column fields (supporting both lowercase schema names and exact imported CSV field names)
                 const dept = item.department || item.Department || '';
                 const category = item.category || item.Category || '';
                 const country = item.country || item.Country || '';
