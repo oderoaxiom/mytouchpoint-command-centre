@@ -1042,6 +1042,7 @@
 
         // Fetch data from Supabase REST API endpoint
         async function fetchSupabaseData() {
+            console.log("Fetching data from Supabase started...");
             try {
                 const { data, error } = await supabaseClient
                     .from(SUPABASE_TABLE_NAME)
@@ -1052,6 +1053,7 @@
                     return;
                 }
 
+                console.log("Data received:", data);
                 populateTableFromData(data);
                 document.getElementById('syncDate').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
             } catch (err) {
