@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>backlog & Action Center - Operations Steering Dashboard</title>
+    <!-- Include Papa Parse for robust CSV/Excel-exported text parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Include Supabase JS Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root[data-theme="dark"] {
+            --bg-color: #05070c;
+            --card-bg: rgba(13, 20, 35, 0.75);
+            --card-hover: rgba(22, 33, 56, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(59, 130, 246, 0.3);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-red: #f43f5e;
+            --accent-amber: #fbbf24;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
+            --glow-blue: rgba(59, 130, 246, 0.25);
+            --glow-red: rgba(244, 63, 94, 0.25);
+            --glow-green: rgba(16, 185, 129, 0.25);
+            --glow-amber: rgba(251, 191, 36, 0.25);
+            --glow-cyan: rgba(6, 182, 212, 0.25);
+            --control-bg: rgba(8, 12, 22, 0.85);
+            --glass-blur: blur(16px);
+        }
+
+        :root[data-theme="light"] {
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-hover: rgba(241, 245, 249, 0.9);
+            --border-color: rgba(0, 0, 0, 0.08);
+            --border-glow: rgba(37, 99, 235, 0.2);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-red: #e11d48;
+            --accent-amber: #d97706;
+            --accent-green: #059669;
+            --accent-blue: #2563eb;
+            --accent-purple: #7c3aed;
+            --accent-cyan: #0891b2;
+            --glow-blue: rgba(37, 99, 235, 0.15);
+            --glow-red: rgba(225, 29, 72, 0.15);
+            --glow-green: rgba(5, 150, 105, 0.15);
+            --glow-amber: rgba(217, 119, 6, 0.15);
+            --glow-cyan: rgba(8, 145, 178, 0.15);
+            --control-bg: rgba(241, 245, 249, 0.9);
+            --glass-blur: blur(16px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 1rem 1.5rem;
+            line-height: 1.5;
+            background-image: 
+                radial-gradient(circle at 10% 10%, var(--glow-green) 0%, transparent 45%),
+                radial-gradient(circle at 90% 90%, var(--glow-blue) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, var(--glow-cyan) 0%, transparent 60%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* Glowing Navigation Cards - Right side and bottom */
+        .header-actions-bar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nav-links-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.25rem;
+            border-radius: 12px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+        }
+
+        .nav-card.dashboard-card {
+            border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 20px var(--glow-green);
+        }
+
+        .nav-card.dashboard-card:hover {
+            color: var(--accent-green);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 25px var(--glow-green);
+            transform: translateY(-2px);
+        }
+
+        .nav-card.crm-card {
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 20px var(--glow-blue);
+        }
+
+        .nav-card.crm-card:hover {
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 25px var(--glow-blue);
+            transform: translateY(-2px);
+        }
+
+        header {
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .current-page-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            width: fit-content;
+            font-weight: 600;
+            backdrop-filter: var(--glass-blur);
+            box-shadow: 0 0 15px var(--glow-green);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-main);
+            margin: 0;
+            background: linear-gradient(135deg, var(--text-main) 30%, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px var(--glow-blue);
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 15px var(--glow-green);
+            transform: translateY(-1px);
+        }
+
+        .header-tag {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            color: var(--accent-green);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px var(--glow-green);
+        }
+
+        section {
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 0.75rem;
+            color: var(--text-muted);
+            border-left: 3px solid var(--accent-green);
+            padding-left: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* Bento Grid Layout Architecture */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .bento-card {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1rem;
+            min-height: 120px;
+            box-shadow: 0 8px 25px -10px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-glow);
+            box-shadow: 0 15px 35px -12px rgba(0,0,0,0.3), 0 0 20px var(--glow-blue);
+        }
+
+        .bento-card:hover::before {
+            opacity: 1;
+        }
+
+        .bento-card.p1:hover {
+            box-shadow: 0 15px 35px -12px rgba(0,0,0,0.3), 0 0 20px var(--glow-red);
+            border-color: rgba(244, 63, 94, 0.4);
+        }
+
+        .bento-card.progress:hover {
+            box-shadow: 0 15px 35px -12px rgba(0,0,0,0.3), 0 0 20px var(--glow-amber);
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+
+        .bento-card.complete:hover {
+            box-shadow: 0 15px 35px -12px rgba(0,0,0,0.3), 0 0 20px var(--glow-green);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .bento-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .bento-value {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .bento-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Bento Department Summary Grid */
+        .dept-bento-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .dept-bento-card {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dept-bento-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--glow-blue);
+        }
+
+        .dept-bento-card.active {
+            border-color: var(--accent-green);
+            background: var(--card-hover);
+            box-shadow: 0 0 15px var(--glow-green);
+        }
+
+        .dept-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dept-badge {
+            font-size: 0.55rem;
+            background: var(--control-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            color: var(--text-muted);
+            width: fit-content;
+            font-weight: 600;
+        }
+
+        /* Weekly Banner Positioned Below Departments */
+        .weekly-banner {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.12), rgba(59, 130, 246, 0.12));
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            border-radius: 14px;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 25px rgba(244, 63, 94, 0.12);
+        }
+
+        .weekly-banner-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .weekly-banner-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--accent-red);
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .weekly-banner-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .weekly-toggle-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(244, 63, 94, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .weekly-toggle-btn:hover, .weekly-toggle-btn.active {
+            background: var(--accent-red);
+            color: white;
+            box-shadow: 0 0 20px var(--glow-red);
+            transform: translateY(-1px);
+        }
+
+        /* Glassmorphism Table Container */
+        .table-container {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3), 0 0 25px var(--glow-blue);
+            margin: 0 auto;
+        }
+
+        /* Sticky Glassmorphic Action & Controls Bar */
+        .controls-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 1.25rem;
+            background: var(--control-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        /* Segmented Status Tabs */
+        .status-tabs {
+            display: flex;
+            gap: 0.4rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.25rem;
+            border-radius: 10px;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .status-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .status-tab:hover {
+            color: var(--text-main);
+            background: var(--card-hover);
+        }
+
+        .status-tab.active {
+            background: var(--accent-green);
+            color: #05070c;
+            box-shadow: 0 0 12px var(--glow-green);
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 1rem 0.6rem 2.25rem;
+            color: var(--text-main);
+            font-size: 0.8rem;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .search-wrapper input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1), 0 0 12px var(--glow-green);
+        }
+
+        .search-wrapper svg {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            fill: var(--text-muted);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 2rem 0.6rem 0.85rem;
+            color: var(--text-main);
+            font-size: 0.8rem;
+            appearance: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 12px var(--glow-green);
+        }
+
+        .csv-upload-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 4px 12px var(--glow-green);
+            transition: all 0.2s ease;
+        }
+
+        .csv-upload-btn:hover {
+            background: var(--accent-green);
+            color: #05070c;
+            transform: translateY(-1px);
+            box-shadow: 0 0 20px var(--glow-green);
+        }
+
+        .reset-filter-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .reset-filter-btn:hover {
+            color: var(--text-main);
+            border-color: var(--accent-green);
+            transform: translateY(-1px);
+        }
+
+        .table-scroll-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            table-layout: fixed;
+            min-width: 1100px;
+        }
+
+        th, td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        th:nth-child(1), td:nth-child(1) { width: 10%; }
+        th:nth-child(2), td:nth-child(2) { width: 9%; }
+        th:nth-child(3), td:nth-child(3) { width: 7%; }
+        th:nth-child(4), td:nth-child(4) { width: 11%; }
+        th:nth-child(5), td:nth-child(5) { width: 16%; }
+        th:nth-child(6), td:nth-child(6) { width: 16%; }
+        th:nth-child(7), td:nth-child(7) { width: 9%; }
+        th:nth-child(8), td:nth-child(8) { width: 6%; }
+        th:nth-child(9), td:nth-child(9) { width: 5%; }
+        th:nth-child(10), td:nth-child(10) { width: 9%; }
+        th:nth-child(11), td:nth-child(11) { width: 9%; }
+        th:nth-child(12), td:nth-child(12) { width: 6%; }
+
+        th {
+            background: var(--control-bg);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        th:hover {
+            color: var(--accent-green);
+            background: var(--card-hover);
+        }
+
+        th .sort-icon {
+            font-size: 0.65rem;
+            margin-left: 0.3rem;
+            opacity: 0.5;
+        }
+
+        th.sorted .sort-icon {
+            opacity: 1;
+            color: var(--accent-green);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr {
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        tr:hover td {
+            background: var(--card-hover);
+        }
+
+        .badge-p1 { 
+            background: rgba(244, 63, 94, 0.12); 
+            color: var(--accent-red); 
+            border: 1px solid rgba(244, 63, 94, 0.35); 
+            padding: 0.2rem 0.5rem; 
+            border-radius: 6px; 
+            font-weight: 700; 
+            font-size: 0.65rem; 
+            box-shadow: 0 0 10px rgba(244, 63, 94, 0.2); 
+            display: inline-block; 
+            text-align: center; 
+        }
+
+        .badge-p2 { 
+            background: rgba(6, 182, 212, 0.12); 
+            color: var(--accent-cyan); 
+            border: 1px solid rgba(6, 182, 212, 0.35); 
+            padding: 0.2rem 0.5rem; 
+            border-radius: 6px; 
+            font-weight: 700; 
+            font-size: 0.65rem; 
+            box-shadow: 0 0 10px var(--glow-cyan); 
+            display: inline-block; 
+            text-align: center; 
+        }
+
+        .badge-p3 { 
+            background: rgba(251, 191, 36, 0.12); 
+            color: var(--accent-amber); 
+            border: 1px solid rgba(251, 191, 36, 0.35); 
+            padding: 0.2rem 0.5rem; 
+            border-radius: 6px; 
+            font-weight: 700; 
+            font-size: 0.65rem; 
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.2); 
+            display: inline-block; 
+            text-align: center; 
+        }
+
+        .badge-p4 { 
+            background: rgba(168, 85, 247, 0.12); 
+            color: var(--accent-purple); 
+            border: 1px solid rgba(168, 85, 247, 0.35); 
+            padding: 0.2rem 0.5rem; 
+            border-radius: 6px; 
+            font-weight: 700; 
+            font-size: 0.65rem; 
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); 
+            display: inline-block; 
+            text-align: center; 
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            width: fit-content;
+        }
+
+        .status-pill::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-complete { 
+            background: rgba(16, 185, 129, 0.1); 
+            color: var(--accent-green); 
+            border: 1px solid rgba(16, 185, 129, 0.3); 
+            box-shadow: 0 0 8px var(--glow-green); 
+        }
+        .status-complete::before { background: var(--accent-green); box-shadow: 0 0 6px var(--accent-green); }
+
+        .status-inprogress { 
+            background: rgba(168, 85, 247, 0.12); 
+            color: var(--accent-purple); 
+            border: 1px solid rgba(168, 85, 247, 0.35); 
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.25); 
+        }
+        .status-inprogress::before { background: var(--accent-purple); box-shadow: 0 0 6px var(--accent-purple); }
+
+        .status-planned { 
+            background: rgba(251, 191, 36, 0.12); 
+            color: var(--accent-amber); 
+            border: 1px solid rgba(251, 191, 36, 0.35); 
+            box-shadow: 0 0 10px var(--glow-amber); 
+        }
+        .status-planned::before { background: var(--accent-amber); box-shadow: 0 0 6px var(--accent-amber); }
+
+        .status-blocked { 
+            background: rgba(244, 63, 94, 0.1); 
+            color: var(--accent-red); 
+            border: 1px solid rgba(244, 63, 94, 0.3); 
+            box-shadow: 0 0 8px var(--glow-red); 
+        }
+        .status-blocked::before { background: var(--accent-red); box-shadow: 0 0 6px var(--accent-red); }
+
+        .mono-text {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            letter-spacing: -0.5px;
+        }
+
+        /* Bottom Navigation Bar Layout with Glowing Cards */
+        .bottom-nav-container {
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        footer {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        footer .command-title {
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            color: var(--text-main);
+            text-shadow: 0 0 12px var(--glow-green);
+        }
+
+        @media (max-width: 1024px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); }
+            .dept-bento-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Right-side top navigation action bar -->
+    <div class="header-actions-bar">
+        <div class="nav-links-group">
+            <a href="index.html" class="nav-card dashboard-card">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Return to Dashboard
+            </a>
+            <button class="nav-card crm-card" onclick="window.open('https://devwabaplatform.lafricamobile.com/chat','_blank')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Open LAM
+            </button>
+        </div>
+    </div>
+
+    <!-- Ultra-Compact Executive Header -->
+    <header>
+        <div class="header-left">
+            <div class="current-page-indicator">
+                <span>✦</span> backlog & Action Center
+            </div>
+            <h1>backlog & Action Center</h1>
+            <p>Master Task Repository, Operational Remediation, and Action Item Tracking</p>
+        </div>
+        <div class="header-controls">
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <span id="theme-icon">☀️</span> <span id="theme-text">Light Mode</span>
+            </button>
+            <div class="header-tag">Action Console</div>
+        </div>
+    </header>
+
+    <section>
+        <!-- Compact KPI Bento Grid -->
+        <div class="bento-grid">
+            <div class="bento-card" onclick="resetFiltersAndScroll()">
+                <span class="bento-label">Total Items</span>
+                <span class="bento-value mono-text" id="kpiTotal">0</span>
+                <span class="bento-sub"><span>📈</span> Full register scope</span>
+            </div>
+            <div class="bento-card p1" onclick="filterByPriority('P1')">
+                <span class="bento-label">P1 Critical</span>
+                <span class="bento-value mono-text" style="color: var(--accent-red);" id="kpiP1">0</span>
+                <span class="bento-sub"><span>⚡</span> High-priority triage</span>
+            </div>
+            <div class="bento-card progress" onclick="filterByStatus('In Progress')">
+                <span class="bento-label">In Progress</span>
+                <span class="bento-value mono-text" style="color: var(--accent-purple);" id="kpiProgress">0</span>
+                <span class="bento-sub"><span>⚙️</span> Active sprint items</span>
+            </div>
+            <div class="bento-card complete" onclick="filterByStatus('Complete')">
+                <span class="bento-label">Completed</span>
+                <span class="bento-value mono-text" style="color: var(--accent-green);" id="kpiComplete">0</span>
+                <span class="bento-sub"><span>✅</span> Remediated milestones</span>
+            </div>
+        </div>
+
+        <h2>Filter by Department</h2>
+        <div class="dept-bento-grid">
+            <div class="dept-bento-card" id="dept-tech" onclick="filterByDepartment('Technical Support')">
+                <span class="dept-title">Technical Support</span>
+                <span class="dept-badge">Systems</span>
+            </div>
+            <div class="dept-bento-card" id="dept-compliance" onclick="filterByDepartment('Compliance')">
+                <span class="dept-title">Compliance</span>
+                <span class="dept-badge">Legal</span>
+            </div>
+            <div class="dept-bento-card" id="dept-commercial" onclick="filterByDepartment('Commercial')">
+                <span class="dept-title">Commercial</span>
+                <span class="dept-badge">Growth</span>
+            </div>
+            <div class="dept-bento-card" id="dept-analytics" onclick="filterByDepartment('Analytics')">
+                <span class="dept-title">Analytics</span>
+                <span class="dept-badge">Data & BI</span>
+            </div>
+            <div class="dept-bento-card" id="dept-customer" onclick="filterByDepartment('Customer Support')">
+                <span class="dept-title">Customer Support</span>
+                <span class="dept-badge">Ops</span>
+            </div>
+            <div class="dept-bento-card" id="dept-partner" onclick="filterByDepartment('Partner Support')">
+                <span class="dept-title">Partner Support</span>
+                <span class="dept-badge">B2B</span>
+            </div>
+        </div>
+
+        <!-- Weekly Banner Moved Below Departments -->
+        <div class="weekly-banner">
+            <div class="weekly-banner-left">
+                <span class="weekly-banner-title">
+                    <span>⚡</span> Weekly Follow-Up View Active
+                </span>
+                <span class="weekly-banner-desc">Showing P1 Critical Issues for executive review and operational sprint tracking.</span>
+            </div>
+            <button id="weeklyToggleBtn" class="weekly-toggle-btn" onclick="toggleWeeklyFilter()">Show All Master Items</button>
+        </div>
+    </section>
+
+    <!-- Master Register Section with Immediate Table View Above the Fold -->
+    <section id="masterRegisterSection">
+        <h2>Master Action & backlog Register</h2>
+        <div class="table-container">
+            <!-- Sticky Glassmorphic Action & Controls Bar -->
+            <div class="controls-bar" id="stickyControlsBar">
+                <!-- Segmented Status Tabs for instant filtering -->
+                <div class="status-tabs">
+                    <button class="status-tab active" onclick="setStatusTab('')">All Statuses</button>
+                    <button class="status-tab" onclick="setStatusTab('Complete')">Complete</button>
+                    <button class="status-tab" onclick="setStatusTab('In Progress')">In Progress</button>
+                    <button class="status-tab" onclick="setStatusTab('Planned')">Planned</button>
+                    <button class="status-tab" onclick="setStatusTab('Blocked')">Blocked</button>
+                </div>
+                <div class="search-wrapper">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2"/></svg>
+                    <input type="text" id="searchInput" placeholder="Search backlog items, categories, or action plans...">
+                </div>
+                <div class="filter-group">
+                    <select id="departmentFilter" class="filter-select">
+                        <option value="">All Departments</option>
+                        <option value="Technical Support">Technical Support</option>
+                        <option value="Compliance">Compliance</option>
+                        <option value="Commercial">Commercial</option>
+                        <option value="Analytics">Analytics</option>
+                        <option value="Customer Support">Customer Support</option>
+                        <option value="Partner Support">Partner Support</option>
+                    </select>
+                    <select id="statusFilter" class="filter-select" style="display: none;">
+                        <option value="">All Statuses</option>
+                        <option value="Complete">Complete</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Planned">Planned</option>
+                        <option value="Blocked">Blocked</option>
+                    </select>
+                    <label for="csvFileInput" class="csv-upload-btn">
+                        📂 Upload Master CSV
+                    </label>
+                    <input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="handleCsvUpload(event)">
+                    <button class="reset-filter-btn" onclick="resetFilters()">Reset</button>
+                </div>
+            </div>
+            <div class="table-scroll-wrapper">
+                <table id="backlogTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Department <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(1)">Category <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(2)">Country <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(3)">Task / Problem <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(4)">Task Description <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(5)">Action Plan <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(6)">Support <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(7)">PR <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(8)">Ticket <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(9)">Ticket No <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(10)">Status <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTable(11)">% Done <span class="sort-icon">↕</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will load dynamically from Supabase -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom Navigation Bar with Glowing Cards -->
+    <div class="bottom-nav-container">
+        <footer>
+            <div>
+                <div class="command-title">backlog & Action Center</div>
+            </div>
+            <div>
+                Sync Date: <strong class="mono-text" id="syncDate">-</strong>
+            </div>
+        </footer>
+        <div class="nav-links-group">
+            <a href="index.html" class="nav-card dashboard-card">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Return to Dashboard
+            </a>
+            <button class="nav-card crm-card" onclick="window.open('https://devwabaplatform.lafricamobile.com/chat','_blank')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Open LAM
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // SUPABASE CONFIGURATION
+        // ==========================================
+        const SUPABASE_URL = 'https://oqfqnscxagccojduaido.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_1VKDPfLyX_V_QSDgJ0slCA_usE7b6fS';
+        const SUPABASE_TABLE_NAME = 'backlog'; // Updated to match your exact Supabase table name capitalization
+
+        // Initialize Supabase Client
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function toggleTheme() {
+            const htmlEl = document.documentElement;
+            const currentTheme = htmlEl.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlEl.setAttribute('data-theme', newTheme);
+            
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            
+            if (newTheme === 'light') {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark Mode';
+            } else {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+            }
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        const departmentFilter = document.getElementById('departmentFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        let tableRows = [];
+        let weeklyModeActive = false;
+
+        // Fetch data from Supabase REST API endpoint
+        async function fetchSupabaseData() {
+            console.log("Fetching data from Supabase started...");
+            try {
+                const { data, error } = await supabaseClient
+                    .from(SUPABASE_TABLE_NAME)
+                    .select('*');
+
+                if (error) {
+                    console.error('Error fetching from Supabase:', error.message);
+                    return;
+                }
+
+                console.log("Data received:", data);
+                populateTableFromData(data);
+                document.getElementById('syncDate').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            } catch (err) {
+                console.error('Connection exception:', err);
+            }
+        }
+
+        function populateTableFromData(records) {
+            const tbody = document.querySelector('#backlogTable tbody');
+            tbody.innerHTML = "";
+
+            records.forEach(item => {
+                // Map column fields (supporting both lowercase schema names and exact imported CSV field names)
+                const dept = item.department || item.Department || '';
+                const category = item.category || item.Category || '';
+                const country = item.country || item.Country || '';
+                const taskProblem = item.task_problem || item['Task/Problem'] || item.task || '';
+                const desc = item.description || item['Task Description'] || '';
+                const actionPlan = item.action_plan || item['Action Plan'] || '';
+                const support = item.support || item.Support || '';
+                const pr = item.pr || item.PR || item.priority || 'P2';
+                const ticket = item.ticket || item.Ticket || 'N/A';
+                const ticketNo = item.ticket_no || item['Ticket No'] || 'N/A';
+                const status = item.status || item.Status || 'Planned';
+                const pctDone = item.pct_done || item['% Done'] || item.progress || '0%';
+
+                const prLower = String(pr).toLowerCase().trim();
+                let priorityKey = 'p2';
+                let priorityClass = 'badge-p2';
+                if (prLower.includes('p1')) { priorityKey = 'p1'; priorityClass = 'badge-p1'; }
+                else if (prLower.includes('p3')) { priorityKey = 'p3'; priorityClass = 'badge-p3'; }
+                else if (prLower.includes('p4')) { priorityKey = 'p4'; priorityClass = 'badge-p4'; }
+
+                const statusLower = String(status).toLowerCase().trim();
+                let statusClass = 'status-inprogress';
+                if (statusLower.includes('complete')) statusClass = 'status-complete';
+                else if (statusLower.includes('planned')) statusClass = 'status-planned';
+                else if (statusLower.includes('blocked')) statusClass = 'status-blocked';
+
+                const row = document.createElement('tr');
+                row.setAttribute('data-priority', priorityKey);
+                row.innerHTML = `
+                    <td><strong>${dept}</strong></td>
+                    <td>${category}</td>
+                    <td>${country}</td>
+                    <td>${taskProblem}</td>
+                    <td>${desc}</td>
+                    <td>${actionPlan}</td>
+                    <td>${support}</td>
+                    <td><span class="${priorityClass}">${pr}</span></td>
+                    <td>${ticket}</td>
+                    <td class="mono-text">${ticketNo}</td>
+                    <td><span class="status-pill ${statusClass}">${status}</span></td>
+                    <td><strong class="mono-text">${pctDone}</strong></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            tableRows = document.querySelectorAll('#backlogTable tbody tr');
+            updateKPIs();
+            filterTable();
+        }
+
+        function updateKPIs() {
+            let total = tableRows.length;
+            let p1Count = 0;
+            let progressCount = 0;
+            let completeCount = 0;
+
+            tableRows.forEach(row => {
+                const priority = row.getAttribute('data-priority');
+                const statusText = row.cells[10].textContent.toLowerCase();
+
+                if (priority === 'p1') p1Count++;
+                if (statusText.includes('in progress')) progressCount++;
+                if (statusText.includes('complete')) completeCount++;
+            });
+
+            document.getElementById('kpiTotal').textContent = total;
+            document.getElementById('kpiP1').textContent = p1Count;
+            document.getElementById('kpiProgress').textContent = progressCount;
+            document.getElementById('kpiComplete').textContent = completeCount;
+        }
+
+        function scrollToTable() {
+            const section = document.getElementById('masterRegisterSection');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedDept = departmentFilter.value.toLowerCase();
+            const selectedStatus = statusFilter.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const departmentText = row.cells[0].textContent.toLowerCase();
+                const rowText = row.textContent.toLowerCase();
+                const statusText = row.cells[10].textContent.toLowerCase();
+                const priorityAttr = row.getAttribute('data-priority');
+
+                const matchesSearch = rowText.includes(searchTerm);
+                const matchesDept = selectedDept === "" || departmentText.includes(selectedDept);
+                const matchesStatus = selectedStatus === "" || statusText.includes(selectedStatus);
+                const matchesWeekly = !weeklyModeActive || (priorityAttr === 'p1');
+
+                if (matchesSearch && matchesDept && matchesStatus && matchesWeekly) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+            updateDeptCardActiveState();
+            updateTabActiveState();
+        }
+
+        function setStatusTab(statusVal) {
+            statusFilter.value = statusVal;
+            filterTable();
+            scrollToTable();
+        }
+
+        function toggleWeeklyFilter() {
+            weeklyModeActive = !weeklyModeActive;
+            const btn = document.getElementById('weeklyToggleBtn');
+            const bannerDesc = document.querySelector('.weekly-banner-desc');
+            
+            if (weeklyModeActive) {
+                btn.textContent = "Show All Master Items";
+                btn.classList.add('active');
+                bannerDesc.textContent = "Showing P1 Critical Issues for executive review and operational sprint tracking.";
+            } else {
+                btn.textContent = "Switch to Weekly P1 View";
+                btn.classList.remove('active');
+                bannerDesc.textContent = "Showing complete master backlog register across all priorities and departments.";
+            }
+            filterTable();
+            scrollToTable();
+        }
+
+        function handleCsvUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: false,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    const data = results.data;
+                    const tbody = document.querySelector('#backlogTable tbody');
+                    tbody.innerHTML = "";
+
+                    for (let i = 1; i < data.length; i++) {
+                        const cols = data[i];
+                        if (cols.length >= 12) {
+                            const dept = cols[0] || '';
+                            const category = cols[1] || '';
+                            const country = cols[2] || '';
+                            const taskProblem = cols[3] || '';
+                            const desc = cols[4] || '';
+                            const actionPlan = cols[5] || '';
+                            const support = cols[6] || '';
+                            const pr = cols[7] || '';
+                            const ticket = cols[8] || '';
+                            const ticketNo = cols[9] || '';
+                            const status = cols[10] || '';
+                            const pctDone = cols[11] || '';
+
+                            const prLower = pr.toLowerCase().trim();
+                            let priorityKey = 'p2';
+                            let priorityClass = 'badge-p2';
+                            if (prLower.includes('p1')) { priorityKey = 'p1'; priorityClass = 'badge-p1'; }
+                            else if (prLower.includes('p3')) { priorityKey = 'p3'; priorityClass = 'badge-p3'; }
+                            else if (prLower.includes('p4')) { priorityKey = 'p4'; priorityClass = 'badge-p4'; }
+
+                            const statusLower = status.toLowerCase().trim();
+                            let statusClass = 'status-inprogress';
+                            if (statusLower.includes('complete')) statusClass = 'status-complete';
+                            else if (statusLower.includes('planned')) statusClass = 'status-planned';
+                            else if (statusLower.includes('blocked')) statusClass = 'status-blocked';
+
+                            const row = document.createElement('tr');
+                            row.setAttribute('data-priority', priorityKey);
+                            row.innerHTML = `
+                                <td><strong>${dept}</strong></td>
+                                <td>${category}</td>
+                                <td>${country}</td>
+                                <td>${taskProblem}</td>
+                                <td>${desc}</td>
+                                <td>${actionPlan}</td>
+                                <td>${support}</td>
+                                <td><span class="${priorityClass}">${pr}</span></td>
+                                <td>${ticket}</td>
+                                <td class="mono-text">${ticketNo}</td>
+                                <td><span class="status-pill ${statusClass}">${status}</span></td>
+                                <td><strong class="mono-text">${pctDone}</strong></td>
+                            `;
+                            tbody.appendChild(row);
+                        }
+                    }
+
+                    tableRows = document.querySelectorAll('#backlogTable tbody tr');
+                    updateKPIs();
+                    filterTable();
+                    scrollToTable();
+                    alert("Master backlog successfully updated!");
+                },
+                error: function(err) {
+                    alert("Error parsing file: " + err.message);
+                }
+            });
+        }
+
+        function filterByDepartment(deptName) {
+            if (departmentFilter.value === deptName) {
+                departmentFilter.value = "";
+            } else {
+                departmentFilter.value = deptName;
+            }
+            filterTable();
+            scrollToTable();
+        }
+
+        function filterByPriority(priorityVal) {
+            searchInput.value = priorityVal;
+            filterTable();
+            scrollToTable();
+        }
+
+        function filterByStatus(statusVal) {
+            statusFilter.value = statusVal;
+            filterTable();
+            scrollToTable();
+        }
+
+        function resetFiltersAndScroll() {
+            resetFilters();
+            scrollToTable();
+        }
+
+        function resetFilters() {
+            searchInput.value = "";
+            departmentFilter.value = "";
+            statusFilter.value = "";
+            filterTable();
+        }
+
+        function updateDeptCardActiveState() {
+            const val = departmentFilter.value.toLowerCase();
+            document.querySelectorAll('.dept-bento-card').forEach(card => card.classList.remove('active'));
+            if (val.includes('technical')) document.getElementById('dept-tech').classList.add('active');
+            if (val.includes('compliance')) document.getElementById('dept-compliance').classList.add('active');
+            if (val.includes('commercial')) document.getElementById('dept-commercial').classList.add('active');
+            if (val.includes('analytics')) document.getElementById('dept-analytics').classList.add('active');
+            if (val.includes('customer')) document.getElementById('dept-customer').classList.add('active');
+            if (val.includes('partner')) document.getElementById('dept-partner').classList.add('active');
+        }
+
+        function updateTabActiveState() {
+            const val = statusFilter.value.toLowerCase();
+            document.querySelectorAll('.status-tab').forEach(tab => {
+                const tabText = tab.textContent.toLowerCase();
+                if (val === "" && tabText.includes('all')) {
+                    tab.classList.add('active');
+                } else if (val !== "" && tabText.includes(val)) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+        }
+
+        searchInput.addEventListener('keyup', filterTable);
+        departmentFilter.addEventListener('change', filterTable);
+        statusFilter.addEventListener('change', filterTable);
+
+        let sortDirections = {};
+        function sortTable(colIndex) {
+            const table = document.getElementById("backlogTable");
+            const tbody = table.tBodies[0];
+            const rowsArray = Array.from(tbody.rows);
+            
+            let currentDir = sortDirections[colIndex] || 'asc';
+            let newDir = currentDir === 'asc' ? 'desc' : 'asc';
+            sortDirections[colIndex] = newDir;
+
+            document.querySelectorAll('#backlogTable th').forEach((th) => {
+                th.classList.remove('sorted');
+                const icon = th.querySelector('.sort-icon');
+                if(icon) icon.textContent = '↕';
+            });
+
+            const activeTh = table.tHead.rows[0].cells[colIndex];
+            activeTh.classList.add('sorted');
+            activeTh.querySelector('.sort-icon').textContent = newDir === 'asc' ? '↑' : '↓';
+
+            rowsArray.sort((rowA, rowB) => {
+                let cellA = rowA.cells[colIndex].textContent.trim().toLowerCase();
+                let cellB = rowB.cells[colIndex].textContent.trim().toLowerCase();
+
+                if (!isNaN(cellA) && !isNaN(cellB)) {
+                    return newDir === 'asc' ? cellA - cellB : cellB - cellA;
+                }
+                return newDir === 'asc' ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+            });
+
+            rowsArray.forEach(row => tbody.appendChild(row));
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchSupabaseData();
+        });
+    </script>
+</body>
+</html>
