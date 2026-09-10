@@ -254,27 +254,6 @@ body::after {
     z-index: 1;
 }
 
-.nav-tab {
-    background: linear-gradient(135deg, var(--primary-light), var(--primary));
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 8px 18px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 16px var(--glow-color);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-}
-
-.nav-tab:hover {
-    transform: translateY(-2px);
-    opacity: 0.9;
-}
-
 .section-content {
     display: block;
 }
@@ -585,6 +564,10 @@ tbody tr.highlighted-row {
 ul { padding-left: 20px; margin: 8px 0; }
 li { margin-bottom: 6px; }
 
+.hidden {
+    display: none !important;
+}
+
 @media (max-width: 900px) {
     .market-leadership-grid, .events-grid, .scoreboard-grid, .country-cards-grid, .executive-banner-grid {
         grid-template-columns: 1fr;
@@ -606,6 +589,23 @@ li { margin-bottom: 6px; }
  
 <body>
 
+<!-- AUTHENTICATION GATE -->
+<div id="auth-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main, #0b0f19); display: flex; justify-content: center; align-items: center; z-index: 99999;">
+    <div style="background: var(--bg-card, rgba(18, 24, 38, 0.95)); backdrop-filter: blur(24px); padding: 2.5rem; border-radius: 20px; border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08)); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5); text-align: center; max-width: 400px; width: 90%;">
+        <h2 style="color: var(--text-main, #f1f5f9); margin-top: 0; border: none; padding: 0;">Restricted Access</h2>
+        <p style="color: var(--text-muted, #94a3b8); font-size: 13px; margin-bottom: 20px;">Please enter the organization password to view this site.</p>
+        <form id="auth-form" onsubmit="handleLogin(event)">
+            <input type="password" id="password-input" placeholder="Password" required autocomplete="current-password" style="padding: 12px; font-size: 1rem; width: 80%; margin-bottom: 15px; border: 1px solid var(--border-color, rgba(255,255,255,0.2)); border-radius: 8px; background: rgba(0,0,0,0.2); color: #fff;">
+            <br>
+            <button type="submit" style="padding: 10px 24px; font-size: 1rem; background: var(--primary-light, #2563eb); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Enter</button>
+        </form>
+        <div id="error" style="color: var(--danger, #dc2626); margin-top: 12px; font-size: 0.9rem;"></div>
+    </div>
+</div>
+
+<!-- PROTECTED CONTENT WRAPPER -->
+<div id="main-content" class="hidden">
+
 <div class="top-controls">
     <button class="control-btn" id="themeToggleBtn" onclick="toggleTheme()">
         <span id="themeIcon">☀️</span> <span id="themeText">Light Mode</span>
@@ -614,7 +614,6 @@ li { margin-bottom: 6px; }
  
 <div class="container">
  
-<!-- Hero Section -->
 <div class="hero">
     <div class="hero-left">
         <div class="hero-text">
@@ -623,139 +622,46 @@ li { margin-bottom: 6px; }
         </div>
     </div>
     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px; z-index: 1;">
-        <span class="status-pill">
-            🟢 Regional Health: Stable
-        </span>
+        <span class="status-pill">🟢 Regional Health: Stable</span>
         <div class="nav-tabs">
-           <a href="backlog.html" class="control-btn">
-    📋 Backlog & Actions
-</a>
-<a href="crossborder-benchmark.html" class="control-btn">
-    💱 Fees & FX Dashboard
-</a>
+           <a href="backlog.html" class="control-btn">📋 Backlog & Actions</a>
+           <a href="crossborder-benchmark.html" class="control-btn">💱 Fees & FX Dashboard</a>
         </div>
     </div>
 </div>
 
-<!-- Executive Insight Banner -->
 <div class="executive-banner">
     <h3>Executive Summary Insights</h3>
     <div class="executive-banner-grid">
-        <div class="executive-banner-item">
-            <span>🚀</span> <span><b>Uganda:</b> Fastest growth market</span>
-        </div>
-        <div class="executive-banner-item">
-            <span>📈</span> <span><b>Kenya:</b> Largest transaction market</span>
-        </div>
-        <div class="executive-banner-item">
-            <span>💰</span> <span><b>Kenya:</b> Largest revenue market</span>
-        </div>
-        <div class="executive-banner-item">
-            <span>⚠</span> <span><b>Nigeria:</b> Impacted by corridor shutdown</span>
-        </div>
+        <div class="executive-banner-item"><span>🚀</span> <span><b>Uganda:</b> Fastest growth market</span></div>
+        <div class="executive-banner-item"><span>📈</span> <span><b>Kenya:</b> Largest transaction market</span></div>
+        <div class="executive-banner-item"><span>💰</span> <span><b>Kenya:</b> Largest revenue market</span></div>
+        <div class="executive-banner-item"><span>⚠</span> <span><b>Nigeria:</b> Impacted by corridor shutdown</span></div>
     </div>
 </div>
 
-<!-- SECTION: PERFORMANCE DASHBOARD -->
 <div id="performanceSection" class="section-content">
-
-    <!-- KPI Cards -->
     <div class="card-row">
-        <div class="card blue">
-            <h3>Transactions</h3>
-            <h2>7,142</h2>
-            <p>Total YTD</p>
-            <div class="trend">▲ vs Previous Month</div>
-        </div>
-         
-        <div class="card green">
-            <h3>Volume (Converted XOF)</h3>
-            <h2>176.3M XOF</h2>
-            <p>Total YTD</p>
-            <div class="trend">▲ vs Previous Month</div>
-        </div>
-         
-        <div class="card orange">
-            <h3>Revenue (Converted XOF)</h3>
-            <h2>5.61M XOF</h2>
-            <p>Total YTD</p>
-            <div class="trend">▲ vs Previous Month</div>
-        </div>
-
-        <div class="card purple">
-            <h3>Active Markets</h3>
-            <h2>4</h2>
-            <p>Corridors Monitored</p>
-            <div class="trend">▲ vs Previous Month</div>
-        </div>
+        <div class="card blue"><h3>Transactions</h3><h2>7,142</h2><p>Total YTD</p><div class="trend">▲ vs Previous Month</div></div>
+        <div class="card green"><h3>Volume (XOF)</h3><h2>176.3M XOF</h2><p>Total YTD</p><div class="trend">▲ vs Previous Month</div></div>
+        <div class="card orange"><h3>Revenue (XOF)</h3><h2>5.61M XOF</h2><p>Total YTD</p><div class="trend">▲ vs Previous Month</div></div>
+        <div class="card purple"><h3>Active Markets</h3><h2>4</h2><p>Corridors Monitored</p><div class="trend">▲ vs Previous Month</div></div>
     </div>
 
-    <!-- Monthly Converted Volumes Table (XOF) -->
     <h2>Monthly Converted Volumes (in XOF)</h2>
     <div class="interactive-hint">💡 Click any country row to isolate its trend across the consolidated charts, or click again to reset.</div>
     <table>
         <thead>
-            <tr>
-                <th>Country</th>
-                <th>Jan</th>
-                <th>Feb</th>
-                <th>March</th>
-                <th>April</th>
-                <th>May</th>
-                <th>June</th>
-                <th>July</th>
-                <th>Aug</th>
-            </tr>
+            <tr><th>Country</th><th>Jan</th><th>Feb</th><th>March</th><th>April</th><th>May</th><th>June</th><th>July</th><th>Aug</th></tr>
         </thead>
         <tbody id="monthlyVolumeTableBody">
-            <tr id="row-Kenya" onclick="toggleIsolateCountry('Kenya')">
-                <td><b>Kenya</b> (KES / 0.2291)</td>
-                <td>6,338,555.22</td>
-                <td>9,259,938.89</td>
-                <td>8,500,000.00</td>
-                <td>9,016,831.08</td>
-                <td>10,806,372.76</td>
-                <td>12,571,863.81</td>
-                <td>6,272,042.78</td>
-                <td>13,612,499.34</td>
-            </tr>
-            <tr id="row-Tanzania" onclick="toggleIsolateCountry('Tanzania')">
-                <td><b>Tanzania</b> (TZS / 4.66)</td>
-                <td>1,533,874.25</td>
-                <td>651,357.94</td>
-                <td>2,100,000.00</td>
-                <td>3,573,788.63</td>
-                <td>4,293,566.09</td>
-                <td>1,511,179.40</td>
-                <td>801,107.94</td>
-                <td>515,566.52</td>
-            </tr>
-            <tr id="row-Uganda" onclick="toggleIsolateCountry('Uganda')">
-                <td><b>Uganda</b> (UGX / 6.69)</td>
-                <td>147,859.64</td>
-                <td>104,573.54</td>
-                <td>500,000.00</td>
-                <td>1,069,604.63</td>
-                <td>1,479,883.26</td>
-                <td>1,363,132.29</td>
-                <td>156,244.84</td>
-                <td>347,311.36</td>
-            </tr>
-            <tr id="row-Nigeria" onclick="toggleIsolateCountry('Nigeria')">
-                <td><b>Nigeria</b> (NGN / 2.34)</td>
-                <td>171,176.07</td>
-                <td>938,936.75</td>
-                <td>1,500,000.00</td>
-                <td>2,595,012.82</td>
-                <td>3,750,288.46</td>
-                <td>4,390,464.96</td>
-                <td>2,688,262.39</td>
-                <td>1,943,815.81</td>
-            </tr>
+            <tr id="row-Kenya" onclick="toggleIsolateCountry('Kenya')"><td><b>Kenya</b> (KES / 0.2291)</td><td>6,338,555.22</td><td>9,259,938.89</td><td>8,500,000.00</td><td>9,016,831.08</td><td>10,806,372.76</td><td>12,571,863.81</td><td>6,272,042.78</td><td>13,612,499.34</td></tr>
+            <tr id="row-Tanzania" onclick="toggleIsolateCountry('Tanzania')"><td><b>Tanzania</b> (TZS / 4.66)</td><td>1,533,874.25</td><td>651,357.94</td><td>2,100,000.00</td><td>3,573,788.63</td><td>4,293,566.09</td><td>1,511,179.40</td><td>801,107.94</td><td>515,566.52</td></tr>
+            <tr id="row-Uganda" onclick="toggleIsolateCountry('Uganda')"><td><b>Uganda</b> (UGX / 6.69)</td><td>147,859.64</td><td>104,573.54</td><td>500,000.00</td><td>1,069,604.63</td><td>1,479,883.26</td><td>1,363,132.29</td><td>156,244.84</td><td>347,311.36</td></tr>
+            <tr id="row-Nigeria" onclick="toggleIsolateCountry('Nigeria')"><td><b>Nigeria</b> (NGN / 2.34)</td><td>171,176.07</td><td>938,936.75</td><td>1,500,000.00</td><td>2,595,012.82</td><td>3,750,288.46</td><td>4,390,464.96</td><td>2,688,262.39</td><td>1,943,815.81</td></tr>
         </tbody>
     </table>
 
-    <!-- Consolidated Regional Volume Chart -->
     <div class="chart-grid">
         <div class="chart-container">
             <h4>Consolidated Regional Volume (XOF Converted - Bar Chart) — 2026 <span id="chartHighlightLabel" style="font-size:12px; color:var(--primary-light); font-weight:normal;">(Showing All Markets)</span></h4>
@@ -767,63 +673,13 @@ li { margin-bottom: 6px; }
     <h2>Monthly Converted Revenues (in XOF)</h2>
     <table>
         <thead>
-            <tr>
-                <th>Country</th>
-                <th>Jan</th>
-                <th>Feb</th>
-                <th>March</th>
-                <th>April</th>
-                <th>May</th>
-                <th>June</th>
-                <th>July</th>
-                <th>Aug</th>
-            </tr>
+            <tr><th>Country</th><th>Jan</th><th>Feb</th><th>March</th><th>April</th><th>May</th><th>June</th><th>July</th><th>Aug</th></tr>
         </thead>
         <tbody>
-            <tr>
-                <td><b>Kenya</b> (KES / 0.2291)</td>
-                <td>214,347.45</td>
-                <td>313,147.10</td>
-                <td>374,164.12</td>
-                <td>304,914.88</td>
-                <td>365,434.31</td>
-                <td>425,137.49</td>
-                <td>212,103.88</td>
-                <td>460,327.37</td>
-            </tr>
-            <tr>
-                <td><b>Tanzania</b> (TZS / 4.66)</td>
-                <td>51,870.17</td>
-                <td>22,026.61</td>
-                <td>99,210.52</td>
-                <td>120,852.36</td>
-                <td>145,193.13</td>
-                <td>51,102.79</td>
-                <td>27,090.56</td>
-                <td>17,434.55</td>
-            </tr>
-            <tr>
-                <td><b>Uganda</b> (UGX / 6.69)</td>
-                <td>5,000.15</td>
-                <td>5,424.22</td>
-                <td>16,488.19</td>
-                <td>36,170.25</td>
-                <td>50,054.41</td>
-                <td>46,096.26</td>
-                <td>5,283.71</td>
-                <td>11,744.84</td>
-            </tr>
-            <tr>
-                <td><b>Nigeria</b> (NGN / 2.34)</td>
-                <td>5,789.53</td>
-                <td>31,751.28</td>
-                <td>80,966.67</td>
-                <td>87,755.56</td>
-                <td>126,821.37</td>
-                <td>148,469.66</td>
-                <td>90,907.26</td>
-                <td>65,732.91</td>
-            </tr>
+            <tr><td><b>Kenya</b> (KES / 0.2291)</td><td>214,347.45</td><td>313,147.10</td><td>374,164.12</td><td>304,914.88</td><td>365,434.31</td><td>425,137.49</td><td>212,103.88</td><td>460,327.37</td></tr>
+            <tr><td><b>Tanzania</b> (TZS / 4.66)</td><td>51,870.17</td><td>22,026.61</td><td>99,210.52</td><td>120,852.36</td><td>145,193.13</td><td>51,102.79</td><td>27,090.56</td><td>17,434.55</td></tr>
+            <tr><td><b>Uganda</b> (UGX / 6.69)</td><td>5,000.15</td><td>5,424.22</td><td>16,488.19</td><td>36,170.25</td><td>50,054.41</td><td>46,096.26</td><td>5,283.71</td><td>11,744.84</td></tr>
+            <tr><td><b>Nigeria</b> (NGN / 2.34)</td><td>5,789.53</td><td>31,751.28</td><td>80,966.67</td><td>87,755.56</td><td>126,821.37</td><td>148,469.66</td><td>90,907.26</td><td>65,732.91</td></tr>
         </tbody>
     </table>
 
@@ -831,38 +687,13 @@ li { margin-bottom: 6px; }
     <h2>Revenue Growth Summary (August vs July)</h2>
     <table>
         <thead>
-            <tr>
-                <th>Country</th>
-                <th>July Revenue (XOF)</th>
-                <th>August Revenue (XOF)</th>
-                <th>Growth (%)</th>
-            </tr>
+            <tr><th>Country</th><th>July Revenue (XOF)</th><th>August Revenue (XOF)</th><th>Growth (%)</th></tr>
         </thead>
         <tbody>
-            <tr>
-                <td><b>Kenya</b></td>
-                <td>212,103.88</td>
-                <td>460,327.37</td>
-                <td><span class="positive">+117.0%</span></td>
-            </tr>
-            <tr>
-                <td><b>Uganda</b></td>
-                <td>5,283.71</td>
-                <td>11,744.84</td>
-                <td><span class="positive">+122.3%</span></td>
-            </tr>
-            <tr>
-                <td><b>Nigeria</b></td>
-                <td>90,907.26</td>
-                <td>65,732.91</td>
-                <td><span class="negative">-27.7%</span></td>
-            </tr>
-            <tr>
-                <td><b>Tanzania</b></td>
-                <td>27,090.56</td>
-                <td>17,434.55</td>
-                <td><span class="negative">-35.6%</span></td>
-            </tr>
+            <tr><td><b>Kenya</b></td><td>212,103.88</td><td>460,327.37</td><td><span class="positive">+117.0%</span></td></tr>
+            <tr><td><b>Uganda</b></td><td>5,283.71</td><td>11,744.84</td><td><span class="positive">+122.3%</span></td></tr>
+            <tr><td><b>Nigeria</b></td><td>90,907.26</td><td>65,732.91</td><td><span class="negative">-27.7%</span></td></tr>
+            <tr><td><b>Tanzania</b></td><td>27,090.56</td><td>17,434.55</td><td><span class="negative">-35.6%</span></td></tr>
         </tbody>
     </table>
 
@@ -889,61 +720,20 @@ li { margin-bottom: 6px; }
     <!-- Performance Heatmap -->
     <h2>Performance Heatmap</h2>
     <table>
-        <tr>
-            <th>Country</th>
-            <th>Txn</th>
-            <th>Vol</th>
-            <th>Rev</th>
-        </tr>
-        <tr>
-            <td><b>Kenya</b></td>
-            <td>🟢</td>
-            <td>🟢</td>
-            <td>🟢</td>
-        </tr>
-        <tr>
-            <td><b>Uganda</b></td>
-            <td>🟢</td>
-            <td>🟢</td>
-            <td>🟢</td>
-        </tr>
-        <tr>
-            <td><b>Nigeria</b></td>
-            <td>🔴</td>
-            <td>🔴</td>
-            <td>🔴</td>
-        </tr>
-        <tr>
-            <td><b>Tanzania</b></td>
-            <td>🔴</td>
-            <td>🔴</td>
-            <td>🔴</td>
-        </tr>
+        <tr><th>Country</th><th>Txn</th><th>Vol</th><th>Rev</th></tr>
+        <tr><td><b>Kenya</b></td><td>🟢</td><td>🟢</td><td>🟢</td></tr>
+        <tr><td><b>Uganda</b></td><td>🟢</td><td>🟢</td><td>🟢</td></tr>
+        <tr><td><b>Nigeria</b></td><td>🔴</td><td>🔴</td><td>🔴</td></tr>
+        <tr><td><b>Tanzania</b></td><td>🔴</td><td>🔴</td><td>🔴</td></tr>
     </table>
 
     <!-- Leadership Scoreboard -->
     <h2>Leadership Scoreboard</h2>
     <div class="scoreboard-grid">
-        <div class="scoreboard-item">
-            <div class="trophy">🏆</div>
-            <h5>Transaction Leader</h5>
-            <div class="leader-val">Kenya</div>
-        </div>
-        <div class="scoreboard-item">
-            <div class="trophy">🏆</div>
-            <h5>Volume Leader</h5>
-            <div class="leader-val">Nigeria</div>
-        </div>
-        <div class="scoreboard-item">
-            <div class="trophy">🏆</div>
-            <h5>Revenue Leader</h5>
-            <div class="leader-val">Kenya</div>
-        </div>
-        <div class="scoreboard-item">
-            <div class="trophy">🏆</div>
-            <h5>Fastest Growth</h5>
-            <div class="leader-val">Uganda</div>
-        </div>
+        <div class="scoreboard-item"><div class="trophy">🏆</div><h5>Transaction Leader</h5><div class="leader-val">Kenya</div></div>
+        <div class="scoreboard-item"><div class="trophy">🏆</div><h5>Volume Leader</h5><div class="leader-val">Nigeria</div></div>
+        <div class="scoreboard-item"><div class="trophy">🏆</div><h5>Revenue Leader</h5><div class="leader-val">Kenya</div></div>
+        <div class="scoreboard-item"><div class="trophy">🏆</div><h5>Fastest Growth</h5><div class="leader-val">Uganda</div></div>
     </div>
 
     <!-- YTD Charts -->
@@ -981,37 +771,25 @@ li { margin-bottom: 6px; }
         <div class="country-card">
             <h4>🇰🇪 Kenya</h4>
             <div class="country-badge-title">Transaction & Revenue Market</div>
-            <ul>
-                <li><b>50%</b> of all transactions</li>
-                <li><b>Highest</b> revenue generation</li>
-            </ul>
+            <ul><li><b>50%</b> of all transactions</li><li><b>Highest</b> revenue generation</li></ul>
             <div class="focus-area"><b>Opportunity:</b><br>Improve yield</div>
         </div>
-
         <div class="country-card">
             <h4>🇺🇬 Uganda</h4>
             <div class="country-badge-title">Growth Market</div>
-            <ul>
-                <li>Fastest growth</li>
-            </ul>
+            <ul><li>Fastest growth</li></ul>
             <div class="focus-area"><b>Opportunity:</b><br>Scale momentum</div>
         </div>
-
         <div class="country-card">
             <h4>🇳🇬 Nigeria</h4>
             <div class="country-badge-title">Volume Market</div>
-            <ul>
-                <li>Largest volume market</li>
-            </ul>
+            <ul><li>Largest volume market</li></ul>
             <div class="focus-area"><b>Opportunity:</b><br>Recovery</div>
         </div>
-
         <div class="country-card">
             <h4>🇹🇿 Tanzania</h4>
             <div class="country-badge-title">Secondary Market</div>
-            <ul>
-                <li>Moderate revenue</li>
-            </ul>
+            <ul><li>Moderate revenue</li></ul>
             <div class="focus-area"><b>Opportunity:</b><br>Restore transactions</div>
         </div>
     </div>
@@ -1019,28 +797,12 @@ li { margin-bottom: 6px; }
     <!-- Q4 Priorities -->
     <h2>Management Priorities for Q4 2026</h2>
     <table>
-        <tr>
-            <th>Priority</th>
-            <th>Status</th>
-        </tr>
-        <tr>
-            <td><b>Improve Kenya Monetization</b></td>
-            <td>🟡</td>
-        </tr>
-        <tr>
-            <td><b>Scale Uganda Growth</b></td>
-            <td>🟢</td>
-        </tr>
-        <tr>
-            <td><b>Recover Nigeria Corridor</b></td>
-            <td>🔴</td>
-        </tr>
-        <tr>
-            <td><b>Restore Tanzania Activity</b></td>
-            <td>🟡</td>
-        </tr>
+        <tr><th>Priority</th><th>Status</th></tr>
+        <tr><td><b>Improve Kenya Monetization</b></td><td>🟡</td></tr>
+        <tr><td><b>Scale Uganda Growth</b></td><td>🟢</td></tr>
+        <tr><td><b>Recover Nigeria Corridor</b></td><td>🔴</td></tr>
+        <tr><td><b>Restore Tanzania Activity</b></td><td>🟡</td></tr>
     </table>
-
 </div>
  
 <div class="footer">
@@ -1049,8 +811,39 @@ li { margin-bottom: 6px; }
 </div>
  
 </div>
+</div>
 
 <script>
+const CORRECT_PASSWORD = "secret123";
+
+function handleLogin(event) {
+    event.preventDefault();
+    const inputVal = document.getElementById('password-input').value;
+
+    if (inputVal === CORRECT_PASSWORD) {
+        sessionStorage.setItem('isAuthenticated', 'true');
+        showContent();
+    } else {
+        document.getElementById('error').innerText = 'Incorrect password. Try again.';
+    }
+}
+
+function showContent() {
+    document.getElementById('auth-container').style.display = 'none';
+    document.getElementById('main-content').classList.remove('hidden');
+    
+    if (typeof initCharts === 'function' && window.chartsInitialized !== true) {
+        initCharts();
+        window.chartsInitialized = true;
+    }
+}
+
+window.onload = function() {
+    if (sessionStorage.getItem('isAuthenticated') === 'true') {
+        showContent();
+    }
+};
+
 function toggleTheme() {
     const html = document.documentElement;
     const themeIcon = document.getElementById('themeIcon');
@@ -1095,14 +888,10 @@ const eliteTooltip = {
 };
 
 const smoothAnimation = {
-    animation: {
-        duration: 2000,
-        easing: 'easeInOutQuart'
-    }
+    animation: { duration: 2000, easing: 'easeInOutQuart' }
 };
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
-
 const volumeDataOriginal = {
     'Kenya': [6338555.22, 9259938.89, 8500000.00, 9016831.08, 10806372.76, 12571863.81, 6272042.78, 13612499.34],
     'Tanzania': [1533874.25, 651357.94, 2100000.00, 3573788.63, 4293566.09, 1511179.40, 801107.94, 515566.52],
@@ -1142,17 +931,13 @@ function initCharts() {
         }
     });
 
-    // 2. Transactions Share (Doughnut) - Only leading country shown, rest grouped as 'Other Markets'
+    // 2. Transactions Share (Doughnut)
     const txShareCtx = document.getElementById('transactionsChart').getContext('2d');
     new Chart(txShareCtx, {
         type: 'doughnut',
         data: {
             labels: ['Kenya', 'Other Markets'],
-            datasets: [{
-                data: [50, 50],
-                backgroundColor: ['#2563eb', '#334155'],
-                borderWidth: 0
-            }]
+            datasets: [{ data: [50, 50], backgroundColor: ['#2563eb', '#334155'], borderWidth: 0 }]
         },
         options: {
             ...smoothAnimation,
@@ -1166,17 +951,13 @@ function initCharts() {
         }
     });
 
-    // 3. Volumes Share (Doughnut) - Only leading country shown, rest grouped as 'Other Markets'
+    // 3. Volumes Share (Doughnut)
     const volShareCtx = document.getElementById('volumesChart').getContext('2d');
     new Chart(volShareCtx, {
         type: 'doughnut',
         data: {
             labels: ['Kenya', 'Other Markets'],
-            datasets: [{
-                data: [62, 38],
-                backgroundColor: ['#2563eb', '#334155'],
-                borderWidth: 0
-            }]
+            datasets: [{ data: [62, 38], backgroundColor: ['#2563eb', '#334155'], borderWidth: 0 }]
         },
         options: {
             ...smoothAnimation,
@@ -1190,17 +971,13 @@ function initCharts() {
         }
     });
 
-    // 4. Revenue Share (Doughnut) - Only leading country shown, rest grouped as 'Other Markets'
+    // 4. Revenue Share (Doughnut)
     const revShareCtx = document.getElementById('revenueChart').getContext('2d');
     new Chart(revShareCtx, {
         type: 'doughnut',
         data: {
             labels: ['Kenya', 'Other Markets'],
-            datasets: [{
-                data: [68, 32],
-                backgroundColor: ['#2563eb', '#334155'],
-                borderWidth: 0
-            }]
+            datasets: [{ data: [68, 32], backgroundColor: ['#2563eb', '#334155'], borderWidth: 0 }]
         },
         options: {
             ...smoothAnimation,
@@ -1279,29 +1056,18 @@ function toggleIsolateCountry(countryName) {
         activeIsolatedCountry = null;
         rows.forEach(r => r.classList.remove('highlighted-row'));
         labelSpan.textContent = '(Showing All Markets)';
-        
-        consolidatedVolumeChartInstance.data.datasets.forEach(dataset => {
-            dataset.hidden = false;
-        });
+        consolidatedVolumeChartInstance.data.datasets.forEach(dataset => dataset.hidden = false);
     } else {
         activeIsolatedCountry = countryName;
         rows.forEach(r => {
-            if (r.id === `row-${countryName}`) {
-                r.classList.add('highlighted-row');
-            } else {
-                r.classList.remove('highlighted-row');
-            }
+            if (r.id === `row-${countryName}`) r.classList.add('highlighted-row');
+            else r.classList.remove('highlighted-row');
         });
         labelSpan.textContent = `(Isolating: ${countryName})`;
-        
-        consolidatedVolumeChartInstance.data.datasets.forEach(dataset => {
-            dataset.hidden = (dataset.label !== countryName);
-        });
+        consolidatedVolumeChartInstance.data.datasets.forEach(dataset => dataset.hidden = (dataset.label !== countryName));
     }
     consolidatedVolumeChartInstance.update();
 }
-
-window.addEventListener('DOMContentLoaded', initCharts);
 </script>
 </body>
 </html>
