@@ -330,7 +330,7 @@
             <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 8px;">
               <div style="font-size: 11px; color: #34d399; font-weight: 600;">MODEL B REVENUE</div>
               <div id="simModelBRev" style="font-size: 20px; font-weight: 700; color: #fff; margin: 4px 0;">$40.00</div>
-              <div style="font-size: 11px; color: var(--text-muted);">Low sticker shock (3% fee + FX spread)</div>
+              <div id="simModelBDesc" style="font-size: 11px; color: var(--text-muted);">Low sticker shock (3.0% fee + 1.00% FX spread)</div>
             </div>
           </div>
         </div>
@@ -398,6 +398,7 @@
 
     document.getElementById("simModelARev").innerText = `$${revA.toFixed(2)}`;
     document.getElementById("simModelBRev").innerText = `$${revB.toFixed(2)}`;
+    document.getElementById("simModelBDesc").innerText = `Low sticker shock (${feePct.toFixed(1)}% fee + ${fxPct.toFixed(2)}% FX spread)`;
 
     const diff = revB - revA;
     const insightEl = document.getElementById("simInsightText");
@@ -420,4 +421,3 @@
 
 </body>
 </html>
-```[cite: 1]
