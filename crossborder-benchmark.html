@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fees & FX Market Benchmarks</title>
+  <!-- Load D3.js -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --bg-base: #060b16;
+      --card-bg: rgba(255, 255, 255, 0.04);
+      --card-border: 1px solid rgba(255, 255, 255, 0.08);
+      --card-border-glow: 1px solid rgba(59, 130, 246, 0.4);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --blue-glow: #3b82f6;
+      --cyan-glow: #06b6d4;
+      --purple-glow: #8b5cf6;
+      --success-glow: #10b981;
+      --warning-glow: #f59e0b;
+      --danger-glow: #ef4444;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at top left, rgba(59,130,246,.22), transparent 35%),
+                  radial-gradient(circle at top right, rgba(139,92,246,.22), transparent 35%),
+                  radial-gradient(circle at bottom, rgba(6,182,212,.12), transparent 45%),
+                  var(--bg-base);
+      color: var(--text-main);
+      margin: 0;
+      padding: 30px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: var(--card-border-glow);
+      box-shadow: 0 0 35px rgba(59, 130, 246, 0.25);
+      padding: 28px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 { margin: 0 0 6px 0; font-size: 26px; letter-spacing: -0.5px; color: #fff; }
+    header p { margin: 0; color: var(--text-muted); font-size: 14px; }
+    
+    .return-dashboard-btn {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success-glow);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .return-dashboard-btn:hover {
+      background: rgba(16, 185, 129, 0.25);
+      border-color: rgba(16, 185, 129, 0.6);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+      color: #fff;
+    }
+
+    /* KPI Grid & Cards */
+    .kpi-grid, .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-card, .card, .section {
+      background: var(--card-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+      margin-bottom: 24px;
+    }
+    .kpi-card .label, .card h3 { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 8px 0; }
+    .kpi-card .value, .card h2 { font-size: 22px; font-weight: 700; color: #fff; margin: 0 0 6px 0; }
+    .kpi-card .sub, .card p { font-size: 12px; color: var(--text-muted); margin: 0; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 1024px) {
+      .kpi-grid, .kpis { grid-template-columns: repeat(2, 1fr); }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .section h2 { font-size: 18px; color: #fff; margin-top: 0; margin-bottom: 6px; font-weight: 600; }
+    .section p { color: var(--text-muted); font-size: 13px; margin-top: 0; margin-bottom: 16px; }
+
+    /* Controls & Tabs */
+    .controls {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 16px;
+      border-radius: 10px;
+      border: var(--card-border);
+      margin-bottom: 16px;
+    }
+    .control-group { margin-bottom: 12px; }
+    .control-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    .control-group label span { color: #fff; font-weight: 600; }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue-glow);
+      background: rgba(255, 255, 255, 0.1);
+      height: 6px;
+      border-radius: 3px;
+      outline: none;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    th { background: rgba(255, 255, 255, 0.03); font-weight: 600; color: var(--text-muted); }
+    .highlight-row { background: rgba(59, 130, 246, 0.12); font-weight: bold; }
+    .mtp-row { background: rgba(16, 185, 129, 0.12); font-weight: bold; color: #34d399; }
+
+    .recommendation-card-content {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+
+    /* Split layout for the interactive FX simulator */
+    .sim-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 768px) {
+      .sim-container { grid-template-columns: 1fr; }
+    }
+    .sim-output-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: var(--card-border);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  
+  <header>
+    <div>
+      <h1>Fees & FX Market Benchmarks</h1>
+      <p>Boardroom-Grade Competitive Benchmarking, FX Yield Dynamics & Strategy Recommendations</p>
+    </div>
+    <a href="#" class="return-dashboard-btn" onclick="alert('Returning to main dashboard...'); return false;">
+      ← Return to Dashboard
+    </a>
+  </header>
+
+  <!-- KPI Overview Grid -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="label">Current Baseline Rev</div>
+      <div class="value">$50.00</div>
+      <div class="sub">Per $1,000 (5% Fee, 0% FX)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Balanced Model Rev</div>
+      <div class="value" style="color: var(--cyan-glow);">$40.00</div>
+      <div class="sub">Per $1,000 (3% Fee, 1% FX)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">FX Yield Conversion</div>
+      <div class="value" style="color: var(--success-glow);">Psychological Win</div>
+      <div class="sub">Lower Fee, Higher Volume</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Market Positioning</div>
+      <div class="value" style="color: var(--success-glow);">Competitive</div>
+      <div class="sub">Against Top Fintechs</div>
+    </div>
+  </div>
+
+  <!-- Market Benchmarks & Pricing Strategy Comparison Side-by-Side (Top Section) -->
+  <div class="grid-2">
+    
+    <!-- 1. Market Benchmarks (Total Cost %) -->
+    <div class="section" style="margin-bottom:0;">
+      <h2>Market Benchmarks (Total Cost %)</h2>
+      <p>Comparing MyTouchPoint against global cross-border market leaders.</p>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>Fee %</th>
+            <th>FX Margin %</th>
+            <th>Total Cost %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Wise</td><td>0.5%</td><td>0.5%</td><td><strong>1.0%</strong></td></tr>
+          <tr><td>Remitly</td><td>1.5%</td><td>1.0%</td><td><strong>2.5%</strong></td></tr>
+          <tr><td>WorldRemit</td><td>1.5%</td><td>1.0%</td><td><strong>2.5%</strong></td></tr>
+          <tr><td>Ria</td><td>2.0%</td><td>1.5%</td><td><strong>3.5%</strong></td></tr>
+          <tr><td>Western Union</td><td>2.5%</td><td>1.5%</td><td><strong>4.0%</strong></td></tr>
+          <tr class="mtp-row"><td>MyTouchPoint (Current)</td><td>5.0%</td><td>0.0%</td><td><strong>5.0%</strong></td></tr>
+          <tr class="highlight-row"><td>MyTouchPoint (Target)</td><td>3.0%</td><td>1.0%</td><td><strong>4.0%</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 2. Pricing Strategy Comparison (Real Revenue Recovery Model) -->
+    <div class="section" style="margin-bottom:0;">
+      <h2>🎯 Pricing Strategy & Revenue Recovery Comparison</h2>
+      <p>Real example of revenue recovery: blending FX and lower fees to beat flat-rate drop-offs.</p>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Current (Flat)</th>
+            <th>Balanced (FX Mix)</th>
+            <th>Net Recovery Impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Transaction Fee</td><td>5.0%</td><td>3.0%</td><td>-2.0% (Lower friction)</td></tr>
+          <tr><td>FX Margin</td><td>0.0%</td><td>1.0%</td><td>+1.0% (Embedded yield)</td></tr>
+          <tr><td>Total Cost to User</td><td>5.0%</td><td>4.0%</td><td>-20% Cheaper sticker</td></tr>
+          <tr><td>Yield on $1,000</td><td>$50.00</td><td>$40.00</td><td>-$10.00 per tx nominal</td></tr>
+          <tr class="highlight-row"><td>Monthly Volume</td><td>1,000 Tx</td><td>1,350 Tx (+35%)</td><td>Higher Conversion</td></tr>
+          <tr class="mtp-row"><td>Total Monthly Revenue</td><td>$50,000</td><td>$54,000</td><td>+$4,000 Revenue Net Gain!</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Interactive FX vs. Fee Yield Simulator -->
+  <div class="section" style="border: 2px solid rgba(16, 185, 129, 0.4); margin-top: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+      <h2 style="margin:0;">⚡ Interactive FX vs. Fee Yield Simulator (Strategic Core)</h2>
+      <span class="return-dashboard-btn" style="padding: 4px 10px; font-size: 11px;">Why FX Mix Beats Flat Fees</span>
+    </div>
+    <p>Compare sender psychological perception and revenue capture between a high-fee model vs. an optimized FX-blend model.</p>
+
+    <div class="sim-container">
+      <!-- Controls -->
+      <div class="controls" style="margin-bottom:0;">
+        <div class="control-group">
+          <label>Transfer Principal Amount: <span id="simPrincipalLabel">$1,000</span></label>
+          <input type="range" id="simPrincipalSlider" min="200" max="5000" step="100" value="1000">
+        </div>
+
+        <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
+          <div style="font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 8px;">Model A: Legacy High Fee (Current)</div>
+          <p style="font-size: 12px; margin-bottom: 4px;">Fee: <strong style="color:#ef4444;">5.0%</strong> | FX Margin: <strong style="color:var(--text-muted);">0.0%</strong></p>
+        </div>
+
+        <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
+          <div style="font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 8px;">Model B: Fintech Blend (Recommended)</div>
+          <div class="control-group">
+            <label>Fee %: <span id="simFeeLabel">3.0%</span></label>
+            <input type="range" id="simFeeSlider" min="1.0" max="4.0" step="0.5" value="3.0">
+          </div>
+          <div class="control-group" style="margin-top:8px;">
+            <label>FX Margin %: <span id="simFxLabel">1.0%</span></label>
+            <input type="range" id="simFxSlider" min="0.0" max="2.0" step="0.25" value="1.0">
+          </div>
+        </div>
+      </div>
+
+      <!-- Outputs & Insights Card -->
+      <div class="sim-output-box">
+        <div>
+          <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Comparative Yield Breakdown</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0;">
+            <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); padding: 12px; border-radius: 8px;">
+              <div style="font-size: 11px; color: #ef4444; font-weight: 600;">MODEL A REVENUE</div>
+              <div id="simModelARev" style="font-size: 20px; font-weight: 700; color: #fff; margin: 4px 0;">$50.00</div>
+              <div style="font-size: 11px; color: var(--text-muted);">High sticker shock (5% upfront fee)</div>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 8px;">
+              <div style="font-size: 11px; color: #34d399; font-weight: 600;">MODEL B REVENUE</div>
+              <div id="simModelBRev" style="font-size: 20px; font-weight: 700; color: #fff; margin: 4px 0;">$40.00</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Low sticker shock (3% fee + FX spread)</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); padding: 12px; border-radius: 8px; margin-top: 8px;">
+          <div style="font-size: 11px; color: var(--blue-glow); font-weight: 700; text-transform: uppercase;">Strategic Growth Takeaway</div>
+          <div id="simInsightText" style="font-size: 12px; color: var(--text-main); margin-top: 4px; line-height: 1.4;">
+            Lowering upfront fees from 5% to 3% while embedding 1% FX removes customer friction. A modest +25% transaction volume surge fully offsets the $10 yield drop per transaction, accelerating market share.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Executive Recommendation Engine Section -->
+  <div class="section" style="margin-top: 24px;">
+    <h2>📈 Executive Recommendation Engine & Strategic Market Analysis</h2>
+    <p>Strategic positioning breakdown across organizational tiers and competitive pressures.</p>
+    
+    <div class="kpis">
+      <div class="card" style="border-left: 4px solid var(--danger-glow); margin-bottom:0;">
+        <h3>Highest Profit</h3>
+        <h2>Current 5%</h2>
+        <p class="recommendation-card-content">Maximum yield per transaction ($30 profit on $1,000). Vulnerable in high-volume corridors against aggressive fintech pricing.</p>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--success-glow); margin-bottom:0;">
+        <h3>Recommended Model</h3>
+        <h2>3% + 1% FX</h2>
+        <p class="recommendation-card-content">Best balance of growth and profitability. Aligns total cost to 4%, matching Remitly/WorldRemit benchmarks while securing healthy margins.</p>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--blue-glow); margin-bottom:0;">
+        <h3>Most Competitive</h3>
+        <h2>2% + 1% FX</h2>
+        <p class="recommendation-card-content">Matches modern fintech pricing (Wise/Ria tier). Requires a +25% volume expansion to achieve revenue neutrality.</p>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--purple-glow); margin-bottom:0;">
+        <h3>Long-Term Target</h3>
+        <h2>4% Total Cost</h2>
+        <p class="recommendation-card-content">Optimal sweet spot for African cross-border corridors, balancing mobile money cash-out costs with platform profitability.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Interactive FX vs Fee Yield Simulator Logic
+  const principalSlider = document.getElementById("simPrincipalSlider");
+  const feeSlider = document.getElementById("simFeeSlider");
+  const fxSlider = document.getElementById("simFxSlider");
+
+  function updateSim() {
+    const principal = parseFloat(principalSlider.value);
+    const feePct = parseFloat(feeSlider.value);
+    const fxPct = parseFloat(fxSlider.value);
+
+    document.getElementById("simPrincipalLabel").innerText = `$${principal.toLocaleString()}`;
+    document.getElementById("simFeeLabel").innerText = `${feePct.toFixed(1)}%`;
+    document.getElementById("simFxLabel").innerText = `${fxPct.toFixed(2)}%`;
+
+    // Model A: Fixed 5% Fee, 0% FX
+    const revA = principal * 0.05;
+    // Model B: Custom Fee + Custom FX
+    const revB = principal * ((feePct + fxPct) / 100);
+
+    document.getElementById("simModelARev").innerText = `$${revA.toFixed(2)}`;
+    document.getElementById("simModelBRev").innerText = `$${revB.toFixed(2)}`;
+
+    const diff = revB - revA;
+    const insightEl = document.getElementById("simInsightText");
+
+    if (diff >= 0) {
+      insightEl.innerHTML = `Model B captures <strong style="color:#34d399;">+$${diff.toFixed(2)} more revenue</strong> than Model A while offering a more attractive upfront fee (${feePct}% vs 5%). Customers perceive lower cost, driving high retention.`;
+    } else {
+      const volumeNeeded = ((revA / revB) - 1) * 100;
+      insightEl.innerHTML = `Model B yields <strong style="color:#f59e0b;">-$${Math.abs(diff).toFixed(2)} less per transaction</strong>, but lowering the upfront fee removes sticker shock. A volume growth of <strong style="color:#34d399;">+${volumeNeeded.toFixed(1)}%</strong> fully neutralizes this gap.`;
+    }
+  }
+
+  principalSlider.addEventListener("input", updateSim);
+  feeSlider.addEventListener("input", updateSim);
+  fxSlider.addEventListener("input", updateSim);
+
+  // Initial render
+  updateSim();
+</script>
+
+</body>
+</html>
