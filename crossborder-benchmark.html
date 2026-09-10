@@ -20,6 +20,7 @@
       --success-glow: #10b981;
       --warning-glow: #f59e0b;
       --danger-glow: #ef4444;
+      --amber-deep: #b45309; /* Deep amber color */
     }
 
     body {
@@ -53,7 +54,7 @@
       align-items: center;
     }
     header h1 { margin: 0 0 6px 0; font-size: 26px; letter-spacing: -0.5px; color: #fff; }
-    header p { margin: 0; color: var(--text-muted); font-size: 14px; }
+    header p { margin: 0 0 16px 0; color: var(--text-muted); font-size: 14px; }
     
     .return-dashboard-btn {
       background: rgba(16, 185, 129, 0.15);
@@ -154,7 +155,7 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
     th { background: rgba(255, 255, 255, 0.03); font-weight: 600; color: var(--text-muted); }
-    .highlight-row { background: rgba(59, 130, 246, 0.12); font-weight: bold; }
+    .highlight-row { background: rgba(180, 83, 9, 0.2); font-weight: bold; color: #fbbf24; }
     .mtp-row { background: rgba(16, 185, 129, 0.12); font-weight: bold; color: #34d399; }
 
     .recommendation-card-content {
@@ -191,14 +192,15 @@
     <div>
       <h1>Fees & FX Market Benchmarks</h1>
       <p>Boardroom-Grade Competitive Benchmarking, FX Yield Dynamics & Strategy Recommendations</p>
+    </div>
     <div style="display: flex; gap: 20px; align-items: center;">
-    <a href="index.html" class="return-dashboard-btn">
-        ← Return to Dashboard
-    </a>
-    <a href="backlog.html" class="return-dashboard-btn" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-color: rgba(59, 130, 246, 0.3);">
-        📋 View Backlog
-    </a>
-</div>
+      <a href="index.html" class="return-dashboard-btn">
+          ← Return to Dashboard
+      </a>
+      <a href="backlog.html" class="return-dashboard-btn" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-color: rgba(59, 130, 246, 0.3);">
+          📋 View Backlog
+      </a>
+    </div>
   </header>
 
   <!-- KPI Overview Grid -->
@@ -249,7 +251,7 @@
           <tr><td>Ria</td><td>2.0%</td><td>1.5%</td><td><strong>3.5%</strong></td></tr>
           <tr><td>Western Union</td><td>2.5%</td><td>1.5%</td><td><strong>4.0%</strong></td></tr>
           <tr class="mtp-row"><td>MyTouchPoint (Current)</td><td>5.0%</td><td>0.0%</td><td><strong>5.0%</strong></td></tr>
-          <tr class="highlight-row"><td>MyTouchPoint (Target)</td><td>3.0%</td><td>1.0%</td><td><strong>4.0%</strong></td></tr>
+          <tr class="highlight-row"><td>MyTouchPoint (Recommended)</td><td>3.0%</td><td>1.0%</td><td><strong>4.0%</strong></td></tr>
         </tbody>
       </table>
     </div>
@@ -354,7 +356,7 @@
         <h2>Current 5%</h2>
         <p class="recommendation-card-content">Maximum yield per transaction ($30 profit on $1,000). Vulnerable in high-volume corridors against aggressive fintech pricing.</p>
       </div>
-      <div class="card" style="border-left: 4px solid var(--success-glow); margin-bottom:0;">
+      <div class="card" style="border-left: 4px solid var(--amber-deep); margin-bottom:0;">
         <h3>Recommended Model</h3>
         <h2>3% + 1% FX</h2>
         <p class="recommendation-card-content">Best balance of growth and profitability. Aligns total cost to 4%, matching Remitly/WorldRemit benchmarks while securing healthy margins.</p>
@@ -418,3 +420,4 @@
 
 </body>
 </html>
+```[cite: 1]
