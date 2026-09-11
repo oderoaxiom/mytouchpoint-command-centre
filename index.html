@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MyTouchpoint EA & NG Executive Command Center - August 2026</title>
+<title>MyTouchpoint EA & NG Command Center - August 2026</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
@@ -70,7 +70,6 @@ body::before, body::after {
     animation: floatOrb 15s infinite alternate ease-in-out;
     opacity: 0.5;
     pointer-events: none;
-    transition: background 0.5s ease;
 }
 
 body::before {
@@ -84,14 +83,6 @@ body::after {
     right: -100px;
     background: radial-gradient(circle, rgba(13,148,136,0.6) 0%, rgba(0,32,96,0.2) 70%);
     animation-delay: -7s;
-}
-
-[data-theme="light"] body::before {
-    background: radial-gradient(circle, rgba(37,99,235,0.25) 0%, rgba(30,58,138,0.05) 70%);
-}
-
-[data-theme="light"] body::after {
-    background: radial-gradient(circle, rgba(13,148,136,0.25) 0%, rgba(0,32,96,0.05) 70%);
 }
 
 @keyframes floatOrb {
@@ -125,7 +116,6 @@ body::after {
     align-items: center;
     gap: 8px;
     transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-    text-decoration: none;
 }
 
 .control-btn:hover {
@@ -143,46 +133,27 @@ body::after {
     border-radius: 24px;
     border: 1px solid var(--border-color);
     box-shadow: var(--card-shadow), 0 0 40px var(--glow-color);
-    transform-style: preserve-3d;
-    transition: background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease;
 }
 
 .hero{
     background: linear-gradient(135deg, rgba(0, 32, 96, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     color: white;
     padding: 30px;
     border-radius: 16px;
     text-align: left;
-    box-shadow: 
-        0 15px 30px -5px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.25),
-        0 0 25px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 25px rgba(37, 99, 235, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.18);
-    position: relative;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 25px;
+}
+
+.hero-top-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    margin-bottom: 25px;
-    transform: translateZ(20px);
-}
-
-.hero::after {
-    content: '';
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.3), transparent 70%);
-    pointer-events: none;
-}
-
-.hero-left {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    z-index: 1;
 }
 
 .hero-text h1{
@@ -190,15 +161,12 @@ body::after {
     font-size: 24px;
     font-weight: 800;
     letter-spacing: -0.5px;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
 .hero-text p {
     margin: 0;
     color: #cbd5e1;
     font-size: 13px;
-    font-weight: 400;
-    line-height: 1.5;
 }
 
 .status-pill {
@@ -212,7 +180,103 @@ body::after {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.system-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.system-nav-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%);
+    border: 1px solid rgba(37, 99, 235, 0.35);
+    border-radius: 16px;
+    padding: 22px 24px;
+    text-decoration: none;
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(37, 99, 235, 0.1);
+    transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Subtle animated border gradient / pulse to make it unmistakably interactive */
+.system-nav-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-light), #38bdf8, var(--primary-light));
+    background-size: 200% auto;
+    animation: shineBorder 4s linear infinite;
+}
+
+@keyframes shineBorder {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+.system-nav-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-light);
+    box-shadow: 0 20px 35px -5px rgba(37, 99, 235, 0.25), 0 0 25px rgba(56, 189, 248, 0.3);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+}
+
+.system-nav-card .nav-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.system-nav-card .nav-badge {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--primary-light);
+    letter-spacing: 0.5px;
+}
+
+.system-nav-card .action-pill {
+    background: rgba(37, 99, 235, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.3s ease;
+}
+
+.system-nav-card:hover .action-pill {
+    background: var(--primary-light);
+    color: #ffffff;
+    transform: translateX(2px);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.system-nav-card h4 {
+    margin: 4px 0 0 0;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.system-nav-card p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.4;
 }
 
 .executive-banner {
@@ -222,7 +286,6 @@ body::after {
     padding: 20px 24px;
     border-radius: 14px;
     margin-bottom: 30px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15), 0 0 20px var(--glow-color);
 }
 
 .executive-banner h3 {
@@ -230,7 +293,6 @@ body::after {
     font-size: 15px;
     color: #ffffff;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 .executive-banner-grid {
@@ -242,20 +304,9 @@ body::after {
 .executive-banner-item {
     font-size: 13px;
     color: var(--text-main);
-    line-height: 1.4;
     display: flex;
     align-items: flex-start;
     gap: 8px;
-}
-
-.nav-tabs {
-    display: flex;
-    gap: 10px;
-    z-index: 1;
-}
-
-.section-content {
-    display: block;
 }
 
 h2{
@@ -265,21 +316,12 @@ h2{
     margin-top: 45px;
     font-size: 22px;
     font-weight: 700;
-    letter-spacing: -0.4px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-h3 {
-    color: var(--text-main);
-    font-size: 18px;
-    font-weight: 600;
 }
 
 .card-row{
     display: flex;
     gap: 20px;
     margin: 30px 0;
-    transform-style: preserve-3d;
 }
 
 .card{
@@ -289,31 +331,20 @@ h3 {
     text-align: center;
     color: white;
     backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 
-        0 15px 30px -5px rgba(0,0,0,0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3),
-        0 0 15px rgba(255, 255, 255, 0.05);
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
-    transform: translateZ(10px);
+    box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: transform 0.3s ease;
 }
 
-.card:hover {
-    transform: translateY(-5px) translateZ(25px);
-    box-shadow: 
-        0 25px 40px -10px rgba(0,0,0,0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4),
-        0 0 25px var(--glow-color);
-}
+.card:hover { transform: translateY(-5px); }
 
 .blue{background: linear-gradient(135deg, rgba(29, 78, 216, 0.9) 0%, rgba(30, 64, 175, 0.95) 100%);}
 .green{background: linear-gradient(135deg, rgba(5, 150, 105, 0.9) 0%, rgba(4, 120, 87, 0.95) 100%);}
 .orange{background: linear-gradient(135deg, rgba(217, 119, 6, 0.9) 0%, rgba(180, 83, 9, 0.95) 100%);}
 .purple{background: linear-gradient(135deg, rgba(124, 58, 237, 0.9) 0%, rgba(91, 33, 182, 0.95) 100%);}
 
-.card h3 { color: rgba(255,255,255,0.9); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 6px 0; }
-.card h2 { color: #ffffff; font-size: 26px; border: none; padding: 0; margin: 0 0 4px 0; text-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+.card h3 { color: rgba(255,255,255,0.9); font-size: 13px; text-transform: uppercase; margin: 0 0 6px 0; }
+.card h2 { color: #ffffff; font-size: 26px; border: none; padding: 0; margin: 0 0 4px 0; }
 .card p { margin: 0; opacity: 0.85; font-size: 12px; }
 .card .trend { margin-top: 8px; font-size: 11px; font-weight: 600; background: rgba(0,0,0,0.2); padding: 3px 8px; border-radius: 10px; display: inline-block; }
 
@@ -329,7 +360,6 @@ h3 {
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
 
 .event-card h4 {
@@ -345,15 +375,9 @@ h3 {
     font-size: 12px;
     color: var(--text-muted);
     margin-bottom: 12px;
-    font-weight: 500;
 }
 
-.event-card p {
-    margin: 0;
-    font-size: 13.5px;
-    line-height: 1.5;
-    color: var(--text-main);
-}
+.event-card p { margin: 0; font-size: 13.5px; line-height: 1.5; }
 
 .country-cards-grid {
     display: grid;
@@ -367,85 +391,111 @@ h3 {
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 22px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-.country-card h4 {
-    margin: 0 0 4px 0;
-    font-size: 16px;
-    color: var(--text-main);
-}
+.country-card h4 { margin: 0 0 4px 0; font-size: 16px; }
+.country-card .country-badge-title { font-size: 12px; color: var(--primary-light); font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+.country-card ul { margin: 8px 0; padding-left: 18px; font-size: 13.5px; }
+.country-card .focus-area { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-color); font-size: 13px; }
 
-.country-card .country-badge-title {
-    font-size: 12px;
-    color: var(--primary-light);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 12px;
-}
-
-.country-card ul {
-    margin: 8px 0;
-    padding-left: 18px;
-    font-size: 13.5px;
-}
-
-.country-card .focus-area {
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border-color);
-    font-size: 13px;
-}
-
+/* 🌟 ELITE SCOREBOARD REDESIGN (0.5s SIGHTABILITY) */
 .scoreboard-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    gap: 18px;
     margin: 24px 0;
 }
 
 .scoreboard-item {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: 18px;
+    border-radius: 16px;
+    padding: 22px 16px;
     text-align: center;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.scoreboard-item .trophy {
-    font-size: 24px;
-    margin-bottom: 6px;
+.scoreboard-item:hover {
+    transform: translateY(-4px);
 }
+
+.scoreboard-item.sb-transactions {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%);
+    border: 1px solid rgba(37, 99, 235, 0.45);
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.15);
+}
+
+.scoreboard-item.sb-volume {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%);
+    border: 1px solid rgba(5, 150, 105, 0.45);
+    box-shadow: 0 10px 25px rgba(5, 150, 105, 0.15);
+}
+
+.scoreboard-item.sb-revenue {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%);
+    border: 1px solid rgba(217, 119, 6, 0.45);
+    box-shadow: 0 10px 25px rgba(217, 119, 6, 0.15);
+}
+
+.scoreboard-item.sb-growth {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%);
+    border: 1px solid rgba(124, 58, 237, 0.45);
+    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.15);
+}
+
+.scoreboard-item .sb-icon-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin: 0 auto 10px auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.sb-transactions .sb-icon-badge { background: rgba(37, 99, 235, 0.3); border: 1px solid rgba(37, 99, 235, 0.6); }
+.sb-volume .sb-icon-badge { background: rgba(5, 150, 105, 0.3); border: 1px solid rgba(5, 150, 105, 0.6); }
+.sb-revenue .sb-icon-badge { background: rgba(217, 119, 6, 0.3); border: 1px solid rgba(217, 119, 6, 0.6); }
+.sb-growth .sb-icon-badge { background: rgba(124, 58, 237, 0.3); border: 1px solid rgba(124, 58, 237, 0.6); }
 
 .scoreboard-item h5 {
-    margin: 0 0 4px 0;
-    font-size: 12px;
+    margin: 0 0 6px 0;
+    font-size: 11px;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
+    font-weight: 700;
 }
 
 .scoreboard-item .leader-val {
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 800;
     color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.scoreboard-item .sb-subtext {
+    font-size: 11px;
+    margin-top: 4px;
+    opacity: 0.8;
+    font-weight: 500;
 }
 
 table{
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    margin-top: 24px;
-    margin-bottom: 35px;
+    margin: 24px 0 35px 0;
     border-radius: 16px;
     overflow: hidden;
     border: 1px solid var(--border-color);
     background: var(--table-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 0 15px var(--glow-color);
 }
 
 th{
@@ -455,8 +505,6 @@ th{
     font-weight: 600;
     font-size: 13px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid var(--border-color);
 }
 
 td{
@@ -466,90 +514,44 @@ td{
     text-align: center;
     font-size: 14px;
     background: var(--table-td);
-    color: var(--text-main);
-    transition: background 0.3s ease;
 }
 
 td:last-child { border-right: none; }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: rgba(37, 99, 235, 0.06); }
 
-tbody tr {
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.1s ease;
-}
-
-tbody tr.highlighted-row {
-    background: rgba(37, 99, 235, 0.2) !important;
-    box-shadow: inset 4px 0 0 var(--primary-light);
-}
+tbody tr { cursor: pointer; transition: background 0.2s ease; }
+tbody tr.highlighted-row { background: rgba(37, 99, 235, 0.2) !important; box-shadow: inset 4px 0 0 var(--primary-light); }
 
 .interactive-hint {
     font-size: 12px;
     color: var(--primary-light);
-    margin-top: -16px;
-    margin-bottom: 20px;
+    margin: -16px 0 20px 0;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-.positive{ color: var(--success); font-weight: 700; text-shadow: 0 0 12px rgba(5, 150, 105, 0.3); }
-.negative{ color: var(--danger); font-weight: 700; text-shadow: 0 0 12px rgba(220, 38, 38, 0.3); }
+.positive{ color: var(--success); font-weight: 700; }
+.negative{ color: var(--danger); font-weight: 700; }
 
-.chart-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
-    margin: 24px 0;
-}
-
-.market-leadership-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin: 20px 0;
-}
+.chart-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin: 24px 0; }
+.market-leadership-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 20px 0; }
 
 .chart-container{
     background: var(--chart-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border-color);
     padding: 24px;
     border-radius: 18px;
-    box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        0 0 20px var(--glow-color);
-    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     height: 420px;
     display: flex;
     flex-direction: column;
-    transform: translateZ(10px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.4s ease;
 }
 
-.chart-container:hover {
-    transform: translateY(-3px) translateZ(20px);
-    box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 30px var(--glow-color);
-}
-
-.chart-container h4{
-    margin: 0 0 12px 0;
-    color: var(--text-main);
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.2px;
-}
-
-.canvas-wrapper {
-    position: relative;
-    flex: 1;
-    width: 100%;
-    height: 100%;
-}
+.chart-container h4{ margin: 0 0 12px 0; font-size: 15px; font-weight: 700; }
+.canvas-wrapper { position: relative; flex: 1; width: 100%; height: 100%; }
 
 .footer{
     margin-top: 50px;
@@ -558,31 +560,16 @@ tbody tr.highlighted-row {
     font-size: 13px;
     color: var(--text-muted);
     text-align: center;
-    line-height: 1.5;
 }
 
-ul { padding-left: 20px; margin: 8px 0; }
-li { margin-bottom: 6px; }
-
-.hidden {
-    display: none !important;
-}
+.hidden { display: none !important; }
 
 @media (max-width: 900px) {
-    .market-leadership-grid, .events-grid, .scoreboard-grid, .country-cards-grid, .executive-banner-grid {
+    .market-leadership-grid, .events-grid, .scoreboard-grid, .country-cards-grid, .executive-banner-grid, .system-nav-grid {
         grid-template-columns: 1fr;
     }
-    .card-row {
-        flex-direction: column;
-    }
-    .hero {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .nav-tabs {
-        width: 100%;
-        justify-content: flex-end;
-    }
+    .card-row { flex-direction: column; }
+    .hero-top-row { flex-direction: column; align-items: flex-start; }
 }
 </style>
 </head>
@@ -615,28 +602,53 @@ li { margin-bottom: 6px; }
 <div class="container">
  
 <div class="hero">
-    <div class="hero-left">
-        <div class="hero-text">
-            <h1>MyTouchpoint EA & NG Executive Command Center</h1>
-            <p>August 2026 Performance Review &nbsp;|&nbsp; Owner: John Odero &nbsp;|&nbsp; Last Updated: 07 Sep 2026</p>
+    <div class="hero-top-row">
+        <div class="hero-left">
+            <div class="hero-text">
+                <h1>MyTouchpoint EA & NG Command Center</h1>
+                <p>August 2026 Performance Review &nbsp;|&nbsp; Owner: John Odero &nbsp;|&nbsp; Last Updated: <span id="dynamicTimestamp">07 Sep 2026</span></p>
+            </div>
         </div>
     </div>
     
-    <!-- Right-hand side: Cleanly stacked status pill and organized action buttons -->
-    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px; z-index: 1;">
+    <div style="display: flex; align-items: center; justify-content: flex-start; z-index: 1;">
         <span class="status-pill">🟢 Regional Health: Stable</span>
-        <div class="nav-tabs" style="display: flex; gap: 8px; align-items: center;">
-           <a href="backlog.html" class="control-btn" style="padding: 8px 14px; font-size: 12px;">📋 Backlog & Actions</a>
-           <a href="crossborder-benchmark.html" class="control-btn" style="padding: 8px 14px; font-size: 12px; background: rgba(30, 41, 59, 0.6); border: 1px dashed rgba(255,255,255,0.2);">💱 FX Benchmark Report</a>
-        </div>
     </div>
+</div>
+
+<!-- SYSTEM DIRECTORY NAVIGATION HUB -->
+<div class="system-nav-grid">
+    <a href="backlog.html" class="system-nav-card">
+        <div class="nav-header-row">
+            <span class="nav-badge">📋 Execution Page</span>
+            <span class="action-pill">Open ➔</span>
+        </div>
+        <h4>Backlog & Actions</h4>
+        <p>Prioritized engineering tickets, regional action tracking, and blockers.</p>
+    </a>
+    <a href="lam.html" class="system-nav-card">
+        <div class="nav-header-row">
+            <span class="nav-badge">💬 CRM Page</span>
+            <span class="action-pill">Open ➔</span>
+        </div>
+        <h4>LAM Customer Support CRM</h4>
+        <p>Customer support workflows, ticketing queues, and interaction metrics.</p>
+    </a>
+    <a href="crossborder-benchmark.html" class="system-nav-card">
+        <div class="nav-header-row">
+            <span class="nav-badge">💱 Analytical Report</span>
+            <span class="action-pill">Open ➔</span>
+        </div>
+        <h4>FX Benchmark Report</h4>
+        <p>Cross-border currency performance insights and corridor comparisons.</p>
+    </a>
 </div>
 
 <div class="executive-banner">
     <h3>Executive Summary Insights</h3>
     <div class="executive-banner-grid">
         <div class="executive-banner-item"><span>🚀</span> <span><b>Uganda:</b> Fastest growth market</span></div>
-        <div class="executive-banner-item"><span>📈</span> <span><b>Kenya:</b> Largest transaction market</span></div>
+        <div class="executive-banner-item"><span>📈</span> <span><b>Kenya:</b> Largest transaction, volume & revenue market</span></div>
         <div class="executive-banner-item"><span>💰</span> <span><b>Kenya:</b> Largest revenue market</span></div>
         <div class="executive-banner-item"><span>⚠</span> <span><b>Nigeria:</b> Impacted by corridor shutdown</span></div>
     </div>
@@ -645,7 +657,7 @@ li { margin-bottom: 6px; }
 <div id="performanceSection" class="section-content">
     <div class="card-row">
         <div class="card blue"><h3>Transactions</h3><h2>7,142</h2><p>Total YTD</p><div class="trend">▲ vs Previous Month</div></div>
-        <div class="card green"><h3>Volume (XOF)</h3><h2>176.3M XOF</h2><p>Total YTD</p><div class="trend">▲ vs Previous Month</div></div>
+        <div class="card green"><h3>Volume (XOF)</h3><h2>123.3M XOF</h2><p>Total YTD</p><div class="trend">▲ vs Previous Month</div></div>
         <div class="card orange"><h3>Revenue (XOF)</h3><h2>5.61M XOF</h2><p>Total YTD</p><div class="trend">▲ vs Previous Month</div></div>
         <div class="card purple"><h3>Active Markets</h3><h2>4</h2><p>Corridors Monitored</p><div class="trend">▲ vs Previous Month</div></div>
     </div>
@@ -657,7 +669,7 @@ li { margin-bottom: 6px; }
             <tr><th>Country</th><th>Jan</th><th>Feb</th><th>March</th><th>April</th><th>May</th><th>June</th><th>July</th><th>Aug</th></tr>
         </thead>
         <tbody id="monthlyVolumeTableBody">
-            <tr id="row-Kenya" onclick="toggleIsolateCountry('Kenya')"><td><b>Kenya</b> (KES / 0.2291)</td><td>6,338,555.22</td><td>9,259,938.89</td><td>8,500,000.00</td><td>9,016,831.08</td><td>10,806,372.76</td><td>12,571,863.81</td><td>6,272,042.78</td><td>13,612,499.34</td></tr>
+            <tr id="row-Kenya" onclick="toggleIsolateCountry('Kenya')"><td><b>Kenya</b> (KES / 4.36)</td><td>6,338,555.22</td><td>9,259,938.89</td><td>8,500,000.00</td><td>9,016,831.08</td><td>10,806,372.76</td><td>12,571,863.81</td><td>6,272,042.78</td><td>13,612,499.34</td></tr>
             <tr id="row-Tanzania" onclick="toggleIsolateCountry('Tanzania')"><td><b>Tanzania</b> (TZS / 4.66)</td><td>1,533,874.25</td><td>651,357.94</td><td>2,100,000.00</td><td>3,573,788.63</td><td>4,293,566.09</td><td>1,511,179.40</td><td>801,107.94</td><td>515,566.52</td></tr>
             <tr id="row-Uganda" onclick="toggleIsolateCountry('Uganda')"><td><b>Uganda</b> (UGX / 6.69)</td><td>147,859.64</td><td>104,573.54</td><td>500,000.00</td><td>1,069,604.63</td><td>1,479,883.26</td><td>1,363,132.29</td><td>156,244.84</td><td>347,311.36</td></tr>
             <tr id="row-Nigeria" onclick="toggleIsolateCountry('Nigeria')"><td><b>Nigeria</b> (NGN / 2.34)</td><td>171,176.07</td><td>938,936.75</td><td>1,500,000.00</td><td>2,595,012.82</td><td>3,750,288.46</td><td>4,390,464.96</td><td>2,688,262.39</td><td>1,943,815.81</td></tr>
@@ -671,21 +683,19 @@ li { margin-bottom: 6px; }
         </div>
     </div>
 
-    <!-- Monthly Converted Revenues Table (XOF) -->
     <h2>Monthly Converted Revenues (in XOF)</h2>
     <table>
         <thead>
             <tr><th>Country</th><th>Jan</th><th>Feb</th><th>March</th><th>April</th><th>May</th><th>June</th><th>July</th><th>Aug</th></tr>
         </thead>
         <tbody>
-            <tr><td><b>Kenya</b> (KES / 0.2291)</td><td>214,347.45</td><td>313,147.10</td><td>374,164.12</td><td>304,914.88</td><td>365,434.31</td><td>425,137.49</td><td>212,103.88</td><td>460,327.37</td></tr>
-            <tr><td><b>Tanzania</b> (TZS / 4.66)</td><td>51,870.17</td><td>22,026.61</td><td>99,210.52</td><td>120,852.36</td><td>145,193.13</td><td>51,102.79</td><td>27,090.56</td><td>17,434.55</td></tr>
-            <tr><td><b>Uganda</b> (UGX / 6.69)</td><td>5,000.15</td><td>5,424.22</td><td>16,488.19</td><td>36,170.25</td><td>50,054.41</td><td>46,096.26</td><td>5,283.71</td><td>11,744.84</td></tr>
-            <tr><td><b>Nigeria</b> (NGN / 2.34)</td><td>5,789.53</td><td>31,751.28</td><td>80,966.67</td><td>87,755.56</td><td>126,821.37</td><td>148,469.66</td><td>90,907.26</td><td>65,732.91</td></tr>
+            <tr><td><b>Kenya</b></td><td>214,347.45</td><td>313,147.10</td><td>374,164.12</td><td>304,914.88</td><td>365,434.31</td><td>425,137.49</td><td>212,103.88</td><td>460,327.37</td></tr>
+            <tr><td><b>Tanzania</b></td><td>51,870.17</td><td>22,026.61</td><td>99,210.52</td><td>120,852.36</td><td>145,193.13</td><td>51,102.79</td><td>27,090.56</td><td>17,434.55</td></tr>
+            <tr><td><b>Uganda</b></td><td>5,000.15</td><td>5,424.22</td><td>16,488.19</td><td>36,170.25</td><td>50,054.41</td><td>46,096.26</td><td>5,283.71</td><td>11,744.84</td></tr>
+            <tr><td><b>Nigeria</b></td><td>5,789.53</td><td>31,751.28</td><td>80,966.67</td><td>87,755.56</td><td>126,821.37</td><td>148,469.66</td><td>90,907.26</td><td>65,732.91</td></tr>
         </tbody>
     </table>
 
-    <!-- August vs July Revenue Growth (%) Summary -->
     <h2>Revenue Growth Summary (August vs July)</h2>
     <table>
         <thead>
@@ -699,7 +709,6 @@ li { margin-bottom: 6px; }
         </tbody>
     </table>
 
-    <!-- Key Events Impacting Performance -->
     <h2>Key Events Impacting Performance</h2>
     <div class="events-grid">
         <div class="event-card">
@@ -719,7 +728,6 @@ li { margin-bottom: 6px; }
         </div>
     </div>
 
-    <!-- Performance Heatmap -->
     <h2>Performance Heatmap</h2>
     <table>
         <tr><th>Country</th><th>Txn</th><th>Vol</th><th>Rev</th></tr>
@@ -729,16 +737,35 @@ li { margin-bottom: 6px; }
         <tr><td><b>Tanzania</b></td><td>🔴</td><td>🔴</td><td>🔴</td></tr>
     </table>
 
-    <!-- Leadership Scoreboard -->
+    <!-- REDESIGNED ELITE LEADERSHIP SCOREBOARD -->
     <h2>Leadership Scoreboard</h2>
     <div class="scoreboard-grid">
-        <div class="scoreboard-item"><div class="trophy">🏆</div><h5>Transaction Leader</h5><div class="leader-val">Kenya</div></div>
-        <div class="scoreboard-item"><div class="trophy">🏆</div><h5>Volume Leader</h5><div class="leader-val">Nigeria</div></div>
-        <div class="scoreboard-item"><div class="trophy">🏆</div><h5>Revenue Leader</h5><div class="leader-val">Kenya</div></div>
-        <div class="scoreboard-item"><div class="trophy">🏆</div><h5>Fastest Growth</h5><div class="leader-val">Uganda</div></div>
+        <div class="scoreboard-item sb-transactions">
+            <div class="sb-icon-badge">📊</div>
+            <h5>Transaction Leader</h5>
+            <div class="leader-val">🇰🇪 Kenya</div>
+            <div class="sb-subtext">50% of total txns</div>
+        </div>
+        <div class="scoreboard-item sb-volume">
+            <div class="sb-icon-badge">💰</div>
+            <h5>Volume Leader</h5>
+            <div class="leader-val">🇰🇪 Kenya</div>
+            <div class="sb-subtext">82.9M XOF (67.3%)</div>
+        </div>
+        <div class="scoreboard-item sb-revenue">
+            <div class="sb-icon-badge">💎</div>
+            <h5>Revenue Leader</h5>
+            <div class="leader-val">🇰🇪 Kenya</div>
+            <div class="sb-subtext">Highest yield generation</div>
+        </div>
+        <div class="scoreboard-item sb-growth">
+            <div class="sb-icon-badge">🚀</div>
+            <h5>Fastest Growth</h5>
+            <div class="leader-val">🇺🇬 Uganda</div>
+            <div class="sb-subtext">+122.3% MoM growth</div>
+        </div>
     </div>
 
-    <!-- YTD Charts -->
     <h2>YTD Market Leadership & Performance Trends</h2>
     <div class="market-leadership-grid">
         <div class="chart-container" style="height: 260px;">
@@ -767,13 +794,12 @@ li { margin-bottom: 6px; }
         </div>
     </div>
 
-    <!-- Country Insight Cards -->
     <h2>Country Insights & Strategic Focus</h2>
     <div class="country-cards-grid">
         <div class="country-card">
             <h4>🇰🇪 Kenya</h4>
-            <div class="country-badge-title">Transaction & Revenue Market</div>
-            <ul><li><b>50%</b> of all transactions</li><li><b>Highest</b> revenue generation</li></ul>
+            <div class="country-badge-title">Transaction, Volume & Revenue Market</div>
+            <ul><li><b>50%</b> of all transactions</li><li><b>67.3%</b> of total XOF volume</li><li><b>Highest</b> revenue generation</li></ul>
             <div class="focus-area"><b>Opportunity:</b><br>Improve yield</div>
         </div>
         <div class="country-card">
@@ -784,19 +810,18 @@ li { margin-bottom: 6px; }
         </div>
         <div class="country-card">
             <h4>🇳🇬 Nigeria</h4>
-            <div class="country-badge-title">Volume Market</div>
-            <ul><li>Largest volume market</li></ul>
+            <div class="country-badge-title">Secondary Volume Market</div>
+            <ul><li>15.6% of XOF volume</li></ul>
             <div class="focus-area"><b>Opportunity:</b><br>Recovery</div>
         </div>
         <div class="country-card">
             <h4>🇹🇿 Tanzania</h4>
             <div class="country-badge-title">Secondary Market</div>
-            <ul><li>Moderate revenue</li></ul>
+            <ul><li>12.9% of XOF volume</li></ul>
             <div class="focus-area"><b>Opportunity:</b><br>Restore transactions</div>
         </div>
     </div>
 
-    <!-- Q4 Priorities -->
     <h2>Management Priorities for Q4 2026</h2>
     <table>
         <tr><th>Priority</th><th>Status</th></tr>
@@ -834,9 +859,21 @@ function showContent() {
     document.getElementById('auth-container').style.display = 'none';
     document.getElementById('main-content').classList.remove('hidden');
     
+    updateDashboardTimestamp();
+
     if (typeof initCharts === 'function' && window.chartsInitialized !== true) {
         initCharts();
         window.chartsInitialized = true;
+    }
+}
+
+function updateDashboardTimestamp() {
+    const now = new Date();
+    const options = { day: '2-digit', month: 'short', year: 'numeric' };
+    const formattedDate = now.toLocaleDateString('en-GB', options);
+    const timestampEl = document.getElementById('dynamicTimestamp');
+    if (timestampEl) {
+        timestampEl.textContent = formattedDate;
     }
 }
 
@@ -905,7 +942,6 @@ let activeIsolatedCountry = null;
 let consolidatedVolumeChartInstance = null;
 
 function initCharts() {
-    // 1. Consolidated Volume Bar Chart
     const volCtx = document.getElementById('consolidatedVolumeChart').getContext('2d');
     consolidatedVolumeChartInstance = new Chart(volCtx, {
         type: 'bar',
@@ -933,7 +969,6 @@ function initCharts() {
         }
     });
 
-    // 2. Transactions Share (Doughnut)
     const txShareCtx = document.getElementById('transactionsChart').getContext('2d');
     new Chart(txShareCtx, {
         type: 'doughnut',
@@ -953,13 +988,12 @@ function initCharts() {
         }
     });
 
-    // 3. Volumes Share (Doughnut)
     const volShareCtx = document.getElementById('volumesChart').getContext('2d');
     new Chart(volShareCtx, {
         type: 'doughnut',
         data: {
             labels: ['Kenya', 'Other Markets'],
-            datasets: [{ data: [62, 38], backgroundColor: ['#2563eb', '#334155'], borderWidth: 0 }]
+            datasets: [{ data: [67, 33], backgroundColor: ['#2563eb', '#334155'], borderWidth: 0 }]
         },
         options: {
             ...smoothAnimation,
@@ -973,7 +1007,6 @@ function initCharts() {
         }
     });
 
-    // 4. Revenue Share (Doughnut)
     const revShareCtx = document.getElementById('revenueChart').getContext('2d');
     new Chart(revShareCtx, {
         type: 'doughnut',
@@ -993,7 +1026,6 @@ function initCharts() {
         }
     });
 
-    // 5. Consolidated Revenue Bar Chart
     const revCtx = document.getElementById('consolidatedRevenueChart').getContext('2d');
     new Chart(revCtx, {
         type: 'bar',
@@ -1021,7 +1053,6 @@ function initCharts() {
         }
     });
 
-    // 6. Consolidated Transactions Line Chart
     const txCtx = document.getElementById('consolidatedTransactionsChart').getContext('2d');
     new Chart(txCtx, {
         type: 'line',
@@ -1063,7 +1094,7 @@ function toggleIsolateCountry(countryName) {
         activeIsolatedCountry = countryName;
         rows.forEach(r => {
             if (r.id === `row-${countryName}`) r.classList.add('highlighted-row');
-            else r.classList.remove('highlighted-row');
+            else r.classList.remove('html-row', 'highlighted-row');
         });
         labelSpan.textContent = `(Isolating: ${countryName})`;
         consolidatedVolumeChartInstance.data.datasets.forEach(dataset => dataset.hidden = (dataset.label !== countryName));
