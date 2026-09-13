@@ -1,844 +1,650 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>MyTouchpoint EA & NG Command Center - August 2026</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-:root {
-    --primary: #002060;
-    --primary-light: #2563eb;
-    --accent: #1e3a8a;
-    --success: #059669;
-    --warning: #d97706;
-    --danger: #dc2626;
-    --bg-main: #0b0f19;
-    --bg-card: rgba(18, 24, 38, 0.7);
-    --text-main: #f1f5f9;
-    --text-muted: #94a3b8;
-    --border-color: rgba(255, 255, 255, 0.08);
-    --card-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.4);
-    --glow-color: rgba(37, 99, 235, 0.25);
-    --table-bg: rgba(15, 23, 42, 0.4);
-    --table-th: rgba(0, 32, 96, 0.9);
-    --table-td: rgba(255, 255, 255, 0.02);
-    --insight-bg: rgba(30, 41, 59, 0.5);
-    --chart-bg: rgba(15, 23, 42, 0.6);
-}
-
-[data-theme="light"] {
-    --primary: #002060;
-    --primary-light: #2563eb;
-    --accent: #1e3a8a;
-    --success: #059669;
-    --warning: #d97706;
-    --danger: #dc2626;
-    --bg-main: #f1f5f9;
-    --bg-card: rgba(255, 255, 255, 0.85);
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --border-color: rgba(0, 32, 96, 0.12);
-    --card-shadow: 0 20px 40px rgba(0, 32, 96, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    --glow-color: rgba(37, 99, 235, 0.15);
-    --table-bg: rgba(255, 255, 255, 0.7);
-    --table-th: #002060;
-    --table-td: #ffffff;
-    --insight-bg: rgba(248, 250, 252, 0.9);
-    --chart-bg: rgba(255, 255, 255, 0.9);
-}
-
-body{
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: var(--text-main);
-    background: var(--bg-main);
-    margin: 0;
-    padding: 40px 20px;
-    -webkit-font-smoothing: antialiased;
-    position: relative;
-    overflow-x: hidden;
-    transition: background 0.4s ease, color 0.4s ease;
-}
-
-body::before, body::after {
-    content: '';
-    position: fixed;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    filter: blur(140px);
-    z-index: -1;
-    animation: floatOrb 15s infinite alternate ease-in-out;
-    opacity: 0.5;
-    pointer-events: none;
-}
-
-body::before {
-    top: -100px;
-    left: -100px;
-    background: radial-gradient(circle, rgba(37,99,235,0.6) 0%, rgba(30,58,138,0.2) 70%);
-}
-
-body::after {
-    bottom: -100px;
-    right: -100px;
-    background: radial-gradient(circle, rgba(13,148,136,0.6) 0%, rgba(0,32,96,0.2) 70%);
-    animation-delay: -7s;
-}
-
-@keyframes floatOrb {
-    0% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(80px, 60px) scale(1.2); }
-    100% { transform: translate(-40px, 100px) scale(0.9); }
-}
-
-.top-controls {
-    position: fixed;
-    top: 25px;
-    right: 30px;
-    display: flex;
-    gap: 12px;
-    z-index: 1000;
-}
-
-.control-btn {
-    background: var(--bg-card);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
-    padding: 10px 18px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 13px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 15px var(--glow-color);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.control-btn:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.3), 0 0 25px var(--glow-color);
-}
-
-.container{
-    max-width: 1200px;
-    margin: auto;
-    background: var(--bg-card);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    padding: 50px;
-    border-radius: 24px;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--card-shadow), 0 0 40px var(--glow-color);
-}
-
-.hero{
-    background: linear-gradient(135deg, rgba(0, 32, 96, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
-    color: white;
-    padding: 30px;
-    border-radius: 16px;
-    text-align: left;
-    box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 25px rgba(37, 99, 235, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 25px;
-}
-
-.hero-top-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.hero-text h1{
-    margin: 0 0 4px 0;
-    font-size: 24px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-}
-
-.hero-text p {
-    margin: 0;
-    color: #cbd5e1;
-    font-size: 13px;
-}
-
-.status-pill {
-    background: rgba(5, 150, 105, 0.2);
-    color: #34d399;
-    border: 1px solid rgba(52, 211, 153, 0.3);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.system-nav-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.system-nav-card {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%);
-    border: 1px solid rgba(37, 99, 235, 0.35);
-    border-radius: 16px;
-    padding: 22px 24px;
-    text-decoration: none;
-    color: var(--text-main);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(37, 99, 235, 0.1);
-    transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.system-nav-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary-light), #38bdf8, var(--primary-light));
-    background-size: 200% auto;
-    animation: shineBorder 4s linear infinite;
-}
-
-@keyframes shineBorder {
-    0% { background-position: 0% center; }
-    100% { background-position: 200% center; }
-}
-
-.system-nav-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary-light);
-    box-shadow: 0 20px 35px -5px rgba(37, 99, 235, 0.25), 0 0 25px rgba(56, 189, 248, 0.3);
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
-}
-
-.system-nav-card .nav-header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.system-nav-card .nav-badge {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--primary-light);
-    letter-spacing: 0.5px;
-}
-
-.system-nav-card .action-pill {
-    background: rgba(37, 99, 235, 0.15);
-    color: #60a5fa;
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: all 0.3s ease;
-}
-
-.system-nav-card:hover .action-pill {
-    background: var(--primary-light);
-    color: #ffffff;
-    transform: translateX(2px);
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-}
-
-.system-nav-card h4 {
-    margin: 4px 0 0 0;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: -0.3px;
-}
-
-.system-nav-card p {
-    margin: 0;
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.4;
-}
-
-.executive-banner {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%);
-    border: 1px solid var(--border-color);
-    border-left: 5px solid var(--primary-light);
-    padding: 20px 24px;
-    border-radius: 14px;
-    margin-bottom: 30px;
-}
-
-.executive-banner h3 {
-    margin: 0 0 12px 0;
-    font-size: 15px;
-    color: #ffffff;
-    text-transform: uppercase;
-}
-
-.executive-banner-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-}
-
-.executive-banner-item {
-    font-size: 13px;
-    color: var(--text-main);
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-}
-
-h2{
-    color: var(--text-main);
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 12px;
-    margin-top: 45px;
-    font-size: 22px;
-    font-weight: 700;
-}
-
-.card-row{
-    display: flex;
-    gap: 20px;
-    margin: 30px 0;
-}
-
-.card{
-    flex: 1;
-    padding: 22px 18px;
-    border-radius: 18px;
-    text-align: center;
-    color: white;
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    transition: transform 0.3s ease;
-}
-
-.card:hover { transform: translateY(-5px); }
-
-.blue{background: linear-gradient(135deg, rgba(29, 78, 216, 0.9) 0%, rgba(30, 64, 175, 0.95) 100%);}
-.green{background: linear-gradient(135deg, rgba(5, 150, 105, 0.9) 0%, rgba(4, 120, 87, 0.95) 100%);}
-.orange{background: linear-gradient(135deg, rgba(217, 119, 6, 0.9) 0%, rgba(180, 83, 9, 0.95) 100%);}
-.purple{background: linear-gradient(135deg, rgba(124, 58, 237, 0.9) 0%, rgba(91, 33, 182, 0.95) 100%);}
-
-.card h3 { color: rgba(255,255,255,0.9); font-size: 13px; text-transform: uppercase; margin: 0 0 6px 0; }
-.card h2 { color: #ffffff; font-size: 26px; border: none; padding: 0; margin: 0 0 4px 0; }
-.card p { margin: 0; opacity: 0.85; font-size: 12px; }
-.card .trend { margin-top: 8px; font-size: 11px; font-weight: 600; background: rgba(0,0,0,0.2); padding: 3px 8px; border-radius: 10px; display: inline-block; }
-
-.events-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin: 24px 0;
-}
-
-.event-card {
-    background: var(--insight-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 20px;
-}
-
-.event-card h4 {
-    margin: 0 0 4px 0;
-    color: var(--warning);
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.event-card .event-meta {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 12px;
-}
-
-.event-card p { margin: 0; font-size: 13.5px; line-height: 1.5; }
-
-.country-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin: 24px 0;
-}
-
-.country-card {
-    background: var(--chart-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 22px;
-}
-
-.country-card h4 { margin: 0 0 4px 0; font-size: 16px; }
-.country-card .country-badge-title { font-size: 12px; color: var(--primary-light); font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
-.country-card ul { margin: 8px 0; padding-left: 18px; font-size: 13.5px; }
-.country-card .focus-area { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-color); font-size: 13px; }
-
-.scoreboard-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-    margin: 24px 0;
-}
-
-.scoreboard-item {
-    border-radius: 16px;
-    padding: 22px 16px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(16px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.scoreboard-item:hover {
-    transform: translateY(-4px);
-}
-
-.scoreboard-item.sb-transactions {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%);
-    border: 1px solid rgba(37, 99, 235, 0.45);
-    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.15);
-}
-
-.scoreboard-item.sb-volume {
-    background: linear-gradient(135deg, rgba(5, 150, 105, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%);
-    border: 1px solid rgba(5, 150, 105, 0.45);
-    box-shadow: 0 10px 25px rgba(5, 150, 105, 0.15);
-}
-
-.scoreboard-item.sb-revenue {
-    background: linear-gradient(135deg, rgba(217, 119, 6, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%);
-    border: 1px solid rgba(217, 119, 6, 0.45);
-    box-shadow: 0 10px 25px rgba(217, 119, 6, 0.15);
-}
-
-.scoreboard-item.sb-growth {
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%);
-    border: 1px solid rgba(124, 58, 237, 0.45);
-    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.15);
-}
-
-.scoreboard-item .sb-icon-badge {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    margin: 0 auto 10px auto;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-.sb-transactions .sb-icon-badge { background: rgba(37, 99, 235, 0.3); border: 1px solid rgba(37, 99, 235, 0.6); }
-.sb-volume .sb-icon-badge { background: rgba(5, 150, 105, 0.3); border: 1px solid rgba(5, 150, 105, 0.6); }
-.sb-revenue .sb-icon-badge { background: rgba(217, 119, 6, 0.3); border: 1px solid rgba(217, 119, 6, 0.6); }
-.sb-growth .sb-icon-badge { background: rgba(124, 58, 237, 0.3); border: 1px solid rgba(124, 58, 237, 0.6); }
-
-.scoreboard-item h5 {
-    margin: 0 0 6px 0;
-    font-size: 11px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    font-weight: 700;
-}
-
-.scoreboard-item .leader-val {
-    font-size: 16px;
-    font-weight: 800;
-    color: var(--text-main);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-
-.scoreboard-item .sb-subtext {
-    font-size: 11px;
-    margin-top: 4px;
-    opacity: 0.8;
-    font-weight: 500;
-}
-
-table{
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin: 24px 0 35px 0;
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-    background: var(--table-bg);
-}
-
-th{
-    background: var(--table-th);
-    color: white;
-    padding: 16px;
-    font-weight: 600;
-    font-size: 13px;
-    text-transform: uppercase;
-}
-
-td{
-    border-bottom: 1px solid var(--border-color);
-    border-right: 1px solid var(--border-color);
-    padding: 16px;
-    text-align: center;
-    font-size: 14px;
-    background: var(--table-td);
-}
-
-td:last-child { border-right: none; }
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: rgba(37, 99, 235, 0.06); }
-
-tbody tr { cursor: pointer; transition: background 0.2s ease; }
-tbody tr.highlighted-row { background: rgba(37, 99, 235, 0.2) !important; box-shadow: inset 4px 0 0 var(--primary-light); }
-
-.interactive-hint {
-    font-size: 12px;
-    color: var(--primary-light);
-    margin: -16px 0 20px 0;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.positive{ color: var(--success); font-weight: 700; }
-.negative{ color: var(--danger); font-weight: 700; }
-
-.chart-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin: 24px 0; }
-.market-leadership-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 20px 0; }
-
-.chart-container{
-    background: var(--chart-bg);
-    border: 1px solid var(--border-color);
-    padding: 24px;
-    border-radius: 18px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    height: 420px;
-    display: flex;
-    flex-direction: column;
-}
-
-.chart-container h4{ margin: 0 0 12px 0; font-size: 15px; font-weight: 700; }
-.canvas-wrapper { position: relative; flex: 1; width: 100%; height: 100%; }
-
-.footer{
-    margin-top: 50px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border-color);
-    font-size: 13px;
-    color: var(--text-muted);
-    text-align: center;
-}
-
-.hidden { display: none !important; }
-
-@media (max-width: 900px) {
-    .market-leadership-grid, .events-grid, .scoreboard-grid, .country-cards-grid, .executive-banner-grid, .system-nav-grid {
-        grid-template-columns: 1fr;
-    }
-    .card-row { flex-direction: column; }
-    .hero-top-row { flex-direction: column; align-items: flex-start; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyTouchpoint EA & Nigeria Command Center</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #030712; color: #f3f4f6; }
+        .hidden { display: none !important; }
+        .glass-panel { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+
+        /* Title Gradient Effect */
+        .gradient-title {
+            background: linear-gradient(90deg, #ffffff 0%, #93c5fd 60%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Link Cards - With blue top wrap border highlight */
+        .glowing-link-card { 
+            background: rgba(15, 23, 42, 0.85); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-top: 2px solid #3b82f6;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .glowing-link-card .open-btn {
+            background: rgba(30, 41, 59, 0.8);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: none;
+            transition: all 0.3s ease;
+        }
+
+        .glowing-link-card:hover {
+            border-color: rgba(59, 130, 246, 0.7);
+            border-top: 2px solid #60a5fa;
+            box-shadow: 0 0 25px -4px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(59, 130, 246, 0.4);
+            transform: translateY(-3px);
+        }
+        .glowing-link-card:hover .open-btn {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: rgba(96, 165, 250, 0.8);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+        }
+
+        .highlighted-row { background-color: rgba(37, 99, 235, 0.15) !important; border-left: 4px solid #2563eb; }
+        
+        [data-theme="light"] {
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+        [data-theme="light"] .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        [data-theme="light"] .gradient-title {
+            background: linear-gradient(90deg, #0f172a 0%, #1e3a8a 70%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        [data-theme="light"] .glowing-link-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(203, 213, 225, 0.8);
+            border-top: 2px solid #2563eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        [data-theme="light"] .glowing-link-card:hover {
+            border-color: rgba(37, 99, 235, 0.8);
+            border-top: 2px solid #1d4ed8;
+            box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.25);
+        }
+        [data-theme="light"] .glowing-link-card .open-btn {
+            background: #f1f5f9;
+            color: #64748b;
+            border-color: #cbd5e1;
+        }
+        [data-theme="light"] .glowing-link-card:hover .open-btn {
+            background: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
+        }
+        [data-theme="light"] .text-slate-400 {
+            color: #64748b !important;
+        }
+        [data-theme="light"] .text-slate-200,
+        [data-theme="light"] .text-white {
+            color: #0f172a !important;
+        }
+        [data-theme="light"] input, [data-theme="light"] select {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border-color: #cbd5e1 !important;
+        }
+        [data-theme="light"] .bg-slate-900\/40 {
+            background-color: rgba(241, 245, 249, 0.8) !important;
+            border-color: #cbd5e1 !important;
+        }
+    </style>
 </head>
- 
-<body>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white p-6">
 
-<!-- AUTHENTICATION GATE -->
-<div id="auth-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main, #0b0f19); display: flex; justify-content: center; align-items: center; z-index: 99999;">
-    <div style="background: var(--bg-card, rgba(18, 24, 38, 0.95)); backdrop-filter: blur(24px); padding: 2.5rem; border-radius: 20px; border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08)); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5); text-align: center; max-width: 400px; width: 90%;">
-        <h2 style="color: var(--text-main, #f1f5f9); margin-top: 0; border: none; padding: 0;">Restricted Access</h2>
-        <p style="color: var(--text-muted, #94a3b8); font-size: 13px; margin-bottom: 20px;">Please enter the organization password to view this site.</p>
-        <form id="auth-form" onsubmit="handleLogin(event)">
-            <input type="password" id="password-input" placeholder="Password" required autocomplete="current-password" style="padding: 12px; font-size: 1rem; width: 80%; margin-bottom: 15px; border: 1px solid var(--border-color, rgba(255,255,255,0.2)); border-radius: 8px; background: rgba(0,0,0,0.2); color: #fff;">
-            <br>
-            <button type="submit" style="padding: 10px 24px; font-size: 1rem; background: var(--primary-light, #2563eb); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Enter</button>
-        </form>
-        <div id="error" style="color: var(--danger, #dc2626); margin-top: 12px; font-size: 0.9rem;"></div>
-    </div>
-</div>
-
-<!-- PROTECTED CONTENT WRAPPER -->
-<div id="main-content" class="hidden">
-
-<div class="top-controls">
-    <button class="control-btn" id="themeToggleBtn" onclick="toggleTheme()">
-        <span id="themeIcon">☀️</span> <span id="themeText">Light Mode</span>
-    </button>
-</div>
- 
-<div class="container">
- 
-<div class="hero">
-    <div class="hero-top-row">
-        <div class="hero-left">
-            <div class="hero-text">
-                <h1>MyTouchpoint EA & NG Command Center</h1>
-                <p>August 2026 Performance Review &nbsp;|&nbsp; Owner: John Odero &nbsp;|&nbsp; Last Updated: <span id="dynamicTimestamp">07 Sep 2026</span></p>
+    <!-- Auth Container -->
+    <div id="auth-container" class="fixed inset-0 flex items-center justify-center bg-[#030712] z-50">
+        <div class="glass-panel p-8 rounded-2xl w-full max-w-md shadow-2xl border border-slate-800">
+            <div class="text-center mb-6">
+                <span class="text-3xl">🔒</span>
+                <h2 class="text-xl font-bold mt-2 text-white">Executive Access Required</h2>
+                <p class="text-sm text-slate-400 mt-1">Please enter your password to view metrics.</p>
             </div>
-        </div>
-    </div>
-    
-    <div style="display: flex; align-items: center; justify-content: flex-start; z-index: 1;">
-        <span class="status-pill">🟢 Regional Health: Stable</span>
-    </div>
-</div>
-
-<!-- SYSTEM DIRECTORY NAVIGATION HUB -->
-<div class="system-nav-grid">
-    <a href="backlog.html" class="system-nav-card">
-        <div class="nav-header-row">
-            <span class="nav-badge">📋 Execution Page</span>
-            <span class="action-pill">Open ➔</span>
-        </div>
-        <h4>Backlog & Actions</h4>
-        <p>Prioritized engineering tickets, regional action tracking, and blockers.</p>
-    </a>
-    <a href="https://devwabaplatform.lafricamobile.com/login" class="system-nav-card">
-        <div class="nav-header-row">
-            <span class="nav-badge">💬 CRM Page</span>
-            <span class="action-pill">Open ➔</span>
-        </div>
-        <h4>LAM Customer Support CRM</h4>
-        <p>Customer support workflows, ticketing queues, and interaction metrics.</p>
-    </a>
-    <a href="crossborder-benchmark.html" class="system-nav-card">
-        <div class="nav-header-row">
-            <span class="nav-badge">💱 Analytical Report</span>
-            <span class="action-pill">Open ➔</span>
-        </div>
-        <h4>FX Benchmark Report</h4>
-        <p>Cross-border currency performance insights and corridor comparisons.</p>
-    </a>
-</div>
-
-<div class="executive-banner">
-    <h3>Executive Summary Insights</h3>
-    <div class="executive-banner-grid">
-        <div class="executive-banner-item"><span>🚀</span> <span><b>Uganda:</b> Fastest growth market</span></div>
-        <div class="executive-banner-item"><span>📈</span> <span><b>Kenya:</b> Largest transaction, volume & revenue market</span></div>
-        <div class="executive-banner-item"><span>💰</span> <span><b>Kenya:</b> Largest revenue market</span></div>
-        <div class="executive-banner-item"><span>⚠</span> <span><b>Nigeria:</b> Impacted by corridor shutdown</span></div>
-    </div>
-</div>
-
-<div id="performanceSection" class="section-content">
-    <div class="card-row">
-        <div class="card blue"><h3>Transactions</h3><h2>7,142</h2><p>Total YTD</p><div class="trend">▲ vs Previous Month</div></div>
-        <div class="card green"><h3>Volume (XOF)</h3><h2>123.3M XOF</h2><p>Total YTD</p><div class="trend">▲ vs Previous Month</div></div>
-        <div class="card orange"><h3>Revenue (XOF)</h3><h2>5.61M XOF</h2><p>Total YTD</p><div class="trend">▲ vs Previous Month</div></div>
-        <div class="card purple"><h3>Active Markets</h3><h2>4</h2><p>Corridors Monitored</p><div class="trend">▲ vs Previous Month</div></div>
-    </div>
-
-    <h2>Monthly Converted Volumes (in XOF)</h2>
-    <div class="interactive-hint">💡 Click any country row to isolate its trend across the consolidated charts, or click again to reset.</div>
-    <table>
-        <thead>
-            <tr><th>Country</th><th>Jan</th><th>Feb</th><th>March</th><th>April</th><th>May</th><th>June</th><th>July</th><th>Aug</th></tr>
-        </thead>
-        <tbody id="monthlyVolumeTableBody">
-            <tr id="row-Kenya" onclick="toggleIsolateCountry('Kenya')"><td><b>Kenya</b> (KES / 4.36)</td><td>6,338,555.22</td><td>9,259,938.89</td><td>8,500,000.00</td><td>9,016,831.08</td><td>10,806,372.76</td><td>12,571,863.81</td><td>6,272,042.78</td><td>13,612,499.34</td></tr>
-            <tr id="row-Tanzania" onclick="toggleIsolateCountry('Tanzania')"><td><b>Tanzania</b> (TZS / 4.66)</td><td>1,533,874.25</td><td>651,357.94</td><td>2,100,000.00</td><td>3,573,788.63</td><td>4,293,566.09</td><td>1,511,179.40</td><td>801,107.94</td><td>515,566.52</td></tr>
-            <tr id="row-Uganda" onclick="toggleIsolateCountry('Uganda')"><td><b>Uganda</b> (UGX / 6.69)</td><td>147,859.64</td><td>104,573.54</td><td>500,000.00</td><td>1,069,604.63</td><td>1,479,883.26</td><td>1,363,132.29</td><td>156,244.84</td><td>347,311.36</td></tr>
-            <tr id="row-Nigeria" onclick="toggleIsolateCountry('Nigeria')"><td><b>Nigeria</b> (NGN / 2.34)</td><td>171,176.07</td><td>938,936.75</td><td>1,500,000.00</td><td>2,595,012.82</td><td>3,750,288.46</td><td>4,390,464.96</td><td>2,688,262.39</td><td>1,943,815.81</td></tr>
-        </tbody>
-    </table>
-
-    <div class="chart-grid">
-        <div class="chart-container">
-            <h4>Consolidated Regional Volume (XOF Converted - Bar Chart) — 2026 <span id="chartHighlightLabel" style="font-size:12px; color:var(--primary-light); font-weight:normal;">(Showing All Markets)</span></h4>
-            <div class="canvas-wrapper"><canvas id="consolidatedVolumeChart"></canvas></div>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <input type="password" id="password-input" placeholder="Enter password..." required
+                        class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition">
+                </div>
+                <div id="error" class="text-red-400 text-xs text-center font-medium"></div>
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition shadow-lg shadow-blue-600/30">
+                    Authorize Dashboard
+                </button>
+            </form>
         </div>
     </div>
 
-    <h2>Monthly Converted Revenues (in XOF)</h2>
-    <table>
-        <thead>
-            <tr><th>Country</th><th>Jan</th><th>Feb</th><th>March</th><th>April</th><th>May</th><th>June</th><th>July</th><th>Aug</th></tr>
-        </thead>
-        <tbody>
-            <tr><td><b>Kenya</b></td><td>214,347.45</td><td>313,147.10</td><td>374,164.12</td><td>304,914.88</td><td>365,434.31</td><td>425,137.49</td><td>212,103.88</td><td>460,327.37</td></tr>
-            <tr><td><b>Tanzania</b></td><td>51,870.17</td><td>22,026.61</td><td>99,210.52</td><td>120,852.36</td><td>145,193.13</td><td>51,102.79</td><td>27,090.56</td><td>17,434.55</td></tr>
-            <tr><td><b>Uganda</b></td><td>5,000.15</td><td>5,424.22</td><td>16,488.19</td><td>36,170.25</td><td>50,054.41</td><td>46,096.26</td><td>5,283.71</td><td>11,744.84</td></tr>
-            <tr><td><b>Nigeria</b></td><td>5,789.53</td><td>31,751.28</td><td>80,966.67</td><td>87,755.56</td><td>126,821.37</td><td>148,469.66</td><td>90,907.26</td><td>65,732.91</td></tr>
-        </tbody>
-    </table>
+    <!-- Main Content Wrapper (Hidden Initially) -->
+    <div id="main-content" class="hidden max-w-7xl mx-auto space-y-6 flex-grow w-full">
+        
+        <!-- Main Dashboard Workspace -->
+        <main class="space-y-6 flex-grow">
+            
+            <!-- Secondary Card Component housing title, regional health, and integrated controls -->
+            <div class="glass-panel p-6 rounded-2xl space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="card-header-content flex items-center justify-between w-full">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight gradient-title">MyTouchpoint EA & Nigeria Command Center</h2>
+                            <p class="text-xs text-slate-400 mt-1">August 2026 Performance Review | Owner: John Odero | Last Updated: 13 Sept 2026</p>
+                        </div>
+                        <div class="header-controls flex items-center gap-3">
+                            <button onclick="toggleTheme()" class="badge-btn flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700 text-xs text-slate-300 transition cursor-pointer">
+                                <span id="themeIcon">☀️</span>
+                                <span id="themeText">Light Mode</span>
+                            </button>
+                            <div class="badge-btn flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-slate-700 text-xs text-slate-300 font-medium">
+                                📅 <span id="dynamicTimestamp">13 Sept 2026</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <h2>Revenue Growth Summary (August vs July)</h2>
-    <table>
-        <thead>
-            <tr><th>Country</th><th>July Revenue (XOF)</th><th>August Revenue (XOF)</th><th>Growth (%)</th></tr>
-        </thead>
-        <tbody>
-            <tr><td><b>Kenya</b></td><td>212,103.88</td><td>460,327.37</td><td><span class="positive">+117.0%</span></td></tr>
-            <tr><td><b>Uganda</b></td><td>5,283.71</td><td>11,744.84</td><td><span class="positive">+122.3%</span></td></tr>
-            <tr><td><b>Nigeria</b></td><td>90,907.26</td><td>65,732.91</td><td><span class="negative">-27.7%</span></td></tr>
-            <tr><td><b>Tanzania</b></td><td>27,090.56</td><td>17,434.55</td><td><span class="negative">-35.6%</span></td></tr>
-        </tbody>
-    </table>
+                <div class="flex justify-between items-center pt-2 border-t border-slate-800/60">
+                    <div class="text-xs text-slate-400">Regional Overview & Navigation Gateway</div>
+                    <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full text-emerald-400 text-xs font-medium">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>Regional Health: Stable</span>
+                    </div>
+                </div>
 
-    <h2>Key Events Impacting Performance</h2>
-    <div class="events-grid">
-        <div class="event-card">
-            <h4>⚠ Ebola Outbreak</h4>
-            <div class="event-meta">Uganda &nbsp;|&nbsp; June-August 2026</div>
-            <p><b>Impact:</b> Reduced customer activity across the market during the peak health alert phase.</p>
-        </div>
-        <div class="event-card">
-            <h4>⚠ Wave Deactivation</h4>
-            <div class="event-meta">All Markets &nbsp;|&nbsp; July-August 2026</div>
-            <p><b>Impact:</b> Reduced transaction throughput following broader network-level service restrictions.</p>
-        </div>
-        <div class="event-card">
-            <h4>⚠ Nigerian Corridor Shutdown</h4>
-            <div class="event-meta">Nigeria &nbsp;|&nbsp; Late August 2026</div>
-            <p><b>Impact:</b> Sharp decline in transactions, volume, and revenue due to sudden partner deactivation.</p>
-        </div>
+                <!-- Navigation Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
+                    <!-- Execution / Backlog Page Card -->
+                    <a href="backlog.html" class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center space-x-1">
+                                    <span>📋</span>
+                                    <span>EXECUTION PAGE</span>
+                                </span>
+                                <span class="open-btn text-xs font-bold px-3 py-1 rounded-lg flex items-center space-x-1">
+                                    <span>Open</span>
+                                    <span>→</span>
+                                </span>
+                            </div>
+                            <h3 class="text-base font-bold text-white mt-2">Backlog & Actions</h3>
+                            <p class="text-xs text-slate-400 mt-1">Prioritized engineering tickets, regional action tracking, and blockers.</p>
+                        </div>
+                    </a>
+
+                    <!-- CRM Page Card -->
+                    <a href="crm.html" class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center space-x-1">
+                                    <span>💬</span>
+                                    <span>CRM PAGE</span>
+                                </span>
+                                <span class="open-btn text-xs font-bold px-3 py-1 rounded-lg flex items-center space-x-1">
+                                    <span>Open</span>
+                                    <span>→</span>
+                                </span>
+                            </div>
+                            <h3 class="text-base font-bold text-white mt-2">LAM Customer Support CRM</h3>
+                            <p class="text-xs text-slate-400 mt-1">Customer support workflows, ticketing queues, and interaction metrics.</p>
+                        </div>
+                    </a>
+
+                    <!-- Analytical Report / FX Benchmarks Card -->
+                    <a href="crossborder-benchmark.html" class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center space-x-1">
+                                    <span>📊</span>
+                                    <span>ANALYTICAL REPORT</span>
+                                </span>
+                                <span class="open-btn text-xs font-bold px-3 py-1 rounded-lg flex items-center space-x-1">
+                                    <span>Open</span>
+                                    <span>→</span>
+                                </span>
+                            </div>
+                            <h3 class="text-base font-bold text-white mt-2">FX Benchmark Report</h3>
+                            <p class="text-xs text-slate-400 mt-1">Cross-border currency performance insights and corridor comparisons.</p>
+                        </div>
+                    </a>
+
+                    <!-- Corridor Status Card -->
+                    <div class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group opacity-75">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1">
+                                    <span>🚧</span>
+                                    <span>CORRIDOR STATUS</span>
+                                </span>
+                                <span class="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                    Coming Soon
+                                </span>
+                            </div>
+                            <h3 class="text-base font-bold text-white mt-2">Active Routing Monitor</h3>
+                            <p class="text-xs text-slate-400 mt-1">Real-time payment gateway health, multi-hop latency, and corridor availability tracking.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Global Filter Active Notification Banner -->
+            <div id="globalFilterBanner" class="hidden glass-panel p-4 rounded-2xl border-l-4 border-blue-500 flex justify-between items-center bg-blue-500/10">
+                <div class="flex items-center space-x-3">
+                    <span class="text-blue-400 text-lg">🔍</span>
+                    <div>
+                        <h4 class="text-sm font-bold text-white">Global Isolation Active: <span id="isolatedCountryNameDisplay" class="text-blue-400">Kenya</span></h4>
+                        <p class="text-xs text-slate-300">All dashboard sections, tables, metrics, and charts are currently filtered for this region.</p>
+                    </div>
+                </div>
+                <button onclick="toggleIsolateCountry(activeIsolatedCountry)" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer">
+                    Reset Global Filter ✕
+                </button>
+            </div>
+
+            <!-- Top Control Bar with Country Selector dropdown for quick top isolation -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center px-2 gap-3">
+                <h1 class="text-xl font-bold text-white tracking-wide">Overview Metrics</h1>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <select id="topCountrySelect" onchange="handleTopSelectIsolation(this.value)" class="px-3 py-2 bg-slate-900 border border-slate-700 text-white text-xs font-medium rounded-lg focus:outline-none focus:border-blue-500 transition cursor-pointer">
+                        <option value="">-- Isolate Market (All Markets) --</option>
+                        <option value="Kenya">🇰🇪 Kenya</option>
+                        <option value="Tanzania">🇹🇿 Tanzania</option>
+                        <option value="Uganda">🇺🇬 Uganda</option>
+                        <option value="Nigeria">🇳🇬 Nigeria</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Top Metric Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Card 1 -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">TOTAL GROSS VOLUME (YTD Jan - Aug)</span>
+                            <div class="p-2 bg-indigo-950/50 rounded-lg text-indigo-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                            </div>
+                        </div>
+                        <div id="metric-volume" class="text-3xl font-extrabold text-white mb-2">$65.8M</div>
+                    </div>
+                    <div id="metric-volume-sub" class="text-xs font-medium text-emerald-400">
+                        +14.2 vs Jan - Aug 2025
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">TOTAL NET REVENUE (YTD Jan - Aug)</span>
+                            <div class="p-2 bg-amber-950/50 rounded-lg text-amber-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                        </div>
+                        <div id="metric-revenue" class="text-3xl font-extrabold text-white mb-2">$2.45M</div>
+                    </div>
+                    <div id="metric-revenue-sub" class="text-xs font-medium text-emerald-400">
+                        +8.9 vs Jan - Aug 2025
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">PROCESSED TRANSACTIONS</span>
+                            <div class="p-2 bg-blue-950/50 rounded-lg text-blue-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            </div>
+                        </div>
+                        <div id="metric-transactions" class="text-3xl font-extrabold text-white mb-2">7,482</div>
+                    </div>
+                    <div id="metric-transactions-sub" class="text-xs font-medium text-emerald-400">
+                        <span class="text-emerald-400">+18.4</span> volume growth vs Jan - Aug 2025
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">ACTIVE MARKETS</span>
+                            <div class="p-2 bg-cyan-950/50 rounded-lg text-cyan-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                        </div>
+                        <div id="metric-markets" class="text-3xl font-extrabold text-white mb-2">4 Regions</div>
+                    </div>
+                    <div id="metric-markets-sub" class="text-xs font-medium text-gray-400">
+                        KE, TZ, UG, NG
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Events Impacting Performance -->
+            <div class="space-y-3">
+                <h2 class="text-base font-bold text-white">Key Events Impacting Performance</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="glass-panel p-5 rounded-2xl border-l-4 border-amber-500">
+                        <div class="flex items-center space-x-2 text-amber-400 font-semibold text-sm">
+                            <span>⚠️</span>
+                            <span>Ebola Outbreak</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Uganda | June-August 2026</p>
+                        <p class="text-xs text-slate-300 mt-3"><strong class="text-white">Impact:</strong> Reduced customer activity across the market during the peak health alert phase.</p>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl border-l-4 border-amber-500">
+                        <div class="flex items-center space-x-2 text-amber-400 font-semibold text-sm">
+                            <span>⚠️</span>
+                            <span>Wave Deactivation</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">All Markets | July-August 2026</p>
+                        <p class="text-xs text-slate-300 mt-3"><strong class="text-white">Impact:</strong> Reduced transaction throughput following broader network-level service restrictions.</p>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl border-l-4 border-amber-500">
+                        <div class="flex items-center space-x-2 text-amber-400 font-semibold text-sm">
+                            <span>⚠️</span>
+                            <span>Nigerian Corridor Shutdown</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Nigeria | Late August 2026</p>
+                        <p class="text-xs text-slate-300 mt-3"><strong class="text-white">Impact:</strong> Sharp decline in transactions, volume, and revenue due to sudden partner deactivation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leadership Scoreboard -->
+            <div class="space-y-3">
+                <h2 class="text-base font-bold text-white">Leadership Scoreboard</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="glass-panel p-5 rounded-2xl text-center flex flex-col items-center justify-center">
+                        <span class="p-2.5 bg-blue-500/10 text-blue-400 rounded-xl text-lg mb-2">📊</span>
+                        <p class="text-xs font-semibold text-blue-400 uppercase tracking-wider">YTD Transaction Leader</p>
+                        <h4 class="text-base font-bold text-white mt-1">🇰🇪 Kenya</h4>
+                        <p class="text-xs text-slate-400 mt-1">50% of total YTD txns</p>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl text-center flex flex-col items-center justify-center border border-emerald-500/30 bg-emerald-500/5">
+                        <span class="p-2.5 bg-emerald-500/10 text-emerald-400 rounded-xl text-lg mb-2">💰</span>
+                        <p class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">YTD Volume Leader</p>
+                        <h4 class="text-base font-bold text-white mt-1">🇰🇪 Kenya</h4>
+                        <p class="text-xs text-slate-400 mt-1">82.9M XOF YTD (67.3%)</p>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl text-center flex flex-col items-center justify-center">
+                        <span class="p-2.5 bg-amber-500/10 text-amber-400 rounded-xl text-lg mb-2">💎</span>
+                        <p class="text-xs font-semibold text-amber-400 uppercase tracking-wider">YTD Revenue Leader</p>
+                        <h4 class="text-base font-bold text-white mt-1">🇰🇪 Kenya</h4>
+                        <p class="text-xs text-slate-400 mt-1">Highest YTD yield generation</p>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl text-center flex flex-col items-center justify-center">
+                        <span class="p-2.5 bg-purple-500/10 text-purple-400 rounded-xl text-lg mb-2">🚀</span>
+                        <p class="text-xs font-semibold text-purple-400 uppercase tracking-wider">YTD Fastest Growth</p>
+                        <h4 class="text-base font-bold text-white mt-1">🇺🇬 Uganda</h4>
+                        <p class="text-xs text-slate-400 mt-1">+122.3% YTD MoM growth</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Analytics: Q4 Forecasting & MoM Variance Panel -->
+            <div class="glass-panel p-6 rounded-2xl">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
+                    <div>
+                        <h2 class="text-base font-bold text-white">Advanced Analytics: Q4 Forecasting & MoM Variance</h2>
+                        <p class="text-xs text-slate-400">Predictive trend extrapolation based on trailing growth velocity and seasonal models (Oct–Dec Forecast)</p>
+                    </div>
+                    <div class="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs px-3 py-1.5 rounded-lg font-medium">
+                        Projected Q4 Volume Growth: <span class="text-emerald-400 font-bold">+16.8%</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400">Oct Forecast (MoM Variance)</span>
+                        <div class="text-lg font-bold text-white mt-1">$28.4M <span class="text-xs text-emerald-400 font-medium">(+4.2% Est.)</span></div>
+                    </div>
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400">Nov Forecast (MoM Variance)</span>
+                        <div class="text-lg font-bold text-white mt-1">$30.1M <span class="text-xs text-emerald-400 font-medium">(+5.9% Est.)</span></div>
+                    </div>
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400">Dec Forecast (MoM Variance)</span>
+                        <div class="text-lg font-bold text-white mt-1">$33.5M <span class="text-xs text-emerald-400 font-medium">(+11.2% Est.)</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section 1: Consolidated Volume & Market Share Donuts -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Large Bar Chart -->
+                <div class="glass-panel p-6 rounded-2xl lg:col-span-2 flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-base font-bold text-white">Consolidated Monthly Gross Volume (YTD Up to Today)</h2>
+                            <p class="text-xs text-slate-400" id="chartHighlightLabel">(Jan–Sep: Actuals | Oct–Dec: Forecast Projections)</p>
+                        </div>
+                        <div class="text-xs text-slate-400">USD ($)</div>
+                    </div>
+                    <div class="relative flex-grow h-72">
+                        <canvas id="consolidatedVolumeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Market Share Doughnuts Card -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-base font-bold text-white">Market Dominance Share</h2>
+                        <p class="text-xs text-slate-400 mb-4">Full Regional Breakdown (% Share)</p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="relative h-28 text-center">
+                            <canvas id="transactionsChart"></canvas>
+                            <span class="block text-[10px] text-slate-400 mt-1">Tx Share %</span>
+                        </div>
+                        <div class="relative h-28 text-center">
+                            <canvas id="volumesChart"></canvas>
+                            <span class="block text-[10px] text-slate-400 mt-1">Vol Share %</span>
+                        </div>
+                        <div class="relative h-28 text-center">
+                            <canvas id="revenueChart"></canvas>
+                            <span class="block text-[10px] text-slate-400 mt-1">Rev Share %</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-800/80 text-xs text-slate-400 flex justify-between">
+                        <span>Primary Hub: <strong class="text-white">Kenya</strong></span>
+                        <span class="text-emerald-400 font-medium">Stable</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section 2: Revenue and Transaction Trends -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="glass-panel p-6 rounded-2xl flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-base font-bold text-white">Consolidated Monthly Gross Revenue (YTD Up to Today)</h2>
+                            <p class="text-xs text-slate-400">Breakdown by region stacked (Jan–Sep Actuals, Oct–Dec Forecast)</p>
+                        </div>
+                    </div>
+                    <div class="relative flex-grow h-64">
+                        <canvas id="consolidatedRevenueChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-base font-bold text-white">Transaction Volume Trends</h2>
+                            <p class="text-xs text-slate-400">Monthly progression across markets (Solid = Actual, Dashed = Forecast)</p>
+                        </div>
+                    </div>
+                    <div class="relative flex-grow h-64">
+                        <canvas id="consolidatedTransactionsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regional Breakdown Interactive Table -->
+            <div class="glass-panel p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 class="text-base font-bold text-white">Regional Breakdown Matrix (Gross YTD Up to Today)</h2>
+                        <p class="text-xs text-slate-400">Click any market row or use the bottom action buttons to globally isolate all charts and metrics</p>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-xs text-slate-400 uppercase tracking-wider">
+                                <th class="py-3 px-4 font-semibold">Region / Country</th>
+                                <th class="py-3 px-4 font-semibold">YTD Volume (Gross)</th>
+                                <th class="py-3 px-4 font-semibold">YTD Revenue (Gross)</th>
+                                <th class="py-3 px-4 font-semibold">Total Transactions</th>
+                                <th class="py-3 px-4 font-semibold text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthlyVolumeTableBody" class="divide-y divide-slate-800/60 text-slate-300">
+                            <tr id="row-Kenya" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Kenya')">
+                                <td class="py-3 px-4 font-medium text-white flex items-center space-x-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
+                                    <span>Kenya</span>
+                                </td>
+                                <td class="py-3 px-4">$66,486,001.98</td>
+                                <td class="py-3 px-4">$2,477,732.31</td>
+                                <td class="py-3 px-4">5,100</td>
+                                <td class="py-3 px-4 text-right">
+                                    <button onclick="event.stopPropagation(); toggleIsolateCountry('Kenya');" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Kenya">Isolate View</button>
+                                </td>
+                            </tr>
+                            <tr id="row-Tanzania" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Tanzania')">
+                                <td class="py-3 px-4 font-medium text-white flex items-center space-x-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-purple-600 inline-block"></span>
+                                    <span>Tanzania</span>
+                                </td>
+                                <td class="py-3 px-4">$15,142,399.10</td>
+                                <td class="py-3 px-4">$603,851.35</td>
+                                <td class="py-3 px-4">1,160</td>
+                                <td class="py-3 px-4 text-right">
+                                    <button onclick="event.stopPropagation(); toggleIsolateCountry('Tanzania');" class="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Tanzania">Isolate View</button>
+                                </td>
+                            </tr>
+                            <tr id="row-Uganda" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Uganda')">
+                                <td class="py-3 px-4 font-medium text-white flex items-center space-x-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>
+                                    <span>Uganda</span>
+                                </td>
+                                <td class="py-3 px-4">$4,598,349.46</td>
+                                <td class="py-3 px-4">$222,467.43</td>
+                                <td class="py-3 px-4">778</td>
+                                <td class="py-3 px-4 text-right">
+                                    <button onclick="event.stopPropagation(); toggleIsolateCountry('Uganda');" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Uganda">Isolate View</button>
+                                </td>
+                            </tr>
+                            <tr id="row-Nigeria" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Nigeria')">
+                                <td class="py-3 px-4 font-medium text-white flex items-center space-x-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-600 inline-block"></span>
+                                    <span>Nigeria</span>
+                                </td>
+                                <td class="py-3 px-4">$17,942,668.75</td>
+                                <td class="py-3 px-4">$699,573.90</td>
+                                <td class="py-3 px-4">2,640</td>
+                                <td class="py-3 px-4 text-right">
+                                    <button onclick="event.stopPropagation(); toggleIsolateCountry('Nigeria');" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Nigeria">Isolate View</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Country Insights & Strategic Focus -->
+            <div class="space-y-3">
+                <h2 class="text-base font-bold text-white">Country Insights & Strategic Focus</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-sm font-bold text-white">🇰🇪 Kenya</h4>
+                            <p class="text-xs text-blue-400 font-semibold mt-0.5">TRANSACTION, VOLUME & REVENUE MARKET</p>
+                            <ul class="text-xs text-slate-300 space-y-1 mt-3 list-disc list-inside">
+                                <li>50% of all transactions</li>
+                                <li>67.3% of total volume</li>
+                                <li>Highest revenue generation</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800 text-xs flex justify-between items-center">
+                            <div><span class="font-bold text-white">Opportunity:</span> <span class="text-slate-400">Improve yield</span></div>
+                            <button onclick="toggleIsolateCountry('Kenya')" class="text-blue-400 hover:underline font-semibold cursor-pointer">Isolate →</button>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-sm font-bold text-white">🇺🇬 Uganda</h4>
+                            <p class="text-xs text-blue-400 font-semibold mt-0.5">GROWTH MARKET</p>
+                            <ul class="text-xs text-slate-300 space-y-1 mt-3 list-disc list-inside">
+                                <li>Fastest growth</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800 text-xs flex justify-between items-center">
+                            <div><span class="font-bold text-white">Opportunity:</span> <span class="text-slate-400">Scale momentum</span></div>
+                            <button onclick="toggleIsolateCountry('Uganda')" class="text-emerald-400 hover:underline font-semibold cursor-pointer">Isolate →</button>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-sm font-bold text-white">🇳🇬 Nigeria</h4>
+                            <p class="text-xs text-blue-400 font-semibold mt-0.5">SECONDARY VOLUME MARKET</p>
+                            <ul class="text-xs text-slate-300 space-y-1 mt-3 list-disc list-inside">
+                                <li>15.6% of volume</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800 text-xs flex justify-between items-center">
+                            <div><span class="font-bold text-white">Opportunity:</span> <span class="text-slate-400">Recovery</span></div>
+                            <button onclick="toggleIsolateCountry('Nigeria')" class="text-amber-400 hover:underline font-semibold cursor-pointer">Isolate →</button>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-sm font-bold text-white">🇹🇿 Tanzania</h4>
+                            <p class="text-xs text-blue-400 font-semibold mt-0.5">SECONDARY MARKET</p>
+                            <ul class="text-xs text-slate-300 space-y-1 mt-3 list-disc list-inside">
+                                <li>12.9% of volume</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800 text-xs flex justify-between items-center">
+                            <div><span class="font-bold text-white">Opportunity:</span> <span class="text-slate-400">Restore transactions</span></div>
+                            <button onclick="toggleIsolateCountry('Tanzania')" class="text-purple-400 hover:underline font-semibold cursor-pointer">Isolate →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="glass-panel border-t border-slate-800/80 py-4 px-6 text-center text-xs text-slate-500 rounded-2xl">
+            Securely connected to Supabase Database • MyTouchpoint EA & Nigeria Command Center
+        </footer>
     </div>
-
-    <h2>Performance Heatmap</h2>
-    <table>
-        <tr><th>Country</th><th>Txn</th><th>Vol</th><th>Rev</th></tr>
-        <tr><td><b>Kenya</b></td><td>🟢</td><td>🟢</td><td>🟢</td></tr>
-        <tr><td><b>Uganda</b></td><td>🟢</td><td>🟢</td><td>🟢</td></tr>
-        <tr><td><b>Nigeria</b></td><td>🔴</td><td>🔴</td><td>🔴</td></tr>
-        <tr><td><b>Tanzania</b></td><td>🔴</td><td>🔴</td><td>🔴</td></tr>
-    </table>
-
-    <h2>Leadership Scoreboard</h2>
-    <div class="scoreboard-grid">
-        <div class="scoreboard-item sb-transactions">
-            <div class="sb-icon-badge">📊</div>
-            <h5>Transaction Leader</h5>
-            <div class="leader-val">🇰🇪 Kenya</div>
-            <div class="sb-subtext">50% of total txns</div>
-        </div>
-        <div class="scoreboard-item sb-volume">
-            <div class="sb-icon-badge">💰</div>
-            <h5>Volume Leader</h5>
-            <div class="leader-val">🇰🇪 Kenya</div>
-            <div class="sb-subtext">82.9M XOF (67.3%)</div>
-        </div>
-        <div class="scoreboard-item sb-revenue">
-            <div class="sb-icon-badge">💎</div>
-            <h5>Revenue Leader</h5>
-            <div class="leader-val">🇰🇪 Kenya</div>
-            <div class="sb-subtext">Highest yield generation</div>
-        </div>
-        <div class="scoreboard-item sb-growth">
-            <div class="sb-icon-badge">🚀</div>
-            <h5>Fastest Growth</h5>
-            <div class="leader-val">🇺🇬 Uganda</div>
-            <div class="sb-subtext">+122.3% MoM growth</div>
-        </div>
-    </div>
-
-    <h2>YTD Market Leadership & Performance Trends</h2>
-    <div class="market-leadership-grid">
-        <div class="chart-container" style="height: 260px;">
-            <h4>Transactions Share</h4>
-            <div class="canvas-wrapper"><canvas id="transactionsChart"></canvas></div>
-        </div>
-        <div class="chart-container" style="height: 260px;">
-            <h4>Volumes Share (XOF)</h4>
-            <div class="canvas-wrapper"><canvas id="volumesChart"></canvas></div>
-        </div>
-        <div class="chart-container" style="height: 260px;">
-            <h4>Revenue Share (XOF)</h4>
-            <div class="canvas-wrapper"><canvas id="revenueChart"></canvas></div>
-        </div>
-    </div>
-
-    <div class="chart-grid">
-        <div class="chart-container" style="max-width: 600px; margin: 0 auto;">
-            <h4>Consolidated Revenue Across All 4 Countries (XOF Converted - Bar Chart) — 2026</h4>
-            <div class="canvas-wrapper"><canvas id="consolidatedRevenueChart"></canvas></div>
-        </div>
-
-        <div class="chart-container">
-            <h4>Consolidated Transactions Across All 4 Countries (Line Chart) — 2026</h4>
-            <div class="canvas-wrapper"><canvas id="consolidatedTransactionsChart"></canvas></div>
-        </div>
-    </div>
-
-    <h2>Country Insights & Strategic Focus</h2>
-    <div class="country-cards-grid">
-        <div class="country-card">
-            <h4>🇰🇪 Kenya</h4>
-            <div class="country-badge-title">Transaction, Volume & Revenue Market</div>
-            <ul><li><b>50%</b> of all transactions</li><li><b>67.3%</b> of total XOF volume</li><li><b>Highest</b> revenue generation</li></ul>
-            <div class="focus-area"><b>Opportunity:</b><br>Improve yield</div>
-        </div>
-        <div class="country-card">
-            <h4>🇺🇬 Uganda</h4>
-            <div class="country-badge-title">Growth Market</div>
-            <ul><li>Fastest growth</li></ul>
-            <div class="focus-area"><b>Opportunity:</b><br>Scale momentum</div>
-        </div>
-        <div class="country-card">
-            <h4>🇳🇬 Nigeria</h4>
-            <div class="country-badge-title">Secondary Volume Market</div>
-            <ul><li>15.6% of XOF volume</li></ul>
-            <div class="focus-area"><b>Opportunity:</b><br>Recovery</div>
-        </div>
-        <div class="country-card">
-            <h4>🇹🇿 Tanzania</h4>
-            <div class="country-badge-title">Secondary Market</div>
-            <ul><li>12.9% of XOF volume</li></ul>
-            <div class="focus-area"><b>Opportunity:</b><br>Restore transactions</div>
-        </div>
-    </div>
-
-    <h2>Management Priorities for Q4 2026</h2>
-    <table>
-        <tr><th>Priority</th><th>Status</th></tr>
-        <tr><td><b>Improve Kenya Monetization</b></td><td>🟡</td></tr>
-        <tr><td><b>Scale Uganda Growth</b></td><td>🟢</td></tr>
-        <tr><td><b>Recover Nigeria Corridor</b></td><td>🔴</td></tr>
-        <tr><td><b>Restore Tanzania Activity</b></td><td>🟡</td></tr>
-    </table>
-</div>
- 
-<div class="footer">
-    Prepared by John Odero, Coordinator, East Africa Hub<br>
-    Confidential Internal Report
-</div>
- 
-</div>
-</div>
 
 <script>
 const CORRECT_PASSWORD = "secret123";
+
+// Initialize Supabase Client
+const SUPABASE_URL = 'https://vgphzwnqktmikpuqsonu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_tOM6F34nq3oitqSvPiDb3w_YpAd-Ydx';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function handleLogin(event) {
     event.preventDefault();
@@ -858,8 +664,8 @@ function showContent() {
     
     updateDashboardTimestamp();
 
-    if (typeof initCharts === 'function' && window.chartsInitialized !== true) {
-        initCharts();
+    if (window.chartsInitialized !== true) {
+        loadDashboardDataFromSupabase();
         window.chartsInitialized = true;
     }
 }
@@ -920,23 +726,102 @@ const eliteTooltip = {
     boxPadding: 8,
     usePointStyle: true,
     borderColor: 'rgba(255, 255, 255, 0.1)',
-    borderWidth: 1
+    borderWidth: 1,
+    callbacks: {
+        title: function(context) {
+            const month = context[0].label;
+            const isForecast = ['Oct', 'Nov', 'Dec'].includes(month);
+            return `${month} 2026 ${isForecast ? '(Forecast)' : '(Actual)'}`;
+        }
+    }
 };
 
 const smoothAnimation = {
     animation: { duration: 2000, easing: 'easeInOutQuart' }
 };
 
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
-const volumeDataOriginal = {
-    'Kenya': [6338555.22, 9259938.89, 8500000.00, 9016831.08, 10806372.76, 12571863.81, 6272042.78, 13612499.34],
-    'Tanzania': [1533874.25, 651357.94, 2100000.00, 3573788.63, 4293566.09, 1511179.40, 801107.94, 515566.52],
-    'Uganda': [147859.64, 104573.54, 500000.00, 1069604.63, 1479883.26, 1363132.29, 156244.84, 347311.36],
-    'Nigeria': [171176.07, 938936.75, 1500000.00, 2595012.82, 3750288.46, 4390464.96, 2688262.39, 1943815.81]
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const countries = ['Kenya', 'Tanzania', 'Uganda', 'Nigeria'];
+
+let volumeDataOriginal = {
+    'Kenya': [6338555.22, 9259938.89, 8500000.00, 9016831.08, 10806372.76, 12571863.81, 6272042.78, 13612499.34, 11500000.00, 12000000.00, 12500000.00, 14000000.00],
+    'Tanzania': [1533874.25, 651357.94, 2100000.00, 3573788.63, 4293566.09, 1511179.40, 801107.94, 515566.52, 1100000.00, 1200000.00, 1300000.00, 1500000.00],
+    'Uganda': [147859.64, 104573.54, 500000.00, 1069604.63, 1479883.26, 1363132.29, 156244.84, 347311.36, 400000.00, 450000.00, 500000.00, 600000.00],
+    'Nigeria': [171176.07, 938936.75, 1500000.00, 2595012.82, 3750288.46, 4390464.96, 2688262.39, 1943815.81, 2200000.00, 2400000.00, 2600000.00, 3000000.00]
 };
+
+const q4TrendProjectionData = [null, null, null, null, null, null, null, null, null, 16000000, 16900000, 19100000];
+
+let revenueDataOriginal = {
+    'Kenya': [214347.45, 313147.10, 374164.12, 304914.88, 365434.31, 425137.49, 212103.88, 460327.37, 390000, 410000, 430000, 480000],
+    'Tanzania': [51870.17, 22026.61, 99210.52, 120852.36, 145193.13, 51102.79, 27090.56, 17434.55, 45000, 48000, 52000, 60000],
+    'Uganda': [5000.15, 5424.22, 16488.19, 36170.25, 50054.41, 46096.26, 5283.71, 11744.84, 15000, 17000, 19000, 22000],
+    'Nigeria': [5789.53, 31751.28, 80966.67, 87755.56, 126821.37, 148469.66, 90907.26, 65732.91, 80000, 88000, 95000, 110000]
+};
+
+let transactionDataOriginal = {
+    'Kenya': [450, 620, 580, 610, 720, 850, 430, 910, 800, 850, 900, 1000],
+    'Tanzania': [120, 50, 160, 280, 340, 110, 60, 40, 90, 100, 110, 130],
+    'Uganda': [20, 15, 70, 150, 210, 190, 22, 50, 60, 70, 80, 95],
+    'Nigeria': [30, 140, 220, 390, 550, 640, 390, 280, 320, 350, 380, 450]
+};
+
+const countryAggregates = {
+    'Kenya': { volume: '$66.5M', revenue: '$2.48M', transactions: '5,100', volumeGrowth: '+14.2%', revenueGrowth: '+8.9%', txnGrowth: '+18.4%', marketsCount: '1 Region (Kenya)' },
+    'Tanzania': { volume: '$15.1M', revenue: '$603.9K', transactions: '1,160', volumeGrowth: '+6.5%', revenueGrowth: '+5.1%', txnGrowth: '+9.2%', marketsCount: '1 Region (Tanzania)' },
+    'Uganda': { volume: '$4.6M', revenue: '$222.5K', transactions: '778', volumeGrowth: '+122.3%', revenueGrowth: '+95.4%', txnGrowth: '+110.0%', marketsCount: '1 Region (Uganda)' },
+    'Nigeria': { volume: '$17.9M', revenue: '$699.6K', transactions: '2,640', volumeGrowth: '+11.1%', revenueGrowth: '+7.3%', txnGrowth: '+14.5%', marketsCount: '1 Region (Nigeria)' }
+};
+
+const defaultGlobalAggregates = { volume: '$65.8M', revenue: '$2.45M', transactions: '7,482', volumeGrowth: '+14.2%', revenueGrowth: '+8.9%', txnGrowth: '+18.4%', marketsCount: '4 Regions' };
 
 let activeIsolatedCountry = null;
 let consolidatedVolumeChartInstance = null;
+let consolidatedRevenueChartInstance = null;
+let consolidatedTransactionsChartInstance = null;
+let transactionsShareChartInstance = null;
+let volumesShareChartInstance = null;
+let revenueShareChartInstance = null;
+
+function getBarColorArray(solidHex, forecastRgba) {
+    return months.map((_, i) => i >= 9 ? forecastRgba : solidHex);
+}
+
+async function loadDashboardDataFromSupabase() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('regional_metrics')
+            .select('*')
+            .eq('year', 2026);
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+            countries.forEach(country => {
+                const countryRows = data.filter(r => r.country === country);
+                
+                volumeDataOriginal[country] = months.map(m => {
+                    const row = countryRows.find(r => r.metric_type === 'volume' && r.month === m);
+                    return row ? row.amount : volumeDataOriginal[country][months.indexOf(m)];
+                });
+
+                revenueDataOriginal[country] = months.map(m => {
+                    const row = countryRows.find(r => r.metric_type === 'revenue' && r.month === m);
+                    return row ? row.amount : revenueDataOriginal[country][months.indexOf(m)];
+                });
+
+                transactionDataOriginal[country] = months.map(m => {
+                    const row = countryRows.find(r => r.metric_type === 'transactions' && r.month === m);
+                    return row ? row.amount : transactionDataOriginal[country][months.indexOf(m)];
+                });
+            });
+        }
+    } catch (err) {
+        console.error('Error fetching from Supabase, using fallback local data:', err);
+    } finally {
+        initCharts();
+    }
+}
 
 function initCharts() {
     const volCtx = document.getElementById('consolidatedVolumeChart').getContext('2d');
@@ -945,10 +830,21 @@ function initCharts() {
         data: {
             labels: months,
             datasets: [
-                { label: 'Kenya', data: volumeDataOriginal['Kenya'], backgroundColor: '#2563eb', borderRadius: 4 },
-                { label: 'Tanzania', data: volumeDataOriginal['Tanzania'], backgroundColor: '#7c3aed', borderRadius: 4 },
-                { label: 'Uganda', data: volumeDataOriginal['Uganda'], backgroundColor: '#059669', borderRadius: 4 },
-                { label: 'Nigeria', data: volumeDataOriginal['Nigeria'], backgroundColor: '#d97706', borderRadius: 4 }
+                { label: 'Kenya', data: volumeDataOriginal['Kenya'], backgroundColor: getBarColorArray('#2563eb', 'rgba(37, 99, 235, 0.4)'), borderRadius: 4 },
+                { label: 'Tanzania', data: volumeDataOriginal['Tanzania'], backgroundColor: getBarColorArray('#7c3aed', 'rgba(124, 58, 237, 0.4)'), borderRadius: 4 },
+                { label: 'Uganda', data: volumeDataOriginal['Uganda'], backgroundColor: getBarColorArray('#059669', 'rgba(5, 150, 105, 0.4)'), borderRadius: 4 },
+                { label: 'Nigeria', data: volumeDataOriginal['Nigeria'], backgroundColor: getBarColorArray('#d97706', 'rgba(217, 119, 6, 0.4)'), borderRadius: 4 },
+                { 
+                    label: 'Q4 Predictive Trend', 
+                    data: q4TrendProjectionData, 
+                    type: 'line', 
+                    borderColor: '#38bdf8', 
+                    borderDash: [6, 6], 
+                    tension: 0.4, 
+                    fill: false,
+                    pointBackgroundColor: '#38bdf8',
+                    borderWidth: 2
+                }
             ]
         },
         options: {
@@ -956,7 +852,7 @@ function initCharts() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 12, weight: '600' }, color: '#94a3b8' } },
+                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '600' }, color: '#94a3b8' } },
                 tooltip: eliteTooltip
             },
             scales: {
@@ -966,73 +862,75 @@ function initCharts() {
         }
     });
 
+    const marketColors = ['#2563eb', '#d97706', '#7c3aed', '#059669'];
+
     const txShareCtx = document.getElementById('transactionsChart').getContext('2d');
-    new Chart(txShareCtx, {
+    transactionsShareChartInstance = new Chart(txShareCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Kenya', 'Other Markets'],
-            datasets: [{ data: [50, 50], backgroundColor: ['#2563eb', '#334155'], borderWidth: 0 }]
+            labels: ['Kenya (50.0%)', 'Nigeria (25.9%)', 'Tanzania (11.4%)', 'Uganda (12.7%)'],
+            datasets: [{ data: [50.0, 25.9, 11.4, 12.7], backgroundColor: marketColors, borderWidth: 0 }]
         },
         options: {
             ...smoothAnimation,
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '70%',
+            cutout: '65%',
             plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 8, usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '500' }, padding: 10, color: '#94a3b8' } },
+                legend: { position: 'bottom', labels: { boxWidth: 6, usePointStyle: true, pointStyle: 'circle', font: { size: 9, weight: '500' }, padding: 8, color: '#94a3b8' } },
                 tooltip: eliteTooltip
             }
         }
     });
 
     const volShareCtx = document.getElementById('volumesChart').getContext('2d');
-    new Chart(volShareCtx, {
+    volumesShareChartInstance = new Chart(volShareCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Kenya', 'Other Markets'],
-            datasets: [{ data: [67, 33], backgroundColor: ['#2563eb', '#334155'], borderWidth: 0 }]
+            labels: ['Kenya (67.3%)', 'Nigeria (15.6%)', 'Tanzania (12.9%)', 'Uganda (4.2%)'],
+            datasets: [{ data: [67.3, 15.6, 12.9, 4.2], backgroundColor: marketColors, borderWidth: 0 }]
         },
         options: {
             ...smoothAnimation,
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '70%',
+            cutout: '65%',
             plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 8, usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '500' }, padding: 10, color: '#94a3b8' } },
+                legend: { position: 'bottom', labels: { boxWidth: 6, usePointStyle: true, pointStyle: 'circle', font: { size: 9, weight: '500' }, padding: 8, color: '#94a3b8' } },
                 tooltip: eliteTooltip
             }
         }
     });
 
     const revShareCtx = document.getElementById('revenueChart').getContext('2d');
-    new Chart(revShareCtx, {
+    revenueShareChartInstance = new Chart(revShareCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Kenya', 'Other Markets'],
-            datasets: [{ data: [68, 32], backgroundColor: ['#2563eb', '#334155'], borderWidth: 0 }]
+            labels: ['Kenya (68.0%)', 'Nigeria (19.2%)', 'Tanzania (16.6%)', 'Uganda (6.1%)'],
+            datasets: [{ data: [68.0, 19.2, 16.6, 6.1], backgroundColor: marketColors, borderWidth: 0 }]
         },
         options: {
             ...smoothAnimation,
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '70%',
+            cutout: '65%',
             plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 8, usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '500' }, padding: 10, color: '#94a3b8' } },
+                legend: { position: 'bottom', labels: { boxWidth: 6, usePointStyle: true, pointStyle: 'circle', font: { size: 9, weight: '500' }, padding: 8, color: '#94a3b8' } },
                 tooltip: eliteTooltip
             }
         }
     });
 
     const revCtx = document.getElementById('consolidatedRevenueChart').getContext('2d');
-    new Chart(revCtx, {
+    consolidatedRevenueChartInstance = new Chart(revCtx, {
         type: 'bar',
         data: {
             labels: months,
             datasets: [
-                { label: 'Kenya', data: [214347.45, 313147.10, 374164.12, 304914.88, 365434.31, 425137.49, 212103.88, 460327.37], backgroundColor: '#2563eb', borderRadius: 4 },
-                { label: 'Tanzania', data: [51870.17, 22026.61, 99210.52, 120852.36, 145193.13, 51102.79, 27090.56, 17434.55], backgroundColor: '#7c3aed', borderRadius: 4 },
-                { label: 'Uganda', data: [5000.15, 5424.22, 16488.19, 36170.25, 50054.41, 46096.26, 5283.71, 11744.84], backgroundColor: '#059669', borderRadius: 4 },
-                { label: 'Nigeria', data: [5789.53, 31751.28, 80966.67, 87755.56, 126821.37, 148469.66, 90907.26, 65732.91], backgroundColor: '#d97706', borderRadius: 4 }
+                { label: 'Kenya', data: revenueDataOriginal['Kenya'], backgroundColor: getBarColorArray('#2563eb', 'rgba(37, 99, 235, 0.4)'), borderRadius: 4 },
+                { label: 'Tanzania', data: revenueDataOriginal['Tanzania'], backgroundColor: getBarColorArray('#7c3aed', 'rgba(124, 58, 237, 0.4)'), borderRadius: 4 },
+                { label: 'Uganda', data: revenueDataOriginal['Uganda'], backgroundColor: getBarColorArray('#059669', 'rgba(5, 150, 105, 0.4)'), borderRadius: 4 },
+                { label: 'Nigeria', data: revenueDataOriginal['Nigeria'], backgroundColor: getBarColorArray('#d97706', 'rgba(217, 119, 6, 0.4)'), borderRadius: 4 }
             ]
         },
         options: {
@@ -1040,7 +938,7 @@ function initCharts() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 12, weight: '600' }, color: '#94a3b8' } },
+                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '600' }, color: '#94a3b8' } },
                 tooltip: eliteTooltip
             },
             scales: {
@@ -1051,15 +949,47 @@ function initCharts() {
     });
 
     const txCtx = document.getElementById('consolidatedTransactionsChart').getContext('2d');
-    new Chart(txCtx, {
+    consolidatedTransactionsChartInstance = new Chart(txCtx, {
         type: 'line',
         data: {
             labels: months,
             datasets: [
-                { label: 'Kenya', data: [450, 620, 580, 610, 720, 850, 430, 910], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true, tension: 0.3 },
-                { label: 'Tanzania', data: [120, 50, 160, 280, 340, 110, 60, 40], borderColor: '#7c3aed', backgroundColor: 'rgba(124, 58, 237, 0.1)', fill: true, tension: 0.3 },
-                { label: 'Uganda', data: [20, 15, 70, 150, 210, 190, 22, 50], borderColor: '#059669', backgroundColor: 'rgba(5, 150, 105, 0.1)', fill: true, tension: 0.3 },
-                { label: 'Nigeria', data: [30, 140, 220, 390, 550, 640, 390, 280], borderColor: '#d97706', backgroundColor: 'rgba(217, 119, 6, 0.1)', fill: true, tension: 0.3 }
+                { 
+                    label: 'Kenya', 
+                    data: transactionDataOriginal['Kenya'], 
+                    borderColor: '#2563eb', 
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)', 
+                    fill: true, 
+                    tension: 0.3,
+                    segment: { borderDash: ctx => ctx.p0DataIndex >= 8 ? [4, 4] : undefined }
+                },
+                { 
+                    label: 'Tanzania', 
+                    data: transactionDataOriginal['Tanzania'], 
+                    borderColor: '#7c3aed', 
+                    backgroundColor: 'rgba(124, 58, 237, 0.1)', 
+                    fill: true, 
+                    tension: 0.3,
+                    segment: { borderDash: ctx => ctx.p0DataIndex >= 8 ? [4, 4] : undefined }
+                },
+                { 
+                    label: 'Uganda', 
+                    data: transactionDataOriginal['Uganda'], 
+                    borderColor: '#059669', 
+                    backgroundColor: 'rgba(5, 150, 105, 0.1)', 
+                    fill: true, 
+                    tension: 0.3,
+                    segment: { borderDash: ctx => ctx.p0DataIndex >= 8 ? [4, 4] : undefined }
+                },
+                { 
+                    label: 'Nigeria', 
+                    data: transactionDataOriginal['Nigeria'], 
+                    borderColor: '#d97706', 
+                    backgroundColor: 'rgba(217, 119, 6, 0.1)', 
+                    fill: true, 
+                    tension: 0.3,
+                    segment: { borderDash: ctx => ctx.p0DataIndex >= 8 ? [4, 4] : undefined }
+                }
             ]
         },
         options: {
@@ -1067,7 +997,7 @@ function initCharts() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 12, weight: '600' }, color: '#94a3b8' } },
+                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '600' }, color: '#94a3b8' } },
                 tooltip: eliteTooltip
             },
             scales: {
@@ -1078,25 +1008,125 @@ function initCharts() {
     });
 }
 
+function handleTopSelectIsolation(countryName) {
+    const topSelect = document.getElementById('topCountrySelect');
+    if (!countryName) {
+        if (topSelect) topSelect.value = "";
+        toggleIsolateCountry(null);
+    } else {
+        if (topSelect) topSelect.value = countryName;
+        toggleIsolateCountry(countryName);
+    }
+}
+
 function toggleIsolateCountry(countryName) {
     const rows = document.querySelectorAll('#monthlyVolumeTableBody tr');
     const labelSpan = document.getElementById('chartHighlightLabel');
+    const bannerEl = document.getElementById('globalFilterBanner');
+    const isolatedNameDisplay = document.getElementById('isolatedCountryNameDisplay');
+    const topSelect = document.getElementById('topCountrySelect');
     
-    if (activeIsolatedCountry === countryName) {
+    const mVolume = document.getElementById('metric-volume');
+    const mVolumeSub = document.getElementById('metric-volume-sub');
+    const mRevenue = document.getElementById('metric-revenue');
+    const mRevenueSub = document.getElementById('metric-revenue-sub');
+    const mTransactions = document.getElementById('metric-transactions');
+    const mTransactionsSub = document.getElementById('metric-transactions-sub');
+    const mMarkets = document.getElementById('metric-markets');
+    const mMarketsSub = document.getElementById('metric-markets-sub');
+    
+    if (activeIsolatedCountry === countryName || !countryName) {
         activeIsolatedCountry = null;
-        rows.forEach(r => r.classList.remove('highlighted-row'));
-        labelSpan.textContent = '(Showing All Markets)';
+        if (topSelect) topSelect.value = "";
+        
+        rows.forEach(r => {
+            r.classList.remove('highlighted-row');
+            const btn = r.querySelector('.isolate-btn-action');
+            if (btn) {
+                btn.textContent = 'Isolate View';
+                btn.classList.remove('bg-blue-800');
+            }
+        });
+        
+        bannerEl.classList.add('hidden');
+        labelSpan.textContent = '(Jan–Sep: Actuals | Oct–Dec: Forecast Projections)';
+        
         consolidatedVolumeChartInstance.data.datasets.forEach(dataset => dataset.hidden = false);
+        consolidatedVolumeChartInstance.update();
+
+        consolidatedRevenueChartInstance.data.datasets.forEach(dataset => dataset.hidden = false);
+        consolidatedRevenueChartInstance.update();
+
+        consolidatedTransactionsChartInstance.data.datasets.forEach(dataset => dataset.hidden = false);
+        consolidatedTransactionsChartInstance.update();
+
+        mVolume.textContent = defaultGlobalAggregates.volume;
+        mVolumeSub.textContent = `+14.2 vs Jan - Aug 2025`;
+        mRevenue.textContent = defaultGlobalAggregates.revenue;
+        mRevenueSub.textContent = `+8.9 vs Jan - Aug 2025`;
+        mTransactions.textContent = defaultGlobalAggregates.transactions;
+        mTransactionsSub.textContent = `+18.4 volume growth vs Jan - Aug 2025`;
+        mMarkets.textContent = `4 Regions`;
+        mMarketsSub.textContent = `KE, TZ, UG, NG`;
+
     } else {
         activeIsolatedCountry = countryName;
+        if (topSelect) topSelect.value = countryName;
+        
         rows.forEach(r => {
-            if (r.id === `row-${countryName}`) r.classList.add('highlighted-row');
-            else r.classList.remove('html-row', 'highlighted-row');
+            const btn = r.querySelector('.isolate-btn-action');
+            if (r.id === `row-${countryName}`) {
+                r.classList.add('highlighted-row');
+                if (btn) btn.textContent = 'Isolated ✓';
+            } else {
+                r.classList.remove('highlighted-row');
+                if (btn) btn.textContent = 'Isolate View';
+            }
         });
-        labelSpan.textContent = `(Isolating: ${countryName})`;
-        consolidatedVolumeChartInstance.data.datasets.forEach(dataset => dataset.hidden = (dataset.label !== countryName));
+        
+        bannerEl.classList.remove('hidden');
+        isolatedNameDisplay.textContent = countryName;
+        labelSpan.textContent = `(Global Isolate Active: ${countryName} - Jan–Sep Actuals & Oct–Dec Forecast)`;
+        
+        consolidatedVolumeChartInstance.data.datasets.forEach(dataset => {
+            if (dataset.label === countryName || dataset.label === 'Q4 Predictive Trend') {
+                dataset.hidden = false;
+            } else {
+                dataset.hidden = true;
+            }
+        });
+        consolidatedVolumeChartInstance.update();
+
+        consolidatedRevenueChartInstance.data.datasets.forEach(dataset => {
+            if (dataset.label === countryName) {
+                dataset.hidden = false;
+            } else {
+                dataset.hidden = true;
+            }
+        });
+        consolidatedRevenueChartInstance.update();
+
+        consolidatedTransactionsChartInstance.data.datasets.forEach(dataset => {
+            if (dataset.label === countryName) {
+                dataset.hidden = false;
+            } else {
+                dataset.hidden = true;
+            }
+        });
+        consolidatedTransactionsChartInstance.update();
+
+        const agg = countryAggregates[countryName];
+        if (agg) {
+            mVolume.textContent = agg.volume;
+            mVolumeSub.textContent = `${agg.volumeGrowth} YTD growth vs 2025`;
+            mRevenue.textContent = agg.revenue;
+            mRevenueSub.textContent = `${agg.revenueGrowth} YTD yield vs 2025`;
+            mTransactions.textContent = agg.transactions;
+            mTransactionsSub.textContent = `${agg.txnGrowth} txn volume vs 2025`;
+            mMarkets.textContent = agg.marketsCount;
+            mMarketsSub.textContent = `Isolated focus market`;
+        }
     }
-    consolidatedVolumeChartInstance.update();
 }
 </script>
 </body>
