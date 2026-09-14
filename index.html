@@ -58,14 +58,40 @@
 
         .highlighted-row { background-color: rgba(37, 99, 235, 0.15) !important; border-left: 4px solid #2563eb; }
         
+        /* Metric Growth CSS Rules */
+        .metric-growth {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #22e59c;
+        }
+        
+        .metric-growth .comparison {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .metric-growth.positive {
+            color: #22e59c;
+        }
+        
+        .metric-growth.negative {
+            color: #ef4444;
+        }
+        
+        /* --- PREMIUM LIGHT MODE OVERHAUL --- */
         [data-theme="light"] {
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
             color: #0f172a;
         }
         [data-theme="light"] .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
         }
         [data-theme="light"] .gradient-title {
             background: linear-gradient(90deg, #0f172a 0%, #1e3a8a 70%, #2563eb 100%);
@@ -73,19 +99,19 @@
             -webkit-text-fill-color: transparent;
         }
         [data-theme="light"] .glowing-link-card {
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid rgba(203, 213, 225, 0.8);
-            border-top: 2px solid #2563eb;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-top: 3px solid #2563eb;
+            box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.05);
         }
         [data-theme="light"] .glowing-link-card:hover {
-            border-color: rgba(37, 99, 235, 0.8);
-            border-top: 2px solid #1d4ed8;
-            box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.25);
+            border-color: #2563eb;
+            border-top: 3px solid #1d4ed8;
+            box-shadow: 0 20px 30px -10px rgba(37, 99, 235, 0.15);
         }
         [data-theme="light"] .glowing-link-card .open-btn {
-            background: #f1f5f9;
-            color: #64748b;
+            background: #f8fafc;
+            color: #475569;
             border-color: #cbd5e1;
         }
         [data-theme="light"] .glowing-link-card:hover .open-btn {
@@ -106,8 +132,16 @@
             border-color: #cbd5e1 !important;
         }
         [data-theme="light"] .bg-slate-900\/40 {
-            background-color: rgba(241, 245, 249, 0.8) !important;
-            border-color: #cbd5e1 !important;
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+        }
+        [data-theme="light"] .bg-gray-900 {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
+        }
+        [data-theme="light"] .metric-growth .comparison {
+            color: #64748b !important;
         }
     </style>
 </head>
@@ -146,7 +180,7 @@
                     <div class="card-header-content flex items-center justify-between w-full">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight gradient-title">MyTouchpoint EA & Nigeria Command Center</h2>
-                            <p class="text-xs text-slate-400 mt-1">August 2026 Performance Review | Owner: John Odero | Last Updated: 13 Sept 2026</p>
+                            <p class="text-xs text-slate-400 mt-1">September 2026 Performance Review | Owner: John Odero | Last Updated: 14 Sept 2026</p>
                         </div>
                         <div class="header-controls flex items-center gap-3">
                             <button onclick="toggleTheme()" class="badge-btn flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700 text-xs text-slate-300 transition cursor-pointer">
@@ -154,7 +188,7 @@
                                 <span id="themeText">Light Mode</span>
                             </button>
                             <div class="badge-btn flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-slate-700 text-xs text-slate-300 font-medium">
-                                📅 <span id="dynamicTimestamp">13 Sept 2026</span>
+                                📅 <span id="dynamicTimestamp">14 Sept 2026</span>
                             </div>
                         </div>
                     </div>
@@ -188,8 +222,8 @@
                         </div>
                     </a>
 
-                    <!-- CRM Page Card -->
-                    <a href="crm.html" class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group">
+                    <!-- CRM Page Card (Updated with external WhatsApp Business Platform URL) -->
+                    <a href="https://devwabaplatform.lafricamobile.com/home" target="_blank" rel="noopener noreferrer" class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group">
                         <div>
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center space-x-1">
@@ -277,15 +311,15 @@
                 <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">TOTAL GROSS VOLUME (YTD Jan - Aug)</span>
+                            <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">TOTAL GROSS VOLUME (YTD Jan - Sep)</span>
                             <div class="p-2 bg-indigo-950/50 rounded-lg text-indigo-400">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                             </div>
                         </div>
-                        <div id="metric-volume" class="text-3xl font-extrabold text-white mb-2">$65.8M</div>
+                        <div id="metric-volume" class="text-3xl font-extrabold text-white mb-2">$77.3M</div>
                     </div>
-                    <div id="metric-volume-sub" class="text-xs font-medium text-emerald-400">
-                        +14.2 vs Jan - Aug 2025
+                    <div id="metric-volume-sub" class="metric-growth positive">
+                        <span>+14.2%</span> <span class="comparison">vs Jan - Sep 2025</span>
                     </div>
                 </div>
 
@@ -293,15 +327,15 @@
                 <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">TOTAL NET REVENUE (YTD Jan - Aug)</span>
+                            <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">TOTAL NET REVENUE (YTD Jan - Sep)</span>
                             <div class="p-2 bg-amber-950/50 rounded-lg text-amber-400">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </div>
                         </div>
-                        <div id="metric-revenue" class="text-3xl font-extrabold text-white mb-2">$2.45M</div>
+                        <div id="metric-revenue" class="text-3xl font-extrabold text-white mb-2">$2.84M</div>
                     </div>
-                    <div id="metric-revenue-sub" class="text-xs font-medium text-emerald-400">
-                        +8.9 vs Jan - Aug 2025
+                    <div id="metric-revenue-sub" class="metric-growth positive">
+                        <span>+8.9%</span> <span class="comparison">vs Jan - Sep 2025</span>
                     </div>
                 </div>
 
@@ -314,10 +348,10 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                             </div>
                         </div>
-                        <div id="metric-transactions" class="text-3xl font-extrabold text-white mb-2">7,482</div>
+                        <div id="metric-transactions" class="text-3xl font-extrabold text-white mb-2">8,282</div>
                     </div>
-                    <div id="metric-transactions-sub" class="text-xs font-medium text-emerald-400">
-                        <span class="text-emerald-400">+18.4</span> volume growth vs Jan - Aug 2025
+                    <div id="metric-transactions-sub" class="metric-growth positive">
+                        <span>+18.4%</span> <span class="comparison">volume growth vs Jan - Sep 2025</span>
                     </div>
                 </div>
 
@@ -332,8 +366,8 @@
                         </div>
                         <div id="metric-markets" class="text-3xl font-extrabold text-white mb-2">4 Regions</div>
                     </div>
-                    <div id="metric-markets-sub" class="text-xs font-medium text-gray-400">
-                        KE, TZ, UG, NG
+                    <div id="metric-markets-sub" class="metric-growth" style="color: #9ca3af;">
+                        <span style="color: #93c5fd; font-weight: 600;">KE, TZ, UG, NG</span> <span class="comparison">Active corridors</span>
                     </div>
                 </div>
             </div>
@@ -522,9 +556,9 @@
                                     <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
                                     <span>Kenya</span>
                                 </td>
-                                <td class="py-3 px-4">$66,486,001.98</td>
-                                <td class="py-3 px-4">$2,477,732.31</td>
-                                <td class="py-3 px-4">5,100</td>
+                                <td class="py-3 px-4">$77,986,001.98</td>
+                                <td class="py-3 px-4">$2,867,732.31</td>
+                                <td class="py-3 px-4">5,900</td>
                                 <td class="py-3 px-4 text-right">
                                     <button onclick="event.stopPropagation(); toggleIsolateCountry('Kenya');" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Kenya">Isolate View</button>
                                 </td>
@@ -534,9 +568,9 @@
                                     <span class="w-2.5 h-2.5 rounded-full bg-purple-600 inline-block"></span>
                                     <span>Tanzania</span>
                                 </td>
-                                <td class="py-3 px-4">$15,142,399.10</td>
-                                <td class="py-3 px-4">$603,851.35</td>
-                                <td class="py-3 px-4">1,160</td>
+                                <td class="py-3 px-4">$16,242,399.10</td>
+                                <td class="py-3 px-4">$651,851.35</td>
+                                <td class="py-3 px-4">1,250</td>
                                 <td class="py-3 px-4 text-right">
                                     <button onclick="event.stopPropagation(); toggleIsolateCountry('Tanzania');" class="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Tanzania">Isolate View</button>
                                 </td>
@@ -546,9 +580,9 @@
                                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>
                                     <span>Uganda</span>
                                 </td>
-                                <td class="py-3 px-4">$4,598,349.46</td>
-                                <td class="py-3 px-4">$222,467.43</td>
-                                <td class="py-3 px-4">778</td>
+                                <td class="py-3 px-4">$4,998,349.46</td>
+                                <td class="py-3 px-4">$239,467.43</td>
+                                <td class="py-3 px-4">848</td>
                                 <td class="py-3 px-4 text-right">
                                     <button onclick="event.stopPropagation(); toggleIsolateCountry('Uganda');" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Uganda">Isolate View</button>
                                 </td>
@@ -558,9 +592,9 @@
                                     <span class="w-2.5 h-2.5 rounded-full bg-amber-600 inline-block"></span>
                                     <span>Nigeria</span>
                                 </td>
-                                <td class="py-3 px-4">$17,942,668.75</td>
-                                <td class="py-3 px-4">$699,573.90</td>
-                                <td class="py-3 px-4">2,640</td>
+                                <td class="py-3 px-4">$20,142,668.75</td>
+                                <td class="py-3 px-4">$779,573.90</td>
+                                <td class="py-3 px-4">2,960</td>
                                 <td class="py-3 px-4 text-right">
                                     <button onclick="event.stopPropagation(); toggleIsolateCountry('Nigeria');" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Nigeria">Isolate View</button>
                                 </td>
@@ -767,13 +801,33 @@ let transactionDataOriginal = {
 };
 
 const countryAggregates = {
-    'Kenya': { volume: '$66.5M', revenue: '$2.48M', transactions: '5,100', volumeGrowth: '+14.2%', revenueGrowth: '+8.9%', txnGrowth: '+18.4%', marketsCount: '1 Region (Kenya)' },
-    'Tanzania': { volume: '$15.1M', revenue: '$603.9K', transactions: '1,160', volumeGrowth: '+6.5%', revenueGrowth: '+5.1%', txnGrowth: '+9.2%', marketsCount: '1 Region (Tanzania)' },
-    'Uganda': { volume: '$4.6M', revenue: '$222.5K', transactions: '778', volumeGrowth: '+122.3%', revenueGrowth: '+95.4%', txnGrowth: '+110.0%', marketsCount: '1 Region (Uganda)' },
-    'Nigeria': { volume: '$17.9M', revenue: '$699.6K', transactions: '2,640', volumeGrowth: '+11.1%', revenueGrowth: '+7.3%', txnGrowth: '+14.5%', marketsCount: '1 Region (Nigeria)' }
+    'Kenya': { 
+        volume: '$78.0M', revenue: '$2.87M', transactions: '5,900', 
+        volumeGrowth: '+14.2%', revenueGrowth: '+8.9%', txnGrowth: '+18.4%', marketsCount: '1 Region (Kenya)',
+        volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive'
+    },
+    'Tanzania': { 
+        volume: '$16.2M', revenue: '$651.9K', transactions: '1,250', 
+        volumeGrowth: '+6.5%', revenueGrowth: '+5.1%', txnGrowth: '+9.2%', marketsCount: '1 Region (Tanzania)',
+        volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive'
+    },
+    'Uganda': { 
+        volume: '$5.0M', revenue: '$239.5K', transactions: '848', 
+        volumeGrowth: '+122.3%', revenueGrowth: '+95.4%', txnGrowth: '+110.0%', marketsCount: '1 Region (Uganda)',
+        volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive'
+    },
+    'Nigeria': { 
+        volume: '$20.1M', revenue: '$779.6K', transactions: '2,960', 
+        volumeGrowth: '+11.1%', revenueGrowth: '+7.3%', txnGrowth: '+14.5%', marketsCount: '1 Region (Nigeria)',
+        volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive'
+    }
 };
 
-const defaultGlobalAggregates = { volume: '$65.8M', revenue: '$2.45M', transactions: '7,482', volumeGrowth: '+14.2%', revenueGrowth: '+8.9%', txnGrowth: '+18.4%', marketsCount: '4 Regions' };
+const defaultGlobalAggregates = { 
+    volume: '$77.3M', revenue: '$2.84M', transactions: '8,282', 
+    volumeGrowth: '+14.2%', revenueGrowth: '+8.9%', txnGrowth: '+18.4%', marketsCount: '4 Regions',
+    volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive'
+};
 
 let activeIsolatedCountry = null;
 let consolidatedVolumeChartInstance = null;
@@ -782,10 +836,6 @@ let consolidatedTransactionsChartInstance = null;
 let transactionsShareChartInstance = null;
 let volumesShareChartInstance = null;
 let revenueShareChartInstance = null;
-
-function getBarColorArray(solidHex, forecastRgba) {
-    return months.map((_, i) => i >= 9 ? forecastRgba : solidHex);
-}
 
 async function loadDashboardDataFromSupabase() {
     try {
@@ -815,11 +865,43 @@ async function loadDashboardDataFromSupabase() {
                     return row ? row.amount : transactionDataOriginal[country][months.indexOf(m)];
                 });
             });
+            
+            computeAndRenderDynamicAggregates();
         }
     } catch (err) {
         console.error('Error fetching from Supabase, using fallback local data:', err);
     } finally {
         initCharts();
+    }
+}
+
+function computeAndRenderDynamicAggregates() {
+    let totalVol = 0;
+    let totalRev = 0;
+    let totalTxn = 0;
+
+    countries.forEach(c => {
+        const volSlice = volumeDataOriginal[c].slice(0, 9);
+        const revSlice = revenueDataOriginal[c].slice(0, 9);
+        const txnSlice = transactionDataOriginal[c].slice(0, 9);
+
+        totalVol += volSlice.reduce((a, b) => a + b, 0);
+        totalRev += revSlice.reduce((a, b) => a + b, 0);
+        totalTxn += txnSlice.reduce((a, b) => a + b, 0);
+    });
+
+    const formattedVol = '$' + (totalVol / 1000000).toFixed(1) + 'M';
+    const formattedRev = '$' + (totalRev / 1000000).toFixed(2) + 'M';
+    const formattedTxn = totalTxn.toLocaleString();
+
+    defaultGlobalAggregates.volume = formattedVol;
+    defaultGlobalAggregates.revenue = formattedRev;
+    defaultGlobalAggregates.transactions = formattedTxn;
+
+    if (!activeIsolatedCountry) {
+        document.getElementById('metric-volume').textContent = formattedVol;
+        document.getElementById('metric-revenue').textContent = formattedRev;
+        document.getElementById('metric-transactions').textContent = formattedTxn;
     }
 }
 
@@ -1008,6 +1090,10 @@ function initCharts() {
     });
 }
 
+function getBarColorArray(solidHex, forecastRgba) {
+    return months.map((_, i) => i >= 9 ? forecastRgba : solidHex);
+}
+
 function handleTopSelectIsolation(countryName) {
     const topSelect = document.getElementById('topCountrySelect');
     if (!countryName) {
@@ -1061,13 +1147,21 @@ function toggleIsolateCountry(countryName) {
         consolidatedTransactionsChartInstance.update();
 
         mVolume.textContent = defaultGlobalAggregates.volume;
-        mVolumeSub.textContent = `+14.2 vs Jan - Aug 2025`;
+        mVolumeSub.className = `metric-growth ${defaultGlobalAggregates.volGrowthClass}`;
+        mVolumeSub.innerHTML = `<span>${defaultGlobalAggregates.volumeGrowth}</span> <span class="comparison">vs Jan - Sep 2025</span>`;
+        
         mRevenue.textContent = defaultGlobalAggregates.revenue;
-        mRevenueSub.textContent = `+8.9 vs Jan - Aug 2025`;
+        mRevenueSub.className = `metric-growth ${defaultGlobalAggregates.revGrowthClass}`;
+        mRevenueSub.innerHTML = `<span>${defaultGlobalAggregates.revenueGrowth}</span> <span class="comparison">vs Jan - Sep 2025</span>`;
+        
         mTransactions.textContent = defaultGlobalAggregates.transactions;
-        mTransactionsSub.textContent = `+18.4 volume growth vs Jan - Aug 2025`;
+        mTransactionsSub.className = `metric-growth ${defaultGlobalAggregates.txnGrowthClass}`;
+        mTransactionsSub.innerHTML = `<span>${defaultGlobalAggregates.txnGrowth}</span> <span class="comparison">volume growth vs Jan - Sep 2025</span>`;
+        
         mMarkets.textContent = `4 Regions`;
-        mMarketsSub.textContent = `KE, TZ, UG, NG`;
+        mMarketsSub.className = `metric-growth`;
+        mMarketsSub.style.color = '#9ca3af';
+        mMarketsSub.innerHTML = `<span style="color: #93c5fd; font-weight: 600;">KE, TZ, UG, NG</span> <span class="comparison">Active corridors</span>`;
 
     } else {
         activeIsolatedCountry = countryName;
@@ -1118,13 +1212,21 @@ function toggleIsolateCountry(countryName) {
         const agg = countryAggregates[countryName];
         if (agg) {
             mVolume.textContent = agg.volume;
-            mVolumeSub.textContent = `${agg.volumeGrowth} YTD growth vs 2025`;
+            mVolumeSub.className = `metric-growth ${agg.volGrowthClass}`;
+            mVolumeSub.innerHTML = `<span>${agg.volumeGrowth}</span> <span class="comparison">YTD growth vs 2025</span>`;
+            
             mRevenue.textContent = agg.revenue;
-            mRevenueSub.textContent = `${agg.revenueGrowth} YTD yield vs 2025`;
+            mRevenueSub.className = `metric-growth ${agg.revGrowthClass}`;
+            mRevenueSub.innerHTML = `<span>${agg.revenueGrowth}</span> <span class="comparison">YTD yield vs 2025</span>`;
+            
             mTransactions.textContent = agg.transactions;
-            mTransactionsSub.textContent = `${agg.txnGrowth} txn volume vs 2025`;
+            mTransactionsSub.className = `metric-growth ${agg.txnGrowthClass}`;
+            mTransactionsSub.innerHTML = `<span>${agg.txnGrowth}</span> <span class="comparison">txn volume vs 2025</span>`;
+            
             mMarkets.textContent = agg.marketsCount;
-            mMarketsSub.textContent = `Isolated focus market`;
+            mMarketsSub.className = `metric-growth`;
+            mMarketsSub.style.color = '#9ca3af';
+            mMarketsSub.innerHTML = `<span style="color: #93c5fd; font-weight: 600;">Isolated market</span> <span class="comparison">Active focus</span>`;
         }
     }
 }
