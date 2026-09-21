@@ -75,13 +75,15 @@
             font-weight: 500;
         }
         
-        .metric-growth.positive {
-            color: #22e59c;
-        }
-        
-        .metric-growth.negative {
-            color: #ef4444;
-        }
+        .metric-growth.positive { color: #22e59c; }
+        .metric-growth.negative { color: #ef4444; }
+
+        /* Dot Legend Colors for Market Dominance Share */
+        .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .dot.kenya { background-color: #2563eb; }
+        .dot.nigeria { background-color: #d97706; }
+        .dot.tanzania { background-color: #7c3aed; }
+        .dot.uganda { background-color: #059669; }
         
         /* --- PREMIUM LIGHT MODE OVERHAUL --- */
         [data-theme="light"] {
@@ -119,30 +121,20 @@
             color: #ffffff;
             box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
         }
-        [data-theme="light"] .text-slate-400 {
-            color: #64748b !important;
-        }
-        [data-theme="light"] .text-slate-200,
-        [data-theme="light"] .text-white {
-            color: #0f172a !important;
-        }
+        [data-theme="light"] .text-slate-400 { color: #64748b !important; }
+        [data-theme="light"] .text-slate-200, [data-theme="light"] .text-white { color: #0f172a !important; }
         [data-theme="light"] input, [data-theme="light"] select {
             background-color: #ffffff !important;
             color: #0f172a !important;
             border-color: #cbd5e1 !important;
         }
-        [data-theme="light"] .bg-slate-900\/40 {
-            background-color: #f1f5f9 !important;
-            border-color: #e2e8f0 !important;
-        }
+        [data-theme="light"] .bg-slate-900\/40 { background-color: #f1f5f9 !important; border-color: #e2e8f0 !important; }
         [data-theme="light"] .bg-gray-900 {
             background-color: #ffffff !important;
             border-color: #e2e8f0 !important;
             box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
         }
-        [data-theme="light"] .metric-growth .comparison {
-            color: #64748b !important;
-        }
+        [data-theme="light"] .metric-growth .comparison { color: #64748b !important; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white p-6">
@@ -180,7 +172,7 @@
                     <div class="card-header-content flex items-center justify-between w-full">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight gradient-title">MyTouchpoint EA & Nigeria Command Center</h2>
-                            <p class="text-xs text-slate-400 mt-1">Performance Review | Owner: John Odero | Last Updated: 14 Sept 2026</p>
+                            <p class="text-xs text-slate-400 mt-1">Performance Review | Owner: John Odero | Last Updated: 20 Sep 2026</p>
                         </div>
                         <div class="header-controls flex items-center gap-3">
                             <button onclick="toggleTheme()" class="badge-btn flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700 text-xs text-slate-300 transition cursor-pointer">
@@ -188,7 +180,7 @@
                                 <span id="themeText">Light Mode</span>
                             </button>
                             <div class="badge-btn flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-slate-700 text-xs text-slate-300 font-medium">
-                                📅 <span id="dynamicTimestamp">14 Sept 2026</span>
+                                📅 <span id="dynamicTimestamp">20 Sep 2026</span>
                             </div>
                         </div>
                     </div>
@@ -204,7 +196,6 @@
 
                 <!-- Navigation Cards Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
-                    <!-- Execution / Backlog Page Card -->
                     <a href="backlog.html" class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group">
                         <div>
                             <div class="flex justify-between items-center mb-2">
@@ -222,7 +213,6 @@
                         </div>
                     </a>
 
-                    <!-- CRM Page Card -->
                     <a href="https://devwabaplatform.lafricamobile.com/home" target="_blank" rel="noopener noreferrer" class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group">
                         <div>
                             <div class="flex justify-between items-center mb-2">
@@ -240,7 +230,6 @@
                         </div>
                     </a>
 
-                    <!-- Analytical Report / FX Benchmarks Card -->
                     <a href="crossborder-benchmark.html" class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group">
                         <div>
                             <div class="flex justify-between items-center mb-2">
@@ -258,7 +247,6 @@
                         </div>
                     </a>
 
-                    <!-- Corridor Status Card -->
                     <div class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group opacity-75">
                         <div>
                             <div class="flex justify-between items-center mb-2">
@@ -291,9 +279,16 @@
                 </button>
             </div>
 
-            <!-- Top Control Bar with Country Selector dropdown for quick top isolation -->
+            <!-- Top Control Bar with Country Selector and View Mode Switcher -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center px-2 gap-3">
-                <h1 class="text-xl font-bold text-white tracking-wide">Overview Metrics</h1>
+                <div class="flex items-center gap-3">
+                    <h1 class="text-xl font-bold text-white tracking-wide" id="viewModeTitle">Overview Metrics (Monthly View)</h1>
+                    <!-- View Mode Toggle Tabs -->
+                    <div class="bg-slate-900 p-1 rounded-xl border border-slate-700 flex items-center">
+                        <button id="monthlyViewBtn" onclick="switchViewMode('monthly')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition cursor-pointer">Monthly</button>
+                        <button id="weeklyViewBtn" onclick="switchViewMode('weekly')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer">Weekly</button>
+                    </div>
+                </div>
                 <div class="flex items-center gap-2 w-full sm:w-auto">
                     <select id="topCountrySelect" onchange="handleTopSelectIsolation(this.value)" class="px-3 py-2 bg-slate-900 border border-slate-700 text-white text-xs font-medium rounded-lg focus:outline-none focus:border-blue-500 transition cursor-pointer">
                         <option value="">-- Isolate Market (All Markets) --</option>
@@ -307,11 +302,10 @@
 
             <!-- Top Metric Cards Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Card 1 -->
                 <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">TOTAL GROSS VOLUME (YTD Jan - Sep)</span>
+                            <span id="card1-title" class="text-xs font-semibold tracking-wider text-gray-400 uppercase">TOTAL GROSS VOLUME (YTD)</span>
                             <div class="p-2 bg-indigo-950/50 rounded-lg text-indigo-400">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                             </div>
@@ -319,15 +313,14 @@
                         <div id="metric-volume" class="text-3xl font-extrabold text-white mb-2">$77.3M</div>
                     </div>
                     <div id="metric-volume-sub" class="metric-growth positive">
-                        <span>+14.2%</span> <span class="comparison">vs Jan - Sep 2025</span>
+                        <span>+14.2%</span> <span class="comparison">vs Prior Period</span>
                     </div>
                 </div>
 
-                <!-- Card 2 -->
                 <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">TOTAL NET REVENUE (YTD Jan - Sep)</span>
+                            <span id="card2-title" class="text-xs font-semibold tracking-wider text-gray-400 uppercase">TOTAL NET REVENUE (YTD)</span>
                             <div class="p-2 bg-amber-950/50 rounded-lg text-amber-400">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </div>
@@ -335,15 +328,14 @@
                         <div id="metric-revenue" class="text-3xl font-extrabold text-white mb-2">$2.84M</div>
                     </div>
                     <div id="metric-revenue-sub" class="metric-growth positive">
-                        <span>+8.9%</span> <span class="comparison">vs Jan - Sep 2025</span>
+                        <span>+8.9%</span> <span class="comparison">vs Prior Period</span>
                     </div>
                 </div>
 
-                <!-- Card 3 -->
                 <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">PROCESSED TRANSACTIONS</span>
+                            <span id="card3-title" class="text-xs font-semibold tracking-wider text-gray-400 uppercase">PROCESSED TRANSACTIONS</span>
                             <div class="p-2 bg-blue-950/50 rounded-lg text-blue-400">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                             </div>
@@ -351,15 +343,14 @@
                         <div id="metric-transactions" class="text-3xl font-extrabold text-white mb-2">8,282</div>
                     </div>
                     <div id="metric-transactions-sub" class="metric-growth positive">
-                        <span>+18.4%</span> <span class="comparison">volume growth vs Jan - Sep 2025</span>
+                        <span>+18.4%</span> <span class="comparison">growth rate</span>
                     </div>
                 </div>
 
-                <!-- Card 4 -->
                 <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">ACTIVE MARKETS</span>
+                            <span id="card4-title" class="text-xs font-semibold tracking-wider text-gray-400 uppercase">ACTIVE MARKETS</span>
                             <div class="p-2 bg-cyan-950/50 rounded-lg text-cyan-400">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </div>
@@ -372,102 +363,12 @@
                 </div>
             </div>
 
-            <!-- Key Events Impacting Performance -->
-            <div class="space-y-3">
-                <h2 class="text-base font-bold text-white">Key Events Impacting Performance</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="glass-panel p-5 rounded-2xl border-l-4 border-red-500">
-                        <div class="flex items-center space-x-2 text-red-500 font-semibold text-sm">
-                            <span>⚠️</span>
-                            <span>Ebola Outbreak</span>
-                        </div>
-                        <p class="text-xs text-slate-400 mt-1">Uganda | June-August 2026</p>
-                        <p class="text-xs text-slate-300 mt-3"><strong class="text-white">Impact:</strong> Reduced customer activity across the market during the peak health alert phase.</p>
-                    </div>
-                    <div class="glass-panel p-5 rounded-2xl border-l-4 border-red-500">
-                        <div class="flex items-center space-x-2 text-red-500 font-semibold text-sm">
-                            <span>⚠️</span>
-                            <span>Wave Deactivation</span>
-                        </div>
-                        <p class="text-xs text-slate-400 mt-1">All Markets | July-August 2026</p>
-                        <p class="text-xs text-slate-300 mt-3"><strong class="text-white">Impact:</strong> Reduced transaction throughput following broader network-level service restrictions.</p>
-                    </div>
-                    <div class="glass-panel p-5 rounded-2xl border-l-4 border-red-500">
-                        <div class="flex items-center space-x-2 text-red-500 font-semibold text-sm">
-                            <span>⚠️</span>
-                            <span>Nigerian Corridor Shutdown</span>
-                        </div>
-                        <p class="text-xs text-slate-400 mt-1">Nigeria | Late August 2026</p>
-                        <p class="text-xs text-slate-300 mt-3"><strong class="text-white">Impact:</strong> Sharp decline in transactions, volume, and revenue due to sudden partner deactivation.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Leadership Scoreboard -->
-            <div class="space-y-3">
-                <h2 class="text-base font-bold text-white">Leadership Scoreboard</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="glass-panel p-5 rounded-2xl text-center flex flex-col items-center justify-center">
-                        <span class="p-2.5 bg-blue-500/10 text-blue-400 rounded-xl text-lg mb-2">📊</span>
-                        <p class="text-xs font-semibold text-blue-400 uppercase tracking-wider">YTD Transaction Leader</p>
-                        <h4 class="text-base font-bold text-white mt-1">🇰🇪 Kenya</h4>
-                        <p class="text-xs text-slate-400 mt-1">50% of total YTD txns</p>
-                    </div>
-                    <div class="glass-panel p-5 rounded-2xl text-center flex flex-col items-center justify-center border border-emerald-500/30 bg-emerald-500/5">
-                        <span class="p-2.5 bg-emerald-500/10 text-emerald-400 rounded-xl text-lg mb-2">💰</span>
-                        <p class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">YTD Volume Leader</p>
-                        <h4 class="text-base font-bold text-white mt-1">🇰🇪 Kenya</h4>
-                        <p class="text-xs text-slate-400 mt-1">82.9M XOF YTD (67.3%)</p>
-                    </div>
-                    <div class="glass-panel p-5 rounded-2xl text-center flex flex-col items-center justify-center">
-                        <span class="p-2.5 bg-yellow-500/10 text-yellow-400 rounded-xl text-lg mb-2">💎</span>
-                        <p class="text-xs font-semibold text-yellow-400 uppercase tracking-wider">YTD Revenue Leader</p>
-                        <h4 class="text-base font-bold text-white mt-1" style="color: #facc15;">🇰🇪 Kenya</h4>
-                        <p class="text-xs text-slate-400 mt-1">Highest YTD yield generation</p>
-                    </div>
-                    <div class="glass-panel p-5 rounded-2xl text-center flex flex-col items-center justify-center">
-                        <span class="p-2.5 bg-purple-500/10 text-purple-400 rounded-xl text-lg mb-2">🚀</span>
-                        <p class="text-xs font-semibold text-purple-400 uppercase tracking-wider">YTD Fastest Growth</p>
-                        <h4 class="text-base font-bold text-white mt-1">🇺🇬 Uganda</h4>
-                        <p class="text-xs text-slate-400 mt-1">+122.3% YTD MoM growth</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Advanced Analytics: Q4 Forecasting & MoM Variance Panel -->
-            <div class="glass-panel p-6 rounded-2xl">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
-                    <div>
-                        <h2 class="text-base font-bold text-white">Advanced Analytics: Q4 Forecasting & MoM Variance</h2>
-                        <p class="text-xs text-slate-400">Predictive trend extrapolation based on trailing growth velocity and seasonal models (Oct–Dec Forecast)</p>
-                    </div>
-                    <div class="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs px-3 py-1.5 rounded-lg font-medium">
-                        Projected Q4 Volume Growth: <span class="text-emerald-400 font-bold">+16.8%</span>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400">Oct Forecast (MoM Variance)</span>
-                        <div class="text-lg font-bold text-white mt-1">$28.4M <span class="text-xs text-emerald-400 font-medium">(+4.2% Est.)</span></div>
-                    </div>
-                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400">Nov Forecast (MoM Variance)</span>
-                        <div class="text-lg font-bold text-white mt-1">$30.1M <span class="text-xs text-emerald-400 font-medium">(+5.9% Est.)</span></div>
-                    </div>
-                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400">Dec Forecast (MoM Variance)</span>
-                        <div class="text-lg font-bold text-white mt-1">$33.5M <span class="text-xs text-emerald-400 font-medium">(+11.2% Est.)</span></div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Charts Section 1: Consolidated Volume & Market Share Donuts -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Large Bar Chart -->
                 <div class="glass-panel p-6 rounded-2xl lg:col-span-2 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
                         <div>
-                            <h2 class="text-base font-bold text-white">Consolidated Monthly Gross Volume (YTD Up to Today)</h2>
+                            <h2 id="chartMainTitle" class="text-base font-bold text-white">Consolidated Monthly Gross Volume (YTD Up to Today)</h2>
                             <p class="text-xs text-slate-400" id="chartHighlightLabel">(Jan–Sep: Actuals | Oct–Dec: Forecast Projections)</p>
                         </div>
                         <div class="text-xs text-slate-400">USD ($)</div>
@@ -477,29 +378,59 @@
                     </div>
                 </div>
 
-                <!-- Market Share Doughnuts Card -->
                 <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between">
                     <div>
                         <h2 class="text-base font-bold text-white">Market Dominance Share</h2>
                         <p class="text-xs text-slate-400 mb-4">Full Regional Breakdown (% Share)</p>
                     </div>
                     <div class="grid grid-cols-3 gap-2">
-                        <div class="relative h-28 text-center">
-                            <canvas id="transactionsChart"></canvas>
-                            <span class="block text-[10px] text-slate-400 mt-1">Tx Share %</span>
+                        <!-- Tx Share % -->
+                        <div class="relative h-28 text-center flex flex-col items-center">
+                            <div class="w-full h-16 relative">
+                                <canvas id="transactionsChart"></canvas>
+                            </div>
+                            <ul class="legend text-[9px] text-slate-400 mt-1 space-y-0.5 text-left w-full">
+                                <li><span class="dot kenya"></span> KE (45.0%)</li>
+                                <li><span class="dot nigeria"></span> NG (25.9%)</li>
+                                <li><span class="dot tanzania"></span> TZ (11.4%)</li>
+                                <li><span class="dot uganda"></span> UG (17.7%)</li>
+                            </ul>
+                            <span class="block text-[10px] text-slate-400 mt-1 font-semibold">Tx Share %</span>
                         </div>
-                        <div class="relative h-28 text-center">
-                            <canvas id="volumesChart"></canvas>
-                            <span class="block text-[10px] text-slate-400 mt-1">Vol Share %</span>
+                        <!-- Vol Share % -->
+                        <div class="relative h-28 text-center flex flex-col items-center">
+                            <div class="w-full h-16 relative">
+                                <canvas id="volumesChart"></canvas>
+                            </div>
+                            <ul class="legend text-[9px] text-slate-400 mt-1 space-y-0.5 text-left w-full">
+                                <li><span class="dot kenya"></span> KE (55.3%)</li>
+                                <li><span class="dot nigeria"></span> NG (15.6%)</li>
+                                <li><span class="dot tanzania"></span> TZ (12.9%)</li>
+                                <li><span class="dot uganda"></span> UG (16.2%)</li>
+                            </ul>
+                            <span class="block text-[10px] text-slate-400 mt-1 font-semibold">Vol Share %</span>
                         </div>
-                        <div class="relative h-28 text-center">
-                            <canvas id="revenueChart"></canvas>
-                            <span class="block text-[10px] text-slate-400 mt-1">Rev Share %</span>
+                        <!-- Rev Share % -->
+                        <div class="relative h-28 text-center flex flex-col items-center">
+                            <div class="w-full h-16 relative">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                            <ul class="legend text-[9px] text-slate-400 mt-1 space-y-0.5 text-left w-full">
+                                <li><span class="dot kenya"></span> KE (58.0%)</li>
+                                <li><span class="dot nigeria"></span> NG (19.2%)</li>
+                                <li><span class="dot tanzania"></span> TZ (16.6%)</li>
+                                <li><span class="dot uganda"></span> UG (6.2%)</li>
+                            </ul>
+                            <span class="block text-[10px] text-slate-400 mt-1 font-semibold">Rev Share %</span>
                         </div>
                     </div>
-                    <div class="mt-4 pt-4 border-t border-slate-800/80 text-xs text-slate-400 flex justify-between">
-                        <span>Primary Hub: <strong class="text-white">Kenya</strong></span>
-                        <span class="text-emerald-400 font-medium">Stable</span>
+                    
+                    <div class="mt-8 pt-4 border-t border-slate-800/80 flex justify-between items-center text-xs">
+                        <div class="flex items-center space-x-1.5">
+                            <span class="text-slate-400">Country Focus:</span>
+                            <span class="text-white font-medium">Kenya, Nigeria, Tanzania, Uganda</span>
+                        </div>
+                        <div class="text-emerald-400 font-medium">Stable</div>
                     </div>
                 </div>
             </div>
@@ -509,8 +440,8 @@
                 <div class="glass-panel p-6 rounded-2xl flex flex-col">
                     <div class="flex justify-between items-center mb-4">
                         <div>
-                            <h2 class="text-base font-bold text-white">Consolidated Monthly Gross Revenue (YTD Up to Today)</h2>
-                            <p class="text-xs text-slate-400">Breakdown by region stacked (Jan–Sep Actuals, Oct–Dec Forecast)</p>
+                            <h2 id="chartRevTitle" class="text-base font-bold text-white">Consolidated Monthly Gross Revenue</h2>
+                            <p class="text-xs text-slate-400" id="chartRevSub">Breakdown by region stacked</p>
                         </div>
                     </div>
                     <div class="relative flex-grow h-64">
@@ -521,8 +452,8 @@
                 <div class="glass-panel p-6 rounded-2xl flex flex-col">
                     <div class="flex justify-between items-center mb-4">
                         <div>
-                            <h2 class="text-base font-bold text-white">Transaction Volume Trends</h2>
-                            <p class="text-xs text-slate-400">Monthly progression across markets (Solid = Actual, Dashed = Forecast)</p>
+                            <h2 id="chartTxnTitle" class="text-base font-bold text-white">Transaction Volume Trends</h2>
+                            <p class="text-xs text-slate-400" id="chartTxnSub">Monthly progression across markets</p>
                         </div>
                     </div>
                     <div class="relative flex-grow h-64">
@@ -535,14 +466,14 @@
             <div class="glass-panel p-6 rounded-2xl">
                 <div class="flex justify-between items-center mb-4">
                     <div>
-                        <h2 class="text-base font-bold text-white">Regional Breakdown Matrix (Gross YTD Up to Today)</h2>
+                        <h2 id="tableTitle" class="text-base font-bold text-white">Regional Breakdown Matrix (Gross YTD Up to Today)</h2>
                         <p class="text-xs text-slate-400">Click any market row or use the bottom action buttons to globally isolate all charts and metrics</p>
                     </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
-                            <tr class="border-b border-slate-800 text-xs text-slate-400 uppercase tracking-wider">
+                            <tr id="tableHeaderRow" class="border-b border-slate-800 text-xs text-slate-400 uppercase tracking-wider">
                                 <th class="py-3 px-4 font-semibold">Region / Country</th>
                                 <th class="py-3 px-4 font-semibold">YTD Volume (Gross)</th>
                                 <th class="py-3 px-4 font-semibold">YTD Revenue (Gross)</th>
@@ -601,67 +532,6 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
-            </div>
-
-            <!-- Country Insights & Strategic Focus -->
-            <div class="space-y-3">
-                <h2 class="text-base font-bold text-white">Country Insights & Strategic Focus</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between">
-                        <div>
-                            <h4 class="text-sm font-bold text-white">🇰🇪 Kenya</h4>
-                            <p class="text-xs text-blue-400 font-semibold mt-0.5">TRANSACTION, VOLUME & REVENUE MARKET</p>
-                            <ul class="text-xs text-slate-300 space-y-1 mt-3 list-disc list-inside">
-                                <li>50% of all transactions</li>
-                                <li>67.3% of total volume</li>
-                                <li>Highest revenue generation</li>
-                            </ul>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-800 text-xs flex justify-between items-center">
-                            <div><span class="font-bold text-white">Opportunity:</span> <span class="text-slate-400">Improve yield</span></div>
-                            <button onclick="toggleIsolateCountry('Kenya')" class="text-blue-400 hover:underline font-semibold cursor-pointer">Isolate →</button>
-                        </div>
-                    </div>
-                    <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between">
-                        <div>
-                            <h4 class="text-sm font-bold text-white">🇺🇬 Uganda</h4>
-                            <p class="text-xs text-blue-400 font-semibold mt-0.5">GROWTH MARKET</p>
-                            <ul class="text-xs text-slate-300 space-y-1 mt-3 list-disc list-inside">
-                                <li>Fastest growth</li>
-                            </ul>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-800 text-xs flex justify-between items-center">
-                            <div><span class="font-bold text-white">Opportunity:</span> <span class="text-slate-400">Scale momentum</span></div>
-                            <button onclick="toggleIsolateCountry('Uganda')" class="text-emerald-400 hover:underline font-semibold cursor-pointer">Isolate →</button>
-                        </div>
-                    </div>
-                    <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between">
-                        <div>
-                            <h4 class="text-sm font-bold text-white">🇳🇬 Nigeria</h4>
-                            <p class="text-xs text-blue-400 font-semibold mt-0.5">SECONDARY VOLUME MARKET</p>
-                            <ul class="text-xs text-slate-300 space-y-1 mt-3 list-disc list-inside">
-                                <li>15.6% of volume</li>
-                            </ul>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-800 text-xs flex justify-between items-center">
-                            <div><span class="font-bold text-white">Opportunity:</span> <span class="text-slate-400">Recovery</span></div>
-                            <button onclick="toggleIsolateCountry('Nigeria')" class="text-amber-400 hover:underline font-semibold cursor-pointer">Isolate →</button>
-                        </div>
-                    </div>
-                    <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between">
-                        <div>
-                            <h4 class="text-sm font-bold text-white">🇹🇿 Tanzania</h4>
-                            <p class="text-xs text-blue-400 font-semibold mt-0.5">SECONDARY MARKET</p>
-                            <ul class="text-xs text-slate-300 space-y-1 mt-3 list-disc list-inside">
-                                <li>12.9% of volume</li>
-                            </ul>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-800 text-xs flex justify-between items-center">
-                            <div><span class="font-bold text-white">Opportunity:</span> <span class="text-slate-400">Restore transactions</span></div>
-                            <button onclick="toggleIsolateCountry('Tanzania')" class="text-purple-400 hover:underline font-semibold cursor-pointer">Isolate →</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </main>
@@ -755,14 +625,7 @@ const eliteTooltip = {
     boxPadding: 8,
     usePointStyle: true,
     borderColor: 'rgba(255, 255, 255, 0.1)',
-    borderWidth: 1,
-    callbacks: {
-        title: function(context) {
-            const month = context[0].label;
-            const isForecast = ['Oct', 'Nov', 'Dec'].includes(month);
-            return `${month} 2026 ${isForecast ? '(Forecast)' : '(Actual)'}`;
-        }
-    }
+    borderWidth: 1
 };
 
 const smoothAnimation = {
@@ -770,7 +633,10 @@ const smoothAnimation = {
 };
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
 const countries = ['Kenya', 'Tanzania', 'Uganda', 'Nigeria'];
+
+let currentViewMode = 'monthly';
 
 let volumeDataOriginal = {
     'Kenya': [6338555.22, 9259938.89, 8500000.00, 9016831.08, 10806372.76, 12571863.81, 6272042.78, 13612499.34, 11500000.00, 12000000.00, 12500000.00, 14000000.00],
@@ -779,13 +645,25 @@ let volumeDataOriginal = {
     'Nigeria': [171176.07, 938936.75, 1500000.00, 2595012.82, 3750288.46, 4390464.96, 2688262.39, 1943815.81, 2200000.00, 2400000.00, 2600000.00, 3000000.00]
 };
 
-const q4TrendProjectionData = [null, null, null, null, null, null, null, null, null, 16000000, 16900000, 19100000];
+let weeklyVolumeData = {
+    'Kenya': [2850000.00, 3100000.00, 3279942.00, 3400000.00],
+    'Tanzania': [350000.00, 410000.00, 230338.00, 480000.00],
+    'Uganda': [110000.00, 125000.00, 58122.90, 165000.00],
+    'Nigeria': [550000.00, 620000.00, 318530.00, 680000.00]
+};
 
 let revenueDataOriginal = {
     'Kenya': [214347.45, 313147.10, 374164.12, 304914.88, 365434.31, 425137.49, 212103.88, 460327.37, 390000, 410000, 430000, 480000],
     'Tanzania': [51870.17, 22026.61, 99210.52, 120852.36, 145193.13, 51102.79, 27090.56, 17434.55, 45000, 48000, 52000, 60000],
     'Uganda': [5000.15, 5424.22, 16488.19, 36170.25, 50054.41, 46096.26, 5283.71, 11744.84, 15000, 17000, 19000, 22000],
     'Nigeria': [5789.53, 31751.28, 80966.67, 87755.56, 126821.37, 148469.66, 90907.26, 65732.91, 80000, 88000, 95000, 110000]
+};
+
+let weeklyRevenueData = {
+    'Kenya': [95000.00, 102000.00, 113635.20, 115000.00],
+    'Tanzania': [11000.00, 13500.00, 6965.80, 15500.00],
+    'Uganda': [3500.00, 4100.00, 2430.50, 5400.00],
+    'Nigeria': [18000.00, 21000.00, 11051.70, 24000.00]
 };
 
 let transactionDataOriginal = {
@@ -795,34 +673,25 @@ let transactionDataOriginal = {
     'Nigeria': [30, 140, 220, 390, 550, 640, 390, 280, 320, 350, 380, 450]
 };
 
-const countryAggregates = {
-    'Kenya': { 
-        volume: '$78.0M', revenue: '$2.87M', transactions: '5,900', 
-        volumeGrowth: '+14.2%', revenueGrowth: '+8.9%', txnGrowth: '+18.4%', marketsCount: '1 Region (Kenya)',
-        volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive'
-    },
-    'Tanzania': { 
-        volume: '$16.2M', revenue: '$651.9K', transactions: '1,250', 
-        volumeGrowth: '+6.5%', revenueGrowth: '+5.1%', txnGrowth: '+9.2%', marketsCount: '1 Region (Tanzania)',
-        volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive'
-    },
-    'Uganda': { 
-        volume: '$5.0M', revenue: '$239.5K', transactions: '848', 
-        volumeGrowth: '+122.3%', revenueGrowth: '+95.4%', txnGrowth: '+110.0%', marketsCount: '1 Region (Uganda)',
-        volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive'
-    },
-    'Nigeria': { 
-        volume: '$20.1M', revenue: '$779.6K', transactions: '2,960', 
-        volumeGrowth: '+11.1%', revenueGrowth: '+7.3%', txnGrowth: '+14.5%', marketsCount: '1 Region (Nigeria)',
-        volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive'
-    }
+let weeklyTransactionData = {
+    'Kenya': [210, 230, 81, 250],
+    'Tanzania': [35, 42, 8, 48],
+    'Uganda': [22, 25, 8, 32],
+    'Nigeria': [95, 105, 45, 120]
 };
 
-const defaultGlobalAggregates = { 
-    volume: '$77.3M', revenue: '$2.84M', transactions: '8,282', 
-    volumeGrowth: '+14.2%', revenueGrowth: '+8.9%', txnGrowth: '+18.4%', marketsCount: '4 Regions',
-    volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive'
+const q4TrendProjectionData = [null, null, null, null, null, null, null, null, null, 16000000, 16900000, 19100000];
+
+const countryAggregates = {
+    'Kenya': { volume: '$78.0M', revenue: '$2.87M', transactions: '5,900', volumeGrowth: '+14.2%', revenueGrowth: '+8.9%', txnGrowth: '+18.4%', marketsCount: '1 Region (Kenya)', volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive' },
+    'Tanzania': { volume: '$16.2M', revenue: '$651.9K', transactions: '1,250', volumeGrowth: '+6.5%', revenueGrowth: '+5.1%', txnGrowth: '+9.2%', marketsCount: '1 Region (Tanzania)', volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive' },
+    'Uganda': { volume: '$5.0M', revenue: '$239.5K', transactions: '848', volumeGrowth: '+122.3%', revenueGrowth: '+95.4%', txnGrowth: '+110.0%', marketsCount: '1 Region (Uganda)', volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive' },
+    'Nigeria': { volume: '$20.1M', revenue: '$779.6K', transactions: '2,960', volumeGrowth: '+11.1%', revenueGrowth: '+7.3%', txnGrowth: '+14.5%', marketsCount: '1 Region (Nigeria)', volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive' }
 };
+
+let defaultGlobalAggregates = { volume: '$77.3M', revenue: '$2.84M', transactions: '8,282', volumeGrowth: '+14.2%', revenueGrowth: '+8.9%', txnGrowth: '+18.4%', marketsCount: '4 Regions', volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive' };
+
+let weeklyGlobalAggregates = { volume: '$18.4M', revenue: '$684.2K', transactions: '1,842', volumeGrowth: '+6.2%', revenueGrowth: '+4.1%', txnGrowth: '+7.8%', marketsCount: '4 Regions (Weekly)', volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive' };
 
 let activeIsolatedCountry = null;
 let consolidatedVolumeChartInstance = null;
@@ -864,7 +733,7 @@ async function loadDashboardDataFromSupabase() {
             computeAndRenderDynamicAggregates();
         }
     } catch (err) {
-        console.error('Error fetching from Supabase, using fallback local data:', err);
+        console.error('Error fetching data, using fallback local context:', err);
     } finally {
         initCharts();
     }
@@ -885,19 +754,217 @@ function computeAndRenderDynamicAggregates() {
         totalTxn += txnSlice.reduce((a, b) => a + b, 0);
     });
 
-    const formattedVol = '$' + (totalVol / 1000000).toFixed(1) + 'M';
-    const formattedRev = '$' + (totalRev / 1000000).toFixed(2) + 'M';
-    const formattedTxn = totalTxn.toLocaleString();
+    defaultGlobalAggregates.volume = '$' + (totalVol / 1000000).toFixed(1) + 'M';
+    defaultGlobalAggregates.revenue = '$' + (totalRev / 1000000).toFixed(2) + 'M';
+    defaultGlobalAggregates.transactions = totalTxn.toLocaleString();
 
-    defaultGlobalAggregates.volume = formattedVol;
-    defaultGlobalAggregates.revenue = formattedRev;
-    defaultGlobalAggregates.transactions = formattedTxn;
-
-    if (!activeIsolatedCountry) {
-        document.getElementById('metric-volume').textContent = formattedVol;
-        document.getElementById('metric-revenue').textContent = formattedRev;
-        document.getElementById('metric-transactions').textContent = formattedTxn;
+    if (currentViewMode === 'monthly' && !activeIsolatedCountry) {
+        document.getElementById('metric-volume').textContent = defaultGlobalAggregates.volume;
+        document.getElementById('metric-revenue').textContent = defaultGlobalAggregates.revenue;
+        document.getElementById('metric-transactions').textContent = defaultGlobalAggregates.transactions;
     }
+}
+
+function switchViewMode(mode) {
+    currentViewMode = mode;
+    const monthlyBtn = document.getElementById('monthlyViewBtn');
+    const weeklyBtn = document.getElementById('weeklyViewBtn');
+    const viewModeTitle = document.getElementById('viewModeTitle');
+    const card1Title = document.getElementById('card1-title');
+    const card2Title = document.getElementById('card2-title');
+    const card3Title = document.getElementById('card3-title');
+    
+    const mVolume = document.getElementById('metric-volume');
+    const mVolumeSub = document.getElementById('metric-volume-sub');
+    const mRevenue = document.getElementById('metric-revenue');
+    const mRevenueSub = document.getElementById('metric-revenue-sub');
+    const mTransactions = document.getElementById('metric-transactions');
+    const mTransactionsSub = document.getElementById('metric-transactions-sub');
+    const chartMainTitle = document.getElementById('chartMainTitle');
+    const chartHighlightLabel = document.getElementById('chartHighlightLabel');
+    const chartRevTitle = document.getElementById('chartRevTitle');
+    const chartTxnTitle = document.getElementById('chartTxnTitle');
+    const tableTitle = document.getElementById('tableTitle');
+
+    if (mode === 'weekly') {
+        monthlyBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer";
+        weeklyBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition cursor-pointer";
+        viewModeTitle.textContent = "Overview Metrics (Weekly View)";
+        
+        card1Title.textContent = "WEEKLY GROSS VOLUME";
+        card2Title.textContent = "WEEKLY NET REVENUE";
+        card3Title.textContent = "WEEKLY TRANSACTIONS";
+
+        mVolume.textContent = weeklyGlobalAggregates.volume;
+        mVolumeSub.innerHTML = `<span>${weeklyGlobalAggregates.volumeGrowth}</span> <span class="comparison">vs Prior Week</span>`;
+        mRevenue.textContent = weeklyGlobalAggregates.revenue;
+        mRevenueSub.innerHTML = `<span>${weeklyGlobalAggregates.revenueGrowth}</span> <span class="comparison">vs Prior Week</span>`;
+        mTransactions.textContent = weeklyGlobalAggregates.transactions;
+        mTransactionsSub.innerHTML = `<span>${weeklyGlobalAggregates.txnGrowth}</span> <span class="comparison">vs Prior Week</span>`;
+
+        chartMainTitle.textContent = "Consolidated Weekly Gross Volume (Rolling View)";
+        chartHighlightLabel.textContent = "(Wk 1-3: Real Actuals | Wk 4: Forecast Projections)";
+        chartRevTitle.textContent = "Consolidated Weekly Gross Revenue";
+        chartTxnTitle.textContent = "Weekly Transaction Volume Trends";
+        tableTitle.textContent = "Regional Breakdown Matrix (Weekly Rolling View)";
+
+        updateChartsForWeekly();
+        updateTableForWeekly();
+    } else {
+        weeklyBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer";
+        monthlyBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition cursor-pointer";
+        viewModeTitle.textContent = "Overview Metrics (Monthly View)";
+        
+        card1Title.textContent = "TOTAL GROSS VOLUME (YTD)";
+        card2Title.textContent = "TOTAL NET REVENUE (YTD)";
+        card3Title.textContent = "PROCESSED TRANSACTIONS";
+
+        mVolume.textContent = defaultGlobalAggregates.volume;
+        mVolumeSub.innerHTML = `<span>${defaultGlobalAggregates.volumeGrowth}</span> <span class="comparison">vs Jan - Sep 2025</span>`;
+        mRevenue.textContent = defaultGlobalAggregates.revenue;
+        mRevenueSub.innerHTML = `<span>${defaultGlobalAggregates.revenueGrowth}</span> <span class="comparison">vs Jan - Sep 2025</span>`;
+        mTransactions.textContent = defaultGlobalAggregates.transactions;
+        mTransactionsSub.innerHTML = `<span>${defaultGlobalAggregates.txnGrowth}</span> <span class="comparison">volume growth vs Jan - Sep 2025</span>`;
+
+        chartMainTitle.textContent = "Consolidated Monthly Gross Volume (YTD Up to Today)";
+        chartHighlightLabel.textContent = "(Jan–Sep: Actuals | Oct–Dec: Forecast Projections)";
+        chartRevTitle.textContent = "Consolidated Monthly Gross Revenue";
+        chartTxnTitle.textContent = "Transaction Volume Trends";
+        tableTitle.textContent = "Regional Breakdown Matrix (Gross YTD Up to Today)";
+
+        updateChartsForMonthly();
+        updateTableForMonthly();
+    }
+}
+
+function updateChartsForWeekly() {
+    consolidatedVolumeChartInstance.data.labels = weeks;
+    consolidatedVolumeChartInstance.data.datasets[0].data = weeklyVolumeData['Kenya'];
+    consolidatedVolumeChartInstance.data.datasets[0].backgroundColor = getWeeklyBarColorArray('#2563eb', 'rgba(37, 99, 235, 0.4)');
+    
+    consolidatedVolumeChartInstance.data.datasets[1].data = weeklyVolumeData['Tanzania'];
+    consolidatedVolumeChartInstance.data.datasets[1].backgroundColor = getWeeklyBarColorArray('#7c3aed', 'rgba(124, 58, 237, 0.4)');
+    
+    consolidatedVolumeChartInstance.data.datasets[2].data = weeklyVolumeData['Uganda'];
+    consolidatedVolumeChartInstance.data.datasets[2].backgroundColor = getWeeklyBarColorArray('#059669', 'rgba(5, 150, 105, 0.4)');
+    
+    consolidatedVolumeChartInstance.data.datasets[3].data = weeklyVolumeData['Nigeria'];
+    consolidatedVolumeChartInstance.data.datasets[3].backgroundColor = getWeeklyBarColorArray('#d97706', 'rgba(217, 119, 6, 0.4)');
+    
+    consolidatedVolumeChartInstance.data.datasets[4].data = [null, null, null, null];
+    consolidatedVolumeChartInstance.update();
+
+    consolidatedRevenueChartInstance.data.labels = weeks;
+    consolidatedRevenueChartInstance.data.datasets[0].data = weeklyRevenueData['Kenya'];
+    consolidatedRevenueChartInstance.data.datasets[0].backgroundColor = getWeeklyBarColorArray('#2563eb', 'rgba(37, 99, 235, 0.4)');
+    
+    consolidatedRevenueChartInstance.data.datasets[1].data = weeklyRevenueData['Tanzania'];
+    consolidatedRevenueChartInstance.data.datasets[1].backgroundColor = getWeeklyBarColorArray('#7c3aed', 'rgba(124, 58, 237, 0.4)');
+    
+    consolidatedRevenueChartInstance.data.datasets[2].data = weeklyRevenueData['Uganda'];
+    consolidatedRevenueChartInstance.data.datasets[2].backgroundColor = getWeeklyBarColorArray('#059669', 'rgba(5, 150, 105, 0.4)');
+    
+    consolidatedRevenueChartInstance.data.datasets[3].data = weeklyRevenueData['Nigeria'];
+    consolidatedRevenueChartInstance.data.datasets[3].backgroundColor = getWeeklyBarColorArray('#d97706', 'rgba(217, 119, 6, 0.4)');
+    consolidatedRevenueChartInstance.update();
+
+    consolidatedTransactionsChartInstance.data.labels = weeks;
+    consolidatedTransactionsChartInstance.data.datasets[0].data = weeklyTransactionData['Kenya'];
+    consolidatedTransactionsChartInstance.data.datasets[1].data = weeklyTransactionData['Tanzania'];
+    consolidatedTransactionsChartInstance.data.datasets[2].data = weeklyTransactionData['Uganda'];
+    consolidatedTransactionsChartInstance.data.datasets[3].data = weeklyTransactionData['Nigeria'];
+    consolidatedTransactionsChartInstance.update();
+}
+
+function updateChartsForMonthly() {
+    consolidatedVolumeChartInstance.data.labels = months;
+    consolidatedVolumeChartInstance.data.datasets[0].data = volumeDataOriginal['Kenya'];
+    consolidatedVolumeChartInstance.data.datasets[0].backgroundColor = getBarColorArray('#2563eb', 'rgba(37, 99, 235, 0.4)');
+    
+    consolidatedVolumeChartInstance.data.datasets[1].data = volumeDataOriginal['Tanzania'];
+    consolidatedVolumeChartInstance.data.datasets[1].backgroundColor = getBarColorArray('#7c3aed', 'rgba(124, 58, 237, 0.4)');
+    
+    consolidatedVolumeChartInstance.data.datasets[2].data = volumeDataOriginal['Uganda'];
+    consolidatedVolumeChartInstance.data.datasets[2].backgroundColor = getBarColorArray('#059669', 'rgba(5, 150, 105, 0.4)');
+    
+    consolidatedVolumeChartInstance.data.datasets[3].data = volumeDataOriginal['Nigeria'];
+    consolidatedVolumeChartInstance.data.datasets[3].backgroundColor = getBarColorArray('#d97706', 'rgba(217, 119, 6, 0.4)');
+    
+    consolidatedVolumeChartInstance.data.datasets[4].data = q4TrendProjectionData;
+    consolidatedVolumeChartInstance.update();
+
+    consolidatedRevenueChartInstance.data.labels = months;
+    consolidatedRevenueChartInstance.data.datasets[0].data = revenueDataOriginal['Kenya'];
+    consolidatedRevenueChartInstance.data.datasets[0].backgroundColor = getBarColorArray('#2563eb', 'rgba(37, 99, 235, 0.4)');
+    
+    consolidatedRevenueChartInstance.data.datasets[1].data = revenueDataOriginal['Tanzania'];
+    consolidatedRevenueChartInstance.data.datasets[1].backgroundColor = getBarColorArray('#7c3aed', 'rgba(124, 58, 237, 0.4)');
+    
+    consolidatedRevenueChartInstance.data.datasets[2].data = revenueDataOriginal['Uganda'];
+    consolidatedRevenueChartInstance.data.datasets[2].backgroundColor = getBarColorArray('#059669', 'rgba(5, 150, 105, 0.4)');
+    
+    consolidatedRevenueChartInstance.data.datasets[3].data = revenueDataOriginal['Nigeria'];
+    consolidatedRevenueChartInstance.data.datasets[3].backgroundColor = getBarColorArray('#d97706', 'rgba(217, 119, 6, 0.4)');
+    consolidatedRevenueChartInstance.update();
+
+    consolidatedTransactionsChartInstance.data.labels = months;
+    consolidatedTransactionsChartInstance.data.datasets[0].data = transactionDataOriginal['Kenya'];
+    consolidatedTransactionsChartInstance.data.datasets[1].data = transactionDataOriginal['Tanzania'];
+    consolidatedTransactionsChartInstance.data.datasets[2].data = transactionDataOriginal['Uganda'];
+    consolidatedTransactionsChartInstance.data.datasets[3].data = transactionDataOriginal['Nigeria'];
+    consolidatedTransactionsChartInstance.update();
+}
+
+function updateTableForWeekly() {
+    const tbody = document.getElementById('monthlyVolumeTableBody');
+    tbody.innerHTML = `
+        <tr id="row-Kenya" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Kenya')">
+            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span><span>Kenya</span></td>
+            <td class="py-3 px-4">$3,279,942.00</td><td class="py-3 px-4">$113,635.20</td><td class="py-3 px-4">81</td>
+            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Kenya');" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Kenya">Isolate View</button></td>
+        </tr>
+        <tr id="row-Tanzania" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Tanzania')">
+            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-purple-600 inline-block"></span><span>Tanzania</span></td>
+            <td class="py-3 px-4">$230,338.00</td><td class="py-3 px-4">$6,965.80</td><td class="py-3 px-4">8</td>
+            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Tanzania');" class="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Tanzania">Isolate View</button></td>
+        </tr>
+        <tr id="row-Uganda" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Uganda')">
+            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span><span>Uganda</span></td>
+            <td class="py-3 px-4">$58,122.90</td><td class="py-3 px-4">$2,430.50</td><td class="py-3 px-4">8</td>
+            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Uganda');" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Uganda">Isolate View</button></td>
+        </tr>
+        <tr id="row-Nigeria" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Nigeria')">
+            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-600 inline-block"></span><span>Nigeria</span></td>
+            <td class="py-3 px-4">$318,530.00</td><td class="py-3 px-4">$11,051.70</td><td class="py-3 px-4">45</td>
+            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Nigeria');" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Nigeria">Isolate View</button></td>
+        </tr>
+    `;
+}
+
+function updateTableForMonthly() {
+    const tbody = document.getElementById('monthlyVolumeTableBody');
+    tbody.innerHTML = `
+        <tr id="row-Kenya" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Kenya')">
+            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span><span>Kenya</span></td>
+            <td class="py-3 px-4">$77,986,001.98</td><td class="py-3 px-4">$2,867,732.31</td><td class="py-3 px-4">5,900</td>
+            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Kenya');" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Kenya">Isolate View</button></td>
+        </tr>
+        <tr id="row-Tanzania" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Tanzania')">
+            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-purple-600 inline-block"></span><span>Tanzania</span></td>
+            <td class="py-3 px-4">$16,242,399.10</td><td class="py-3 px-4">$651,851.35</td><td class="py-3 px-4">1,250</td>
+            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Tanzania');" class="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Tanzania">Isolate View</button></td>
+        </tr>
+        <tr id="row-Uganda" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Uganda')">
+            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span><span>Uganda</span></td>
+            <td class="py-3 px-4">$4,998,349.46</td><td class="py-3 px-4">$239,467.43</td><td class="py-3 px-4">848</td>
+            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Uganda');" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Uganda">Isolate View</button></td>
+        </tr>
+        <tr id="row-Nigeria" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Nigeria')">
+            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-600 inline-block"></span><span>Nigeria</span></td>
+            <td class="py-3 px-4">$20,142,668.75</td><td class="py-3 px-4">$779,573.90</td><td class="py-3 px-4">2,960</td>
+            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Nigeria');" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Nigeria">Isolate View</button></td>
+        </tr>
+    `;
 }
 
 function initCharts() {
@@ -945,8 +1012,8 @@ function initCharts() {
     transactionsShareChartInstance = new Chart(txShareCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Kenya (50.0%)', 'Nigeria (25.9%)', 'Tanzania (11.4%)', 'Uganda (12.7%)'],
-            datasets: [{ data: [50.0, 25.9, 11.4, 12.7], backgroundColor: marketColors, borderWidth: 0 }]
+            labels: ['Kenya', 'Nigeria', 'Tanzania', 'Uganda'],
+            datasets: [{ data: [45.0, 25.9, 11.4, 17.7], backgroundColor: marketColors, borderWidth: 0 }]
         },
         options: {
             ...smoothAnimation,
@@ -954,7 +1021,7 @@ function initCharts() {
             maintainAspectRatio: false,
             cutout: '65%',
             plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 6, usePointStyle: true, pointStyle: 'circle', font: { size: 9, weight: '500' }, padding: 8, color: '#94a3b8' } },
+                legend: { display: false },
                 tooltip: eliteTooltip
             }
         }
@@ -964,8 +1031,8 @@ function initCharts() {
     volumesShareChartInstance = new Chart(volShareCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Kenya (67.3%)', 'Nigeria (15.6%)', 'Tanzania (12.9%)', 'Uganda (4.2%)'],
-            datasets: [{ data: [67.3, 15.6, 12.9, 4.2], backgroundColor: marketColors, borderWidth: 0 }]
+            labels: ['Kenya', 'Nigeria', 'Tanzania', 'Uganda'],
+            datasets: [{ data: [55.3, 15.6, 12.9, 16.2], backgroundColor: marketColors, borderWidth: 0 }]
         },
         options: {
             ...smoothAnimation,
@@ -973,7 +1040,7 @@ function initCharts() {
             maintainAspectRatio: false,
             cutout: '65%',
             plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 6, usePointStyle: true, pointStyle: 'circle', font: { size: 9, weight: '500' }, padding: 8, color: '#94a3b8' } },
+                legend: { display: false },
                 tooltip: eliteTooltip
             }
         }
@@ -983,8 +1050,8 @@ function initCharts() {
     revenueShareChartInstance = new Chart(revShareCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Kenya (68.0%)', 'Nigeria (19.2%)', 'Tanzania (16.6%)', 'Uganda (6.1%)'],
-            datasets: [{ data: [68.0, 19.2, 16.6, 6.1], backgroundColor: marketColors, borderWidth: 0 }]
+            labels: ['Kenya', 'Nigeria', 'Tanzania', 'Uganda'],
+            datasets: [{ data: [58.0, 19.2, 16.6, 6.2], backgroundColor: marketColors, borderWidth: 0 }]
         },
         options: {
             ...smoothAnimation,
@@ -992,7 +1059,7 @@ function initCharts() {
             maintainAspectRatio: false,
             cutout: '65%',
             plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 6, usePointStyle: true, pointStyle: 'circle', font: { size: 9, weight: '500' }, padding: 8, color: '#94a3b8' } },
+                legend: { display: false },
                 tooltip: eliteTooltip
             }
         }
@@ -1031,42 +1098,10 @@ function initCharts() {
         data: {
             labels: months,
             datasets: [
-                { 
-                    label: 'Kenya', 
-                    data: transactionDataOriginal['Kenya'], 
-                    borderColor: '#2563eb', 
-                    backgroundColor: 'rgba(37, 99, 235, 0.1)', 
-                    fill: true, 
-                    tension: 0.3,
-                    segment: { borderDash: ctx => ctx.p0DataIndex >= 8 ? [4, 4] : undefined }
-                },
-                { 
-                    label: 'Tanzania', 
-                    data: transactionDataOriginal['Tanzania'], 
-                    borderColor: '#7c3aed', 
-                    backgroundColor: 'rgba(124, 58, 237, 0.1)', 
-                    fill: true, 
-                    tension: 0.3,
-                    segment: { borderDash: ctx => ctx.p0DataIndex >= 8 ? [4, 4] : undefined }
-                },
-                { 
-                    label: 'Uganda', 
-                    data: transactionDataOriginal['Uganda'], 
-                    borderColor: '#059669', 
-                    backgroundColor: 'rgba(5, 150, 105, 0.1)', 
-                    fill: true, 
-                    tension: 0.3,
-                    segment: { borderDash: ctx => ctx.p0DataIndex >= 8 ? [4, 4] : undefined }
-                },
-                { 
-                    label: 'Nigeria', 
-                    data: transactionDataOriginal['Nigeria'], 
-                    borderColor: '#d97706', 
-                    backgroundColor: 'rgba(217, 119, 6, 0.1)', 
-                    fill: true, 
-                    tension: 0.3,
-                    segment: { borderDash: ctx => ctx.p0DataIndex >= 8 ? [4, 4] : undefined }
-                }
+                { label: 'Kenya', data: transactionDataOriginal['Kenya'], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true, tension: 0.3 },
+                { label: 'Tanzania', data: transactionDataOriginal['Tanzania'], borderColor: '#7c3aed', backgroundColor: 'rgba(124, 58, 237, 0.1)', fill: true, tension: 0.3 },
+                { label: 'Uganda', data: transactionDataOriginal['Uganda'], borderColor: '#059669', backgroundColor: 'rgba(5, 150, 105, 0.1)', fill: true, tension: 0.3 },
+                { label: 'Nigeria', data: transactionDataOriginal['Nigeria'], borderColor: '#d97706', backgroundColor: 'rgba(217, 119, 6, 0.1)', fill: true, tension: 0.3 }
             ]
         },
         options: {
@@ -1087,6 +1122,10 @@ function initCharts() {
 
 function getBarColorArray(solidHex, forecastRgba) {
     return months.map((_, i) => i >= 9 ? forecastRgba : solidHex);
+}
+
+function getWeeklyBarColorArray(solidHex, forecastRgba) {
+    return weeks.map((_, i) => i === 3 ? forecastRgba : solidHex);
 }
 
 function handleTopSelectIsolation(countryName) {
@@ -1130,7 +1169,7 @@ function toggleIsolateCountry(countryName) {
         });
         
         bannerEl.classList.add('hidden');
-        labelSpan.textContent = '(Jan–Sep: Actuals | Oct–Dec: Forecast Projections)';
+        labelSpan.textContent = currentViewMode === 'weekly' ? '(Wk 1-3: Real Actuals | Wk 4: Forecast Projections)' : '(Jan–Sep: Actuals | Oct–Dec: Forecast Projections)';
         
         consolidatedVolumeChartInstance.data.datasets.forEach(dataset => dataset.hidden = false);
         consolidatedVolumeChartInstance.update();
@@ -1139,21 +1178,22 @@ function toggleIsolateCountry(countryName) {
         consolidatedRevenueChartInstance.update();
 
         consolidatedTransactionsChartInstance.data.datasets.forEach(dataset => dataset.hidden = false);
-        consolidatedTransactionsChartInstance.update();
+        consolidatedTransactionsChartInstance?.update();
 
-        mVolume.textContent = defaultGlobalAggregates.volume;
-        mVolumeSub.className = `metric-growth ${defaultGlobalAggregates.volGrowthClass}`;
-        mVolumeSub.innerHTML = `<span>${defaultGlobalAggregates.volumeGrowth}</span> <span class="comparison">vs Jan - Sep 2025</span>`;
+        const activeAgg = currentViewMode === 'weekly' ? weeklyGlobalAggregates : defaultGlobalAggregates;
+        mVolume.textContent = activeAgg.volume;
+        mVolumeSub.className = `metric-growth ${activeAgg.volGrowthClass}`;
+        mVolumeSub.innerHTML = `<span>${activeAgg.volumeGrowth}</span> <span class="comparison">vs Prior Period</span>`;
         
-        mRevenue.textContent = defaultGlobalAggregates.revenue;
-        mRevenueSub.className = `metric-growth ${defaultGlobalAggregates.revGrowthClass}`;
-        mRevenueSub.innerHTML = `<span>${defaultGlobalAggregates.revenueGrowth}</span> <span class="comparison">vs Jan - Sep 2025</span>`;
+        mRevenue.textContent = activeAgg.revenue;
+        mRevenueSub.className = `metric-growth ${activeAgg.revGrowthClass}`;
+        mRevenueSub.innerHTML = `<span>${activeAgg.revenueGrowth}</span> <span class="comparison">vs Prior Period</span>`;
         
-        mTransactions.textContent = defaultGlobalAggregates.transactions;
-        mTransactionsSub.className = `metric-growth ${defaultGlobalAggregates.txnGrowthClass}`;
-        mTransactionsSub.innerHTML = `<span>${defaultGlobalAggregates.txnGrowth}</span> <span class="comparison">volume growth vs Jan - Sep 2025</span>`;
+        mTransactions.textContent = activeAgg.transactions;
+        mTransactionsSub.className = `metric-growth ${activeAgg.txnGrowthClass}`;
+        mTransactionsSub.innerHTML = `<span>${activeAgg.txnGrowth}</span> <span class="comparison">growth rate</span>`;
         
-        mMarkets.textContent = `4 Regions`;
+        mMarkets.textContent = currentViewMode === 'weekly' ? '4 Regions (Weekly)' : '4 Regions';
         mMarketsSub.className = `metric-growth`;
         mMarketsSub.style.color = '#9ca3af';
         mMarketsSub.innerHTML = `<span style="color: #93c5fd; font-weight: 600;">KE, TZ, UG, NG</span> <span class="comparison">Active corridors</span>`;
@@ -1175,7 +1215,7 @@ function toggleIsolateCountry(countryName) {
         
         bannerEl.classList.remove('hidden');
         isolatedNameDisplay.textContent = countryName;
-        labelSpan.textContent = `(Global Isolate Active: ${countryName} - Jan–Sep Actuals & Oct–Dec Forecast)`;
+        labelSpan.textContent = `(Global Isolate Active: ${countryName})`;
         
         consolidatedVolumeChartInstance.data.datasets.forEach(dataset => {
             if (dataset.label === countryName || dataset.label === 'Q4 Predictive Trend') {
