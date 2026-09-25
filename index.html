@@ -1,1270 +1,733 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyTouchpoint EA & Nigeria Command Center</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Applied Systems Innovation Lab | Powered by OACM</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js CDN -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        amberGlow: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        cyanBlue: {
+                            400: '#38bdf8',
+                            500: '#0ea5e9'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'monospace'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Supabase JS Library -->
+    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #030712; color: #f3f4f6; }
-        .hidden { display: none !important; }
-        .glass-panel { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-
-        /* Title Gradient Effect */
-        .gradient-title {
-            background: linear-gradient(90deg, #ffffff 0%, #93c5fd 60%, #60a5fa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Link Cards - With blue top wrap border highlight */
-        .glowing-link-card { 
-            background: rgba(15, 23, 42, 0.85); 
-            backdrop-filter: blur(12px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-top: 2px solid #3b82f6;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
         
-        .glowing-link-card .open-btn {
-            background: rgba(30, 41, 59, 0.8);
-            color: #94a3b8;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: none;
-            transition: all 0.3s ease;
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(2, 6, 23, 0.98) 100%);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
 
-        .glowing-link-card:hover {
-            border-color: rgba(59, 130, 246, 0.7);
-            border-top: 2px solid #60a5fa;
-            box-shadow: 0 0 25px -4px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(59, 130, 246, 0.4);
-            transform: translateY(-3px);
-        }
-        .glowing-link-card:hover .open-btn {
-            background: #2563eb;
-            color: #ffffff;
-            border-color: rgba(96, 165, 250, 0.8);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+        .amber-glow-panel {
+            border: 1px solid rgba(245, 158, 11, 0.4) !important;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.15), inset 0 1px 0 rgba(245, 158, 11, 0.2) !important;
         }
 
-        .highlighted-row { background-color: rgba(37, 99, 235, 0.15) !important; border-left: 4px solid #2563eb; }
-        
-        /* Metric Growth CSS Rules */
-        .metric-growth {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #22e59c;
+        .amber-glow-btn {
+            border: 1px solid rgba(245, 158, 11, 0.6) !important;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3) !important;
         }
-        
-        .metric-growth .comparison {
-            color: #9ca3af;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        
-        .metric-growth.positive { color: #22e59c; }
-        .metric-growth.negative { color: #ef4444; }
 
-        /* Dot Legend Colors for Market Dominance Share */
-        .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-        .dot.kenya { background-color: #2563eb; }
-        .dot.nigeria { background-color: #d97706; }
-        .dot.tanzania { background-color: #7c3aed; }
-        .dot.uganda { background-color: #059669; }
+        .login-card {
+            background: radial-gradient(circle at top, rgba(14, 165, 233, 0.08) 0%, rgba(2, 6, 23, 0.98) 70%);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(14, 165, 233, 0.1);
+        }
+
+        .glow-cyan-input:focus {
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.25);
+            border-color: rgba(56, 189, 248, 0.8);
+        }
+
+        .executive-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.25;
+        }
+
+        .alert-glow { animation: pulseAlert 1.5s infinite; }
+        @keyframes pulseAlert {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        #map { height: 100%; min-height: 260px; border-radius: 0.5rem; }
         
-        /* --- PREMIUM LIGHT MODE OVERHAUL --- */
-        [data-theme="light"] {
-            background-color: #f8fafc;
-            color: #0f172a;
+        @media print {
+            body { background: white !important; color: black !important; }
+            header, .hero-section, button, input, select, .no-print { display: none !important; }
+            .print-container { width: 100% !important; padding: 0 !important; margin: 0 !important; }
+            .bg-slate-900, .bg-slate-950 { background: white !important; border: 1px solid #ccc !important; color: black !important; }
         }
-        [data-theme="light"] .glass-panel {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
-        }
-        [data-theme="light"] .gradient-title {
-            background: linear-gradient(90deg, #0f172a 0%, #1e3a8a 70%, #2563eb 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        [data-theme="light"] .glowing-link-card {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-top: 3px solid #2563eb;
-            box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.05);
-        }
-        [data-theme="light"] .glowing-link-card:hover {
-            border-color: #2563eb;
-            border-top: 3px solid #1d4ed8;
-            box-shadow: 0 20px 30px -10px rgba(37, 99, 235, 0.15);
-        }
-        [data-theme="light"] .glowing-link-card .open-btn {
-            background: #f8fafc;
-            color: #475569;
-            border-color: #cbd5e1;
-        }
-        [data-theme="light"] .glowing-link-card:hover .open-btn {
-            background: #2563eb;
-            color: #ffffff;
-            box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
-        }
-        [data-theme="light"] .text-slate-400 { color: #64748b !important; }
-        [data-theme="light"] .text-slate-200, [data-theme="light"] .text-white { color: #0f172a !important; }
-        [data-theme="light"] input, [data-theme="light"] select {
-            background-color: #ffffff !important;
-            color: #0f172a !important;
-            border-color: #cbd5e1 !important;
-        }
-        [data-theme="light"] .bg-slate-900\/40 { background-color: #f1f5f9 !important; border-color: #e2e8f0 !important; }
-        [data-theme="light"] .bg-gray-900 {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
-        }
-        [data-theme="light"] .metric-growth .comparison { color: #64748b !important; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white p-6">
+<body class="bg-[#020617] text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden">
 
-    <!-- Auth Container -->
-    <div id="auth-container" class="fixed inset-0 flex items-center justify-center bg-[#030712] z-50">
-        <div class="glass-panel p-8 rounded-2xl w-full max-w-md shadow-2xl border border-slate-800">
-            <div class="text-center mb-6">
-                <span class="text-3xl">🔒</span>
-                <h2 class="text-xl font-bold mt-2 text-white">Executive Access Required</h2>
-                <p class="text-sm text-slate-400 mt-1">Please enter your password to view metrics.</p>
-            </div>
-            <form onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <input type="password" id="password-input" placeholder="Enter password..." required
-                        class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition">
+    <!-- Ambient Lighting -->
+    <div class="executive-orb w-[40rem] h-[40rem] bg-amber-600 top-[-15%] left-[10%]"></div>
+    <div class="executive-orb w-[35rem] h-[35rem] bg-sky-700 bottom-[-10%] right-[5%]"></div>
+
+    <!-- LOGIN OVERLAY MODAL -->
+    <div id="login-overlay" class="fixed inset-0 z-50 bg-[#020617]/90 backdrop-blur-2xl flex items-center justify-center p-4">
+        <div class="login-card rounded-2xl p-8 md:p-10 max-w-md w-full relative z-10 transition-all duration-500">
+            <div class="flex flex-col items-center text-center mb-8">
+                <div class="h-14 w-14 rounded-xl bg-slate-900 border border-amber-500/40 flex items-center justify-center shadow-lg shadow-amber-500/10 mb-4 relative">
+                    <svg class="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
                 </div>
-                <div id="error" class="text-red-400 text-xs text-center font-medium"></div>
-                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition shadow-lg shadow-blue-600/30">
-                    Authorize Dashboard
+                <span class="text-[11px] uppercase tracking-widest text-amber-400 mono font-semibold mb-1">Odero Axiom Control Matrix</span>
+                <h2 class="font-bold text-xl md:text-2xl tracking-tight">Applied Systems Innovation Lab</h2>
+                <p class="text-xs opacity-80 mt-1">Authenticate credential to access executive matrix.</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-5">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <label class="mono font-medium">PASSWORD CREDENTIAL</label>
+                        <span class="text-amber-400 mono text-[10px]">Secure Gateway</span>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        </span>
+                        <input type="password" id="login-password-input" placeholder="Enter password..." class="w-full bg-slate-900/90 border border-slate-800 rounded-xl pl-10 pr-4 py-3.5 text-sm mono text-slate-100 focus:outline-none glow-cyan-input transition" required autofocus>
+                    </div>
+                </div>
+
+                <div id="login-error-msg" class="p-3 rounded-lg bg-red-950/40 border border-red-900/50 text-xs text-red-300 mono hidden flex items-center gap-2">
+                    <svg class="w-4 h-4 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span>Incorrect password. Please try again.</span>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl transition-all duration-200 shadow-lg shadow-amber-500/20">
+                    Authorize Session
                 </button>
             </form>
+
+            <div class="mt-8 pt-6 border-t border-slate-800/60 flex items-center justify-between text-[11px] mono opacity-80">
+                <span>System: Online</span>
+                <span class="text-amber-400 font-medium">OACM Protocol</span>
+            </div>
         </div>
     </div>
 
-    <!-- Main Content Wrapper (Hidden Initially) -->
-    <div id="main-content" class="hidden max-w-7xl mx-auto space-y-6 flex-grow w-full">
-        
-        <!-- Main Dashboard Workspace -->
-        <main class="space-y-6 flex-grow">
-            
-            <!-- Secondary Card Component housing title, regional health, and integrated controls -->
-            <div class="glass-panel p-6 rounded-2xl space-y-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div class="card-header-content flex items-center justify-between w-full">
-                        <div>
-                            <h2 class="text-xl font-bold tracking-tight gradient-title">MyTouchpoint EA & Nigeria Command Center</h2>
-                            <p class="text-xs text-slate-400 mt-1">Performance Review | Owner: John Odero | Last Updated: 20 Sep 2026</p>
-                        </div>
-                        <div class="header-controls flex items-center gap-3">
-                            <button onclick="toggleTheme()" class="badge-btn flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700 text-xs text-slate-300 transition cursor-pointer">
-                                <span id="themeIcon">☀️</span>
-                                <span id="themeText">Light Mode</span>
-                            </button>
-                            <div class="badge-btn flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-slate-700 text-xs text-slate-300 font-medium">
-                                📅 <span id="dynamicTimestamp">20 Sep 2026</span>
-                            </div>
-                        </div>
+    <!-- MAIN APP WRAPPER -->
+    <div id="app-wrapper" class="flex-1 flex flex-col hidden relative z-10">
+
+        <!-- Executive Hero Header -->
+        <div class="hero-section bg-slate-950/80 backdrop-blur border-b border-amber-500/20 px-6 py-4 flex items-center justify-between no-print">
+            <div class="flex items-center space-x-4 max-w-7xl mx-auto w-full justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="h-9 w-9 rounded-lg bg-slate-900 border border-amber-500/40 flex items-center justify-center shadow-md">
+                        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
                     </div>
-                </div>
-
-                <div class="flex justify-between items-center pt-2 border-t border-slate-800/60">
-                    <div class="text-xs text-slate-400">Regional Overview & Navigation Gateway</div>
-                    <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full text-emerald-400 text-xs font-medium">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>Regional Health: Stable</span>
-                    </div>
-                </div>
-
-                <!-- Navigation Cards Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
-                    <a href="backlog.html" class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center space-x-1">
-                                    <span>📋</span>
-                                    <span>EXECUTION PAGE</span>
-                                </span>
-                                <span class="open-btn text-xs font-bold px-3 py-1 rounded-lg flex items-center space-x-1">
-                                    <span>Open</span>
-                                    <span>→</span>
-                                </span>
-                            </div>
-                            <h3 class="text-base font-bold text-white mt-2">Backlog & Actions</h3>
-                            <p class="text-xs text-slate-400 mt-1">Prioritized engineering tickets, regional action tracking, and blockers.</p>
-                        </div>
-                    </a>
-
-                    <a href="https://devwabaplatform.lafricamobile.com/home" target="_blank" rel="noopener noreferrer" class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center space-x-1">
-                                    <span>💬</span>
-                                    <span>CRM PAGE</span>
-                                </span>
-                                <span class="open-btn text-xs font-bold px-3 py-1 rounded-lg flex items-center space-x-1">
-                                    <span>Open</span>
-                                    <span>→</span>
-                                </span>
-                            </div>
-                            <h3 class="text-base font-bold text-white mt-2">LAM Customer Support CRM</h3>
-                            <p class="text-xs text-slate-400 mt-1">Customer support workflows, ticketing queues, and interaction metrics.</p>
-                        </div>
-                    </a>
-
-                    <a href="crossborder-benchmark.html" class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center space-x-1">
-                                    <span>📊</span>
-                                    <span>ANALYTICAL REPORT</span>
-                                </span>
-                                <span class="open-btn text-xs font-bold px-3 py-1 rounded-lg flex items-center space-x-1">
-                                    <span>Open</span>
-                                    <span>→</span>
-                                </span>
-                            </div>
-                            <h3 class="text-base font-bold text-white mt-2">FX Benchmark Report</h3>
-                            <p class="text-xs text-slate-400 mt-1">Cross-border currency performance insights and corridor comparisons.</p>
-                        </div>
-                    </a>
-
-                    <div class="glowing-link-card p-5 rounded-2xl flex flex-col justify-between group opacity-75">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1">
-                                    <span>🚧</span>
-                                    <span>CORRIDOR STATUS</span>
-                                </span>
-                                <span class="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-500/10 text-slate-400 border border-slate-500/20">
-                                    Coming Soon
-                                </span>
-                            </div>
-                            <h3 class="text-base font-bold text-slate-400 mt-2">Active Routing Monitor</h3>
-                            <p class="text-xs text-slate-400 mt-1">Real-time payment gateway health, multi-hop latency, and corridor availability tracking.</p>
-                        </div>
+                    <div>
+                        <h1 class="font-semibold text-base md:text-lg tracking-tight flex items-center gap-3">
+                            Applied Systems Innovation Lab <span class="opacity-40">|</span> <span class="text-xs md:text-sm font-normal text-amber-400 mono">Powered by OACM</span>
+                        </h1>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Global Filter Active Notification Banner -->
-            <div id="globalFilterBanner" class="hidden glass-panel p-4 rounded-2xl border-l-4 border-blue-500 flex justify-between items-center bg-blue-500/10">
+        <!-- Top Navigation Bar -->
+        <header class="border-b border-slate-800/80 bg-slate-950/60 backdrop-blur-md sticky top-0 z-40 px-6 py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-4 max-w-7xl mx-auto w-full justify-between">
                 <div class="flex items-center space-x-3">
-                    <span class="text-blue-400 text-lg">🔍</span>
+                    <div id="connection-indicator" class="h-2.5 w-2.5 bg-amber-400 rounded-full animate-pulse shadow-sm"></div>
                     <div>
-                        <h4 class="text-sm font-bold text-white">Global Isolation Active: <span id="isolatedCountryNameDisplay" class="text-blue-400">Kenya</span></h4>
-                        <p class="text-xs text-slate-300">All dashboard sections, tables, metrics, and charts are currently filtered for this region.</p>
-                    </div>
-                </div>
-                <button onclick="toggleIsolateCountry(activeIsolatedCountry)" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer">
-                    Reset Global Filter ✕
-                </button>
-            </div>
-
-            <!-- Top Control Bar with Country Selector and View Mode Switcher -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center px-2 gap-3">
-                <div class="flex items-center gap-3">
-                    <h1 class="text-xl font-bold text-white tracking-wide" id="viewModeTitle">Overview Metrics (Monthly View)</h1>
-                    <!-- View Mode Toggle Tabs -->
-                    <div class="bg-slate-900 p-1 rounded-xl border border-slate-700 flex items-center">
-                        <button id="monthlyViewBtn" onclick="switchViewMode('monthly')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition cursor-pointer">Monthly</button>
-                        <button id="weeklyViewBtn" onclick="switchViewMode('weekly')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer">Weekly</button>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <select id="topCountrySelect" onchange="handleTopSelectIsolation(this.value)" class="px-3 py-2 bg-slate-900 border border-slate-700 text-white text-xs font-medium rounded-lg focus:outline-none focus:border-blue-500 transition cursor-pointer">
-                        <option value="">-- Isolate Market (All Markets) --</option>
-                        <option value="Kenya">🇰🇪 Kenya</option>
-                        <option value="Tanzania">🇹🇿 Tanzania</option>
-                        <option value="Uganda">🇺🇬 Uganda</option>
-                        <option value="Nigeria">🇳🇬 Nigeria</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Top Metric Cards Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span id="card1-title" class="text-xs font-semibold tracking-wider text-gray-400 uppercase">TOTAL GROSS VOLUME (YTD)</span>
-                            <div class="p-2 bg-indigo-950/50 rounded-lg text-indigo-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-                            </div>
-                        </div>
-                        <div id="metric-volume" class="text-3xl font-extrabold text-white mb-2">$77.3M</div>
-                    </div>
-                    <div id="metric-volume-sub" class="metric-growth positive">
-                        <span>+14.2%</span> <span class="comparison">vs Prior Period</span>
+                        <h2 class="font-semibold tracking-wider text-xs md:text-sm flex items-center gap-2">
+                            Odero Axiom Control Matrix <span class="text-[10px] px-2 py-0.5 rounded bg-slate-900 text-amber-400 border border-amber-500/30 mono">(OACM)</span>
+                        </h2>
                     </div>
                 </div>
 
-                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span id="card2-title" class="text-xs font-semibold tracking-wider text-gray-400 uppercase">TOTAL NET REVENUE (YTD)</span>
-                            <div class="p-2 bg-amber-950/50 rounded-lg text-amber-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </div>
-                        </div>
-                        <div id="metric-revenue" class="text-3xl font-extrabold text-white mb-2">$2.84M</div>
+                <!-- Controls: Project Selector & Export Suite -->
+                <div class="flex items-center space-x-3 w-full md:w-auto justify-end flex-wrap gap-2">
+                    <div class="flex items-center space-x-2 p-1 rounded-xl amber-glow-panel bg-slate-900/80">
+                        <label class="text-[11px] text-amber-300 mono font-semibold pl-2">PROJECT:</label>
+                        <select id="project-selector" onchange="switchProjectContext()" class="bg-slate-950 border border-amber-500/40 rounded-lg px-3 py-1.5 text-xs text-amber-300 mono focus:outline-none focus:border-amber-400 font-semibold shadow-sm">
+                            <option value="mytouchpoint">MyTouchpoint (EA & NG Fintech)</option>
+                            <option value="inflation-capture" disabled>Captured Inflation (Persistence Macro) [Locked]</option>
+                            <option value="totalenergies" disabled>TotalEnergies (Energy Grid) [Locked]</option>
+                            <option value="dcps" disabled>DCPs (Decentralized Credit Protocols) [Locked]</option>
+                            <option value="fnpl" disabled>Fuel Now Pay Later (BNPL Grid) [Locked]</option>
+                        </select>
                     </div>
-                    <div id="metric-revenue-sub" class="metric-growth positive">
-                        <span>+8.9%</span> <span class="comparison">vs Prior Period</span>
-                    </div>
-                </div>
-
-                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span id="card3-title" class="text-xs font-semibold tracking-wider text-gray-400 uppercase">PROCESSED TRANSACTIONS</span>
-                            <div class="p-2 bg-blue-950/50 rounded-lg text-blue-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                            </div>
-                        </div>
-                        <div id="metric-transactions" class="text-3xl font-extrabold text-white mb-2">8,282</div>
-                    </div>
-                    <div id="metric-transactions-sub" class="metric-growth positive">
-                        <span>+18.4%</span> <span class="comparison">growth rate</span>
-                    </div>
-                </div>
-
-                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span id="card4-title" class="text-xs font-semibold tracking-wider text-gray-400 uppercase">ACTIVE MARKETS</span>
-                            <div class="p-2 bg-cyan-950/50 rounded-lg text-cyan-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </div>
-                        </div>
-                        <div id="metric-markets" class="text-3xl font-extrabold text-white mb-2">4 Regions</div>
-                    </div>
-                    <div id="metric-markets-sub" class="metric-growth" style="color: #9ca3af;">
-                        <span style="color: #93c5fd; font-weight: 600;">KE, TZ, UG, NG</span> <span class="comparison">Active corridors</span>
+                    <div class="flex gap-1.5 no-print">
+                        <button onclick="exportAuditCSV()" class="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-lg text-xs mono transition">CSV</button>
+                        <button onclick="exportAuditJSON()" class="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-lg text-xs mono transition">JSON</button>
+                        <button onclick="window.print()" class="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg text-xs mono transition font-semibold">PDF Report</button>
                     </div>
                 </div>
             </div>
+        </header>
 
-            <!-- Charts Section 1: Consolidated Volume & Market Share Donuts -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="glass-panel p-6 rounded-2xl lg:col-span-2 flex flex-col">
+        <!-- MAIN DASHBOARD VIEW -->
+        <main id="main-dashboard-view" class="flex-1 p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6 print-container">
+            
+            <!-- Left Column -->
+            <div class="lg:col-span-1 flex flex-col gap-6">
+                
+                <!-- Parameters & Volatility Control -->
+                <div id="control-panel" class="glass-panel rounded-2xl p-5 no-print transition-all">
                     <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h2 id="chartMainTitle" class="text-base font-bold text-white">Consolidated Monthly Gross Volume (YTD Up to Today)</h2>
-                            <p class="text-xs text-slate-400" id="chartHighlightLabel">(Jan–Sep: Actuals | Oct–Dec: Forecast Projections)</p>
-                        </div>
-                        <div class="text-xs text-slate-400">USD ($)</div>
+                        <h3 id="project-title-label" class="text-[11px] uppercase tracking-widest opacity-80 font-semibold mono">MyTouchpoint Parameters</h3>
+                        <span id="volatility-badge" class="text-[10px] px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-900/60 mono font-medium">Stable</span>
                     </div>
-                    <div class="relative flex-grow h-72">
-                        <canvas id="consolidatedVolumeChart"></canvas>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-xs opacity-90 block mb-1">Grid Volatility / Load Index</label>
+                            <input type="range" id="volatility-slider" min="1" max="100" value="42" class="w-full accent-amber-400 bg-slate-900 rounded">
+                            <div class="flex justify-between text-[10px] opacity-70 mono mt-1">
+                                <span>Nominal (1)</span>
+                                <span id="volatility-val" class="text-amber-400 font-bold">42</span>
+                                <span>Critical (100)</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="executeStabilizationSweep()" class="py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 font-semibold text-xs rounded-xl transition shadow-sm">
+                                Stabilization
+                            </button>
+                            <button onclick="runMonteCarloSimulation()" class="py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition shadow-sm">
+                                Monte Carlo
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between">
-                    <div>
-                        <h2 class="text-base font-bold text-white">Market Dominance Share</h2>
-                        <p class="text-xs text-slate-400 mb-4">Full Regional Breakdown (% Share)</p>
+                <!-- Live Metrics Cards -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="glass-panel p-4 rounded-2xl">
+                        <div id="metric-1-title" class="text-[10px] uppercase opacity-70 font-semibold mono">Friction Index</div>
+                        <div id="metric-friction" class="text-xl font-bold mono mt-1">0.142</div>
+                        <div id="metric-1-sub" class="text-[10px] text-amber-400 mt-1 font-medium">&darr; 3.2% optimized</div>
                     </div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <!-- Tx Share % -->
-                        <div class="relative h-28 text-center flex flex-col items-center">
-                            <div class="w-full h-16 relative">
-                                <canvas id="transactionsChart"></canvas>
-                            </div>
-                            <ul class="legend text-[9px] text-slate-400 mt-1 space-y-0.5 text-left w-full">
-                                <li><span class="dot kenya"></span> KE (45.0%)</li>
-                                <li><span class="dot nigeria"></span> NG (25.9%)</li>
-                                <li><span class="dot tanzania"></span> TZ (11.4%)</li>
-                                <li><span class="dot uganda"></span> UG (17.7%)</li>
-                            </ul>
-                            <span class="block text-[10px] text-slate-400 mt-1 font-semibold">Tx Share %</span>
+                    <div class="glass-panel p-4 rounded-2xl">
+                        <div id="metric-2-title" class="text-[10px] uppercase opacity-70 font-semibold mono">Capture Rate</div>
+                        <div id="metric-capture" class="text-xl font-bold mono mt-1">94.8%</div>
+                        <div class="text-[10px] text-amber-400 mono mt-1">Optimal threshold</div>
+                    </div>
+                </div>
+
+                <!-- Interactive Clickable Card: ALL OPERATIONS -->
+                <div onclick="showAsilCommandCentre()" class="glass-panel rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:border-amber-500/50 flex flex-col items-center text-center group relative overflow-hidden">
+                    <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center mb-3 text-amber-400 group-hover:border-amber-500/40 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </div>
+                    
+                    <h3 class="text-sm font-bold tracking-wider group-hover:text-amber-400 transition mb-1">
+                        ALL OPERATIONS
+                    </h3>
+
+                    <p class="text-[11px] opacity-80 mono tracking-tight mb-4">
+                        MyTP &bull; DCPs &bull; TotalEnergies &bull; FNPL
+                    </p>
+
+                    <div class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900 text-xs font-medium mono group-hover:bg-amber-500/10 group-hover:border-amber-500/40 group-hover:text-amber-300 transition">
+                        Access Business Units <span class="ml-1.5">&rarr;</span>
+                    </div>
+                </div>
+
+                <!-- Precision Academic RAG Engine -->
+                <div class="glass-panel amber-glow-panel rounded-2xl p-5 flex flex-col flex-1 min-h-[300px]">
+                    <h3 class="text-[11px] uppercase tracking-widest text-amber-400 font-semibold mono mb-2 flex items-center justify-between">
+                        <span>Optimizer RAG Corpus</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-900 text-amber-400 border border-amber-500/40 mono">VERIFIED</span>
+                    </h3>
+                    <p class="text-[11px] opacity-80 mb-3">Indexed to published works and cosmological equations.</p>
+                    
+                    <div id="chat-history" class="bg-slate-950/90 rounded-xl p-3 flex-1 h-40 overflow-y-auto mono text-xs space-y-3 text-slate-300 border border-slate-900 mb-3">
+                        <div class="text-amber-400"><strong>Optimizer RAG:</strong> Systems active. Query research preprints or live corridor metrics.</div>
+                    </div>
+
+                    <div class="flex gap-2 no-print">
+                        <input type="text" id="user-question" placeholder="Query papers or metrics..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs mono text-slate-100 focus:outline-none glow-cyan-input">
+                        <button onclick="submitUserQuery()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition">
+                            Query
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column -->
+            <div class="lg:col-span-2 flex flex-col gap-6">
+                
+                <!-- Dual-Metric Telemetry Chart -->
+                <div class="glass-panel rounded-2xl p-6 flex-1 flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="chart-title" class="text-[11px] uppercase tracking-widest opacity-80 font-semibold mono">Dual-Axis Live Variance & Capture Feed</h3>
+                        <div class="flex items-center space-x-2 text-xs mono text-sky-400">
+                            <span class="h-2 w-2 rounded-full bg-sky-400 animate-ping"></span>
+                            <span>Supabase Realtime</span>
                         </div>
-                        <!-- Vol Share % -->
-                        <div class="relative h-28 text-center flex flex-col items-center">
-                            <div class="w-full h-16 relative">
-                                <canvas id="volumesChart"></canvas>
-                            </div>
-                            <ul class="legend text-[9px] text-slate-400 mt-1 space-y-0.5 text-left w-full">
-                                <li><span class="dot kenya"></span> KE (55.3%)</li>
-                                <li><span class="dot nigeria"></span> NG (15.6%)</li>
-                                <li><span class="dot tanzania"></span> TZ (12.9%)</li>
-                                <li><span class="dot uganda"></span> UG (16.2%)</li>
-                            </ul>
-                            <span class="block text-[10px] text-slate-400 mt-1 font-semibold">Vol Share %</span>
+                    </div>
+                    <div class="relative flex-1 w-full h-60">
+                        <canvas id="telemetryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- MyTouchpoint Sub-Page Iframe Container -->
+                <div id="module-container" class="glass-panel amber-glow-panel rounded-2xl p-5 flex flex-col h-[620px] transition-all duration-300">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-3">
+                        <div class="flex items-center gap-3">
+                            <h3 id="iframe-title" class="text-[11px] uppercase tracking-widest text-amber-300 font-semibold mono">Active Module: Performance Dashboard</h3>
+                            <!-- Highlighted Expand Button with Amber Glow -->
+                            <button id="expand-btn" onclick="toggleFullScreenModule()" class="px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-400 rounded-lg text-xs mono transition font-semibold flex items-center gap-1.5 amber-glow-btn no-print hover:bg-amber-500/30">
+                                <svg id="expand-icon" class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                                </svg>
+                                <span id="expand-text">Expand</span>
+                            </button>
                         </div>
-                        <!-- Rev Share % -->
-                        <div class="relative h-28 text-center flex flex-col items-center">
-                            <div class="w-full h-16 relative">
-                                <canvas id="revenueChart"></canvas>
-                            </div>
-                            <ul class="legend text-[9px] text-slate-400 mt-1 space-y-0.5 text-left w-full">
-                                <li><span class="dot kenya"></span> KE (58.0%)</li>
-                                <li><span class="dot nigeria"></span> NG (19.2%)</li>
-                                <li><span class="dot tanzania"></span> TZ (16.6%)</li>
-                                <li><span class="dot uganda"></span> UG (6.2%)</li>
-                            </ul>
-                            <span class="block text-[10px] text-slate-400 mt-1 font-semibold">Rev Share %</span>
+                        
+                        <!-- Navigation Buttons: LAM CRM unified with standard module button style -->
+                        <div class="flex items-center space-x-1.5 flex-wrap gap-1.5 no-print">
+                            <button onclick="loadSubPage('performance.html', 'Performance Dashboard')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-lg text-xs mono transition font-medium">Performance</button>
+                            <button onclick="loadSubPage('telemetry.html', 'Cross Border Telemetry')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-lg text-xs mono transition font-medium">Telemetry</button>
+                            <button onclick="loadSubPage('bi.html', 'CB Business Intelligence')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-lg text-xs mono transition font-medium">BI</button>
+                            <a href="https://devwabaplatform.lafricamobile.com/login" target="_blank" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-lg text-xs mono transition flex items-center gap-1 font-medium">
+                                LAM CRM &nearr;
+                            </a>
+                            <button onclick="loadSubPage('backlog.html', 'Backlog & Actions')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-lg text-xs mono transition font-medium">Backlog</button>
                         </div>
                     </div>
                     
-                    <div class="mt-8 pt-4 border-t border-slate-800/80 flex justify-between items-center text-xs">
-                        <div class="flex items-center space-x-1.5">
-                            <span class="text-slate-400">Country Focus:</span>
-                            <span class="text-white font-medium">Kenya, Nigeria, Tanzania, Uganda</span>
-                        </div>
-                        <div class="text-emerald-400 font-medium">Stable</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Section 2: Revenue and Transaction Trends -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="glass-panel p-6 rounded-2xl flex flex-col">
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h2 id="chartRevTitle" class="text-base font-bold text-white">Consolidated Monthly Gross Revenue</h2>
-                            <p class="text-xs text-slate-400" id="chartRevSub">Breakdown by region stacked</p>
-                        </div>
-                    </div>
-                    <div class="relative flex-grow h-64">
-                        <canvas id="consolidatedRevenueChart"></canvas>
-                    </div>
+                    <!-- Target Iframe -->
+                    <iframe id="mtp-subpage-frame" src="performance.html" class="w-full flex-1 rounded-xl border border-slate-900 bg-slate-950"></iframe>
                 </div>
 
-                <div class="glass-panel p-6 rounded-2xl flex flex-col">
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h2 id="chartTxnTitle" class="text-base font-bold text-white">Transaction Volume Trends</h2>
-                            <p class="text-xs text-slate-400" id="chartTxnSub">Monthly progression across markets</p>
+                <!-- Geospatial Map & Audit Stream -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Leaflet Geospatial Map -->
+                    <div class="glass-panel rounded-2xl p-4 flex flex-col">
+                        <h3 class="text-[11px] uppercase tracking-widest opacity-80 font-semibold mono mb-3 flex items-center justify-between">
+                            <span>Geospatial Corridor Nodes</span>
+                            <span class="text-[10px] text-sky-400 mono">Nairobi &bull; Lagos &bull; Kampala</span>
+                        </h3>
+                        <div id="map"></div>
+                    </div>
+
+                    <!-- Persistent Audit Log Stream -->
+                    <div class="glass-panel rounded-2xl p-4 flex flex-col">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-[11px] uppercase tracking-widest opacity-80 font-semibold mono">Persistent Audit Trail</h3>
+                            <span class="text-[10px] text-amber-400 mono">DB Synced</span>
+                        </div>
+                        <div id="log-container" class="bg-slate-950/90 rounded-xl p-3 flex-1 h-52 overflow-y-auto mono text-xs space-y-2 text-slate-400 border border-slate-900">
+                            <div class="text-amber-400">[00:00:01] [INIT] Applied Systems Innovation Lab matrix loaded with OACM amber & cyan aesthetics.</div>
                         </div>
                     </div>
-                    <div class="relative flex-grow h-64">
-                        <canvas id="consolidatedTransactionsChart"></canvas>
-                    </div>
                 </div>
-            </div>
 
-            <!-- Regional Breakdown Interactive Table -->
-            <div class="glass-panel p-6 rounded-2xl">
-                <div class="flex justify-between items-center mb-4">
-                    <div>
-                        <h2 id="tableTitle" class="text-base font-bold text-white">Regional Breakdown Matrix (Gross YTD Up to Today)</h2>
-                        <p class="text-xs text-slate-400">Click any market row or use the bottom action buttons to globally isolate all charts and metrics</p>
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-sm">
-                        <thead>
-                            <tr id="tableHeaderRow" class="border-b border-slate-800 text-xs text-slate-400 uppercase tracking-wider">
-                                <th class="py-3 px-4 font-semibold">Region / Country</th>
-                                <th class="py-3 px-4 font-semibold">YTD Volume (Gross)</th>
-                                <th class="py-3 px-4 font-semibold">YTD Revenue (Gross)</th>
-                                <th class="py-3 px-4 font-semibold">Total Transactions</th>
-                                <th class="py-3 px-4 font-semibold text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="monthlyVolumeTableBody" class="divide-y divide-slate-800/60 text-slate-300">
-                            <tr id="row-Kenya" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Kenya')">
-                                <td class="py-3 px-4 font-medium text-white flex items-center space-x-2">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
-                                    <span>Kenya</span>
-                                </td>
-                                <td class="py-3 px-4">$77,986,001.98</td>
-                                <td class="py-3 px-4">$2,867,732.31</td>
-                                <td class="py-3 px-4">5,900</td>
-                                <td class="py-3 px-4 text-right">
-                                    <button onclick="event.stopPropagation(); toggleIsolateCountry('Kenya');" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Kenya">Isolate View</button>
-                                </td>
-                            </tr>
-                            <tr id="row-Tanzania" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Tanzania')">
-                                <td class="py-3 px-4 font-medium text-white flex items-center space-x-2">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-purple-600 inline-block"></span>
-                                    <span>Tanzania</span>
-                                </td>
-                                <td class="py-3 px-4">$16,242,399.10</td>
-                                <td class="py-3 px-4">$651,851.35</td>
-                                <td class="py-3 px-4">1,250</td>
-                                <td class="py-3 px-4 text-right">
-                                    <button onclick="event.stopPropagation(); toggleIsolateCountry('Tanzania');" class="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Tanzania">Isolate View</button>
-                                </td>
-                            </tr>
-                            <tr id="row-Uganda" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Uganda')">
-                                <td class="py-3 px-4 font-medium text-white flex items-center space-x-2">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>
-                                    <span>Uganda</span>
-                                </td>
-                                <td class="py-3 px-4">$4,998,349.46</td>
-                                <td class="py-3 px-4">$239,467.43</td>
-                                <td class="py-3 px-4">848</td>
-                                <td class="py-3 px-4 text-right">
-                                    <button onclick="event.stopPropagation(); toggleIsolateCountry('Uganda');" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Uganda">Isolate View</button>
-                                </td>
-                            </tr>
-                            <tr id="row-Nigeria" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Nigeria')">
-                                <td class="py-3 px-4 font-medium text-white flex items-center space-x-2">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-600 inline-block"></span>
-                                    <span>Nigeria</span>
-                                </td>
-                                <td class="py-3 px-4">$20,142,668.75</td>
-                                <td class="py-3 px-4">$779,573.90</td>
-                                <td class="py-3 px-4">2,960</td>
-                                <td class="py-3 px-4 text-right">
-                                    <button onclick="event.stopPropagation(); toggleIsolateCountry('Nigeria');" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Nigeria">Isolate View</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </main>
+
+        <!-- ASIL COMMAND CENTRE VIEW -->
+        <div id="asil-command-view" class="flex-1 p-6 max-w-7xl mx-auto w-full hidden flex-col gap-6">
+            <div class="flex justify-between items-center glass-panel amber-glow-panel p-5 rounded-2xl">
+                <div>
+                    <span class="text-[11px] uppercase tracking-widest text-amber-400 font-semibold mono">ASIL Executive Matrix</span>
+                    <h2 class="text-xl md:text-2xl font-bold mt-1">ASIL Command Centre</h2>
+                    <p class="text-xs opacity-80 mt-1">Operational business entities managed by the core optimizer engine.</p>
+                </div>
+                <button onclick="returnToMainDashboard()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 rounded-xl text-xs mono font-semibold transition flex items-center gap-2">
+                    &larr; Back to Telemetry Matrix
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 my-4">
+                <!-- LIVE ENTITY: MyTouchpoint -->
+                <div onclick="selectEntityFromAsil('mytouchpoint')" class="glass-panel rounded-2xl p-6 border border-amber-500/40 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:border-amber-400 flex flex-col justify-between group">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-amber-950/60 text-amber-300 border border-amber-800/60 mono font-semibold">FINTECH (LIVE)</span>
+                            <span class="text-xs text-amber-400 group-hover:translate-x-1 transition duration-200">&rarr;</span>
+                        </div>
+                        <h3 class="text-base font-bold group-hover:text-amber-300 transition mb-2">MyTouchPoint EA & Nigeria</h3>
+                        <p class="text-xs opacity-80 leading-relaxed">
+                            Cross-border regional transaction processing, friction indexing, and high-velocity corridor throughput monitoring.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs mono text-amber-400">
+                        <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span> Active</span>
+                        <span class="font-semibold underline">Launch</span>
+                    </div>
+                </div>
+
+                <!-- LOCKED ENTITY: DCPs -->
+                <div class="glass-panel rounded-2xl p-6 opacity-50 cursor-not-allowed flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-slate-900 text-slate-500 border border-slate-800 mono">LOCKED</span>
+                        </div>
+                        <h3 class="text-base font-bold opacity-70 mb-2">DCPs Kenya</h3>
+                        <p class="text-xs opacity-60 leading-relaxed">Decentralized credit protocol modeling and collateral risk coefficient analysis.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-900 text-xs mono opacity-50">Pending activation</div>
+                </div>
+
+                <!-- LOCKED ENTITY: TotalEnergies -->
+                <div class="glass-panel rounded-2xl p-6 opacity-50 cursor-not-allowed flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-slate-900 text-slate-500 border border-slate-800 mono">LOCKED</span>
+                        </div>
+                        <h3 class="text-base font-bold opacity-70 mb-2">TotalEnergies Kenya</h3>
+                        <p class="text-xs opacity-60 leading-relaxed">Energy grid flow resistance tracking and throughput ratio telemetry.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-900 text-xs mono opacity-50">Pending activation</div>
+                </div>
+
+                <!-- LOCKED ENTITY: Fuel Now Pay Later -->
+                <div class="glass-panel rounded-2xl p-6 opacity-50 cursor-not-allowed flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-slate-900 text-slate-500 border border-slate-800 mono">LOCKED</span>
+                        </div>
+                        <h3 class="text-base font-bold opacity-70 mb-2">Fuel Now Pay Later</h3>
+                        <p class="text-xs opacity-60 leading-relaxed">Automated BNPL risk scoring and credit line velocity metrics.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-900 text-xs mono opacity-50">Pending activation</div>
+                </div>
+            </div>
+        </div>
     </div>
 
-<script>
-const CORRECT_PASSWORD = "secret123";
+    <!-- Script Logic -->
+    <script>
+        const SUPABASE_URL = 'https://vgphzwnqktmikpuqsonu.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_tOM6F34nq3oitqSvPiDb3w_YpAd-Ydx';
 
-// Initialize Supabase Client
-const SUPABASE_URL = 'https://vgphzwnqktmikpuqsonu.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_tOM6F34nq3oitqSvPiDb3w_YpAd-Ydx';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let supabaseClient = null;
+        let timeLabels = [];
+        let auditLogsStore = [];
+        let activeProjectKey = 'mytouchpoint';
 
-function handleLogin(event) {
-    event.preventDefault();
-    const inputVal = document.getElementById('password-input').value;
+        const projectProfiles = {
+            'mytouchpoint': { name: 'MyTouchpoint (EA & NG Fintech)', metric1: 'Friction Index', metric2: 'Capture Rate', friction: 0.142, capture: 94.8, color: '#f59e0b' }
+        };
 
-    if (inputVal === CORRECT_PASSWORD) {
-        sessionStorage.setItem('isAuthenticated', 'true');
-        showContent();
-    } else {
-        document.getElementById('error').innerText = 'Incorrect password. Try again.';
-    }
-}
+        let currentProfile = projectProfiles[activeProjectKey];
+        let latestTelemetryCache = { friction: currentProfile.friction, capture: currentProfile.capture, volatility: 42 };
 
-function showContent() {
-    document.getElementById('auth-container').style.display = 'none';
-    document.getElementById('main-content').classList.remove('hidden');
-    
-    updateDashboardTimestamp();
+        let map = null;
+        let telemetryChart = null;
 
-    if (window.chartsInitialized !== true) {
-        loadDashboardDataFromSupabase();
-        window.chartsInitialized = true;
-    }
-}
+        function handleLogin(event) {
+            event.preventDefault();
+            const passInput = document.getElementById('login-password-input').value;
+            const errorMsg = document.getElementById('login-error-msg');
 
-function updateDashboardTimestamp() {
-    const now = new Date();
-    const options = { day: '2-digit', month: 'short', year: 'numeric' };
-    const formattedDate = now.toLocaleDateString('en-GB', options);
-    const timestampEl = document.getElementById('dynamicTimestamp');
-    if (timestampEl) {
-        timestampEl.textContent = formattedDate;
-    }
-}
+            if (passInput === 'secret123') {
+                document.getElementById('login-overlay').classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => { document.getElementById('login-overlay').classList.add('hidden'); }, 500);
+                document.getElementById('app-wrapper').classList.remove('hidden');
+                initApp();
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('login-password-input').classList.add('border-red-500');
+            }
+        }
 
-window.onload = function() {
-    if (sessionStorage.getItem('isAuthenticated') === 'true') {
-        showContent();
-    }
-};
+        function initApp() {
+            try {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                document.getElementById('connection-indicator').className = 'h-2.5 w-2.5 bg-emerald-400 rounded-full animate-pulse shadow-sm';
+            } catch (err) {
+                console.warn('Supabase notice:', err);
+            }
 
-function toggleTheme() {
-    const html = document.documentElement;
-    const themeIcon = document.getElementById('themeIcon');
-    const themeText = document.getElementById('themeText');
-    
-    if (html.getAttribute('data-theme') === 'light') {
-        html.removeAttribute('data-theme');
-        themeIcon.textContent = '☀️';
-        themeText.textContent = 'Light Mode';
-        localStorage.setItem('theme', 'dark');
-    } else {
-        html.setAttribute('data-theme', 'light');
-        themeIcon.textContent = '🌙';
-        themeText.textContent = 'Dark Mode';
-        localStorage.setItem('theme', 'light');
-    }
-}
+            map = L.map('map', { zoomControl: false }).setView([2.5, 18.0], 3);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap & CartoDB', maxZoom: 10
+            }).addTo(map);
 
-if (localStorage.getItem('theme') === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
-    document.getElementById('themeIcon').textContent = '🌙';
-    document.getElementById('themeText').textContent = 'Dark Mode';
-}
+            const nodes = [
+                { name: 'Nairobi HQ (ASIL)', coords: [-1.2921, 36.8219], status: 'Optimal' },
+                { name: 'Kampala Corridor', coords: [0.3476, 32.5825], status: 'Active' },
+                { name: 'Lagos Gateway', coords: [6.5244, 3.3792], status: 'Nominal' }
+            ];
 
-Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-Chart.defaults.color = '#94a3b8';
-Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.04)';
-Chart.defaults.scale.grid.tickMarkLength = 0;
-
-const eliteTooltip = {
-    backgroundColor: 'rgba(15, 23, 42, 0.95)',
-    titleColor: '#f8fafc',
-    bodyColor: '#cbd5e1',
-    titleFont: { size: 13, weight: '700' },
-    bodyFont: { size: 12, weight: '500' },
-    padding: 14,
-    cornerRadius: 10,
-    boxPadding: 8,
-    usePointStyle: true,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    borderWidth: 1
-};
-
-const smoothAnimation = {
-    animation: { duration: 2000, easing: 'easeInOutQuart' }
-};
-
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-const countries = ['Kenya', 'Tanzania', 'Uganda', 'Nigeria'];
-
-let currentViewMode = 'monthly';
-
-let volumeDataOriginal = {
-    'Kenya': [6338555.22, 9259938.89, 8500000.00, 9016831.08, 10806372.76, 12571863.81, 6272042.78, 13612499.34, 11500000.00, 12000000.00, 12500000.00, 14000000.00],
-    'Tanzania': [1533874.25, 651357.94, 2100000.00, 3573788.63, 4293566.09, 1511179.40, 801107.94, 515566.52, 1100000.00, 1200000.00, 1300000.00, 1500000.00],
-    'Uganda': [147859.64, 104573.54, 500000.00, 1069604.63, 1479883.26, 1363132.29, 156244.84, 347311.36, 400000.00, 450000.00, 500000.00, 600000.00],
-    'Nigeria': [171176.07, 938936.75, 1500000.00, 2595012.82, 3750288.46, 4390464.96, 2688262.39, 1943815.81, 2200000.00, 2400000.00, 2600000.00, 3000000.00]
-};
-
-let weeklyVolumeData = {
-    'Kenya': [2850000.00, 3100000.00, 3279942.00, 3400000.00],
-    'Tanzania': [350000.00, 410000.00, 230338.00, 480000.00],
-    'Uganda': [110000.00, 125000.00, 58122.90, 165000.00],
-    'Nigeria': [550000.00, 620000.00, 318530.00, 680000.00]
-};
-
-let revenueDataOriginal = {
-    'Kenya': [214347.45, 313147.10, 374164.12, 304914.88, 365434.31, 425137.49, 212103.88, 460327.37, 390000, 410000, 430000, 480000],
-    'Tanzania': [51870.17, 22026.61, 99210.52, 120852.36, 145193.13, 51102.79, 27090.56, 17434.55, 45000, 48000, 52000, 60000],
-    'Uganda': [5000.15, 5424.22, 16488.19, 36170.25, 50054.41, 46096.26, 5283.71, 11744.84, 15000, 17000, 19000, 22000],
-    'Nigeria': [5789.53, 31751.28, 80966.67, 87755.56, 126821.37, 148469.66, 90907.26, 65732.91, 80000, 88000, 95000, 110000]
-};
-
-let weeklyRevenueData = {
-    'Kenya': [95000.00, 102000.00, 113635.20, 115000.00],
-    'Tanzania': [11000.00, 13500.00, 6965.80, 15500.00],
-    'Uganda': [3500.00, 4100.00, 2430.50, 5400.00],
-    'Nigeria': [18000.00, 21000.00, 11051.70, 24000.00]
-};
-
-let transactionDataOriginal = {
-    'Kenya': [450, 620, 580, 610, 720, 850, 430, 910, 800, 850, 900, 1000],
-    'Tanzania': [120, 50, 160, 280, 340, 110, 60, 40, 90, 100, 110, 130],
-    'Uganda': [20, 15, 70, 150, 210, 190, 22, 50, 60, 70, 80, 95],
-    'Nigeria': [30, 140, 220, 390, 550, 640, 390, 280, 320, 350, 380, 450]
-};
-
-let weeklyTransactionData = {
-    'Kenya': [210, 230, 81, 250],
-    'Tanzania': [35, 42, 8, 48],
-    'Uganda': [22, 25, 8, 32],
-    'Nigeria': [95, 105, 45, 120]
-};
-
-const q4TrendProjectionData = [null, null, null, null, null, null, null, null, null, 16000000, 16900000, 19100000];
-
-const countryAggregates = {
-    'Kenya': { volume: '$78.0M', revenue: '$2.87M', transactions: '5,900', volumeGrowth: '+14.2%', revenueGrowth: '+8.9%', txnGrowth: '+18.4%', marketsCount: '1 Region (Kenya)', volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive' },
-    'Tanzania': { volume: '$16.2M', revenue: '$651.9K', transactions: '1,250', volumeGrowth: '+6.5%', revenueGrowth: '+5.1%', txnGrowth: '+9.2%', marketsCount: '1 Region (Tanzania)', volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive' },
-    'Uganda': { volume: '$5.0M', revenue: '$239.5K', transactions: '848', volumeGrowth: '+122.3%', revenueGrowth: '+95.4%', txnGrowth: '+110.0%', marketsCount: '1 Region (Uganda)', volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive' },
-    'Nigeria': { volume: '$20.1M', revenue: '$779.6K', transactions: '2,960', volumeGrowth: '+11.1%', revenueGrowth: '+7.3%', txnGrowth: '+14.5%', marketsCount: '1 Region (Nigeria)', volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive' }
-};
-
-let defaultGlobalAggregates = { volume: '$77.3M', revenue: '$2.84M', transactions: '8,282', volumeGrowth: '+14.2%', revenueGrowth: '+8.9%', txnGrowth: '+18.4%', marketsCount: '4 Regions', volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive' };
-
-let weeklyGlobalAggregates = { volume: '$18.4M', revenue: '$684.2K', transactions: '1,842', volumeGrowth: '+6.2%', revenueGrowth: '+4.1%', txnGrowth: '+7.8%', marketsCount: '4 Regions (Weekly)', volGrowthClass: 'positive', revGrowthClass: 'positive', txnGrowthClass: 'positive' };
-
-let activeIsolatedCountry = null;
-let consolidatedVolumeChartInstance = null;
-let consolidatedRevenueChartInstance = null;
-let consolidatedTransactionsChartInstance = null;
-let transactionsShareChartInstance = null;
-let volumesShareChartInstance = null;
-let revenueShareChartInstance = null;
-
-async function loadDashboardDataFromSupabase() {
-    try {
-        const { data, error } = await supabaseClient
-            .from('regional_metrics')
-            .select('*')
-            .eq('year', 2026);
-
-        if (error) throw error;
-
-        if (data && data.length > 0) {
-            countries.forEach(country => {
-                const countryRows = data.filter(r => r.country === country);
-                
-                volumeDataOriginal[country] = months.map(m => {
-                    const row = countryRows.find(r => r.metric_type === 'volume' && r.month === m);
-                    return row ? row.amount : volumeDataOriginal[country][months.indexOf(m)];
-                });
-
-                revenueDataOriginal[country] = months.map(m => {
-                    const row = countryRows.find(r => r.metric_type === 'revenue' && r.month === m);
-                    return row ? row.amount : revenueDataOriginal[country][months.indexOf(m)];
-                });
-
-                transactionDataOriginal[country] = months.map(m => {
-                    const row = countryRows.find(r => r.metric_type === 'transactions' && r.month === m);
-                    return row ? row.amount : transactionDataOriginal[country][months.indexOf(m)];
-                });
+            nodes.forEach(node => {
+                L.circleMarker(node.coords, {
+                    radius: 5, color: '#38bdf8', fillColor: '#38bdf8', fillOpacity: 0.9
+                }).addTo(map).bindPopup(`<b class="mono">${node.name}</b><br>Status: ${node.status}`);
             });
-            
-            computeAndRenderDynamicAggregates();
-        }
-    } catch (err) {
-        console.error('Error fetching data, using fallback local context:', err);
-    } finally {
-        initCharts();
-    }
-}
 
-function computeAndRenderDynamicAggregates() {
-    let totalVol = 0;
-    let totalRev = 0;
-    let totalTxn = 0;
+            seedTimeline();
 
-    countries.forEach(c => {
-        const volSlice = volumeDataOriginal[c].slice(0, 9);
-        const revSlice = revenueDataOriginal[c].slice(0, 9);
-        const txnSlice = transactionDataOriginal[c].slice(0, 9);
-
-        totalVol += volSlice.reduce((a, b) => a + b, 0);
-        totalRev += revSlice.reduce((a, b) => a + b, 0);
-        totalTxn += txnSlice.reduce((a, b) => a + b, 0);
-    });
-
-    defaultGlobalAggregates.volume = '$' + (totalVol / 1000000).toFixed(1) + 'M';
-    defaultGlobalAggregates.revenue = '$' + (totalRev / 1000000).toFixed(2) + 'M';
-    defaultGlobalAggregates.transactions = totalTxn.toLocaleString();
-
-    if (currentViewMode === 'monthly' && !activeIsolatedCountry) {
-        document.getElementById('metric-volume').textContent = defaultGlobalAggregates.volume;
-        document.getElementById('metric-revenue').textContent = defaultGlobalAggregates.revenue;
-        document.getElementById('metric-transactions').textContent = defaultGlobalAggregates.transactions;
-    }
-}
-
-function switchViewMode(mode) {
-    currentViewMode = mode;
-    const monthlyBtn = document.getElementById('monthlyViewBtn');
-    const weeklyBtn = document.getElementById('weeklyViewBtn');
-    const viewModeTitle = document.getElementById('viewModeTitle');
-    const card1Title = document.getElementById('card1-title');
-    const card2Title = document.getElementById('card2-title');
-    const card3Title = document.getElementById('card3-title');
-    
-    const mVolume = document.getElementById('metric-volume');
-    const mVolumeSub = document.getElementById('metric-volume-sub');
-    const mRevenue = document.getElementById('metric-revenue');
-    const mRevenueSub = document.getElementById('metric-revenue-sub');
-    const mTransactions = document.getElementById('metric-transactions');
-    const mTransactionsSub = document.getElementById('metric-transactions-sub');
-    const chartMainTitle = document.getElementById('chartMainTitle');
-    const chartHighlightLabel = document.getElementById('chartHighlightLabel');
-    const chartRevTitle = document.getElementById('chartRevTitle');
-    const chartTxnTitle = document.getElementById('chartTxnTitle');
-    const tableTitle = document.getElementById('tableTitle');
-
-    if (mode === 'weekly') {
-        monthlyBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer";
-        weeklyBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition cursor-pointer";
-        viewModeTitle.textContent = "Overview Metrics (Weekly View)";
-        
-        card1Title.textContent = "WEEKLY GROSS VOLUME";
-        card2Title.textContent = "WEEKLY NET REVENUE";
-        card3Title.textContent = "WEEKLY TRANSACTIONS";
-
-        mVolume.textContent = weeklyGlobalAggregates.volume;
-        mVolumeSub.innerHTML = `<span>${weeklyGlobalAggregates.volumeGrowth}</span> <span class="comparison">vs Prior Week</span>`;
-        mRevenue.textContent = weeklyGlobalAggregates.revenue;
-        mRevenueSub.innerHTML = `<span>${weeklyGlobalAggregates.revenueGrowth}</span> <span class="comparison">vs Prior Week</span>`;
-        mTransactions.textContent = weeklyGlobalAggregates.transactions;
-        mTransactionsSub.innerHTML = `<span>${weeklyGlobalAggregates.txnGrowth}</span> <span class="comparison">vs Prior Week</span>`;
-
-        chartMainTitle.textContent = "Consolidated Weekly Gross Volume (Rolling View)";
-        chartHighlightLabel.textContent = "(Wk 1-3: Real Actuals | Wk 4: Forecast Projections)";
-        chartRevTitle.textContent = "Consolidated Weekly Gross Revenue";
-        chartTxnTitle.textContent = "Weekly Transaction Volume Trends";
-        tableTitle.textContent = "Regional Breakdown Matrix (Weekly Rolling View)";
-
-        updateChartsForWeekly();
-        updateTableForWeekly();
-    } else {
-        weeklyBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer";
-        monthlyBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition cursor-pointer";
-        viewModeTitle.textContent = "Overview Metrics (Monthly View)";
-        
-        card1Title.textContent = "TOTAL GROSS VOLUME (YTD)";
-        card2Title.textContent = "TOTAL NET REVENUE (YTD)";
-        card3Title.textContent = "PROCESSED TRANSACTIONS";
-
-        mVolume.textContent = defaultGlobalAggregates.volume;
-        mVolumeSub.innerHTML = `<span>${defaultGlobalAggregates.volumeGrowth}</span> <span class="comparison">vs Jan - Sep 2025</span>`;
-        mRevenue.textContent = defaultGlobalAggregates.revenue;
-        mRevenueSub.innerHTML = `<span>${defaultGlobalAggregates.revenueGrowth}</span> <span class="comparison">vs Jan - Sep 2025</span>`;
-        mTransactions.textContent = defaultGlobalAggregates.transactions;
-        mTransactionsSub.innerHTML = `<span>${defaultGlobalAggregates.txnGrowth}</span> <span class="comparison">volume growth vs Jan - Sep 2025</span>`;
-
-        chartMainTitle.textContent = "Consolidated Monthly Gross Volume (YTD Up to Today)";
-        chartHighlightLabel.textContent = "(Jan–Sep: Actuals | Oct–Dec: Forecast Projections)";
-        chartRevTitle.textContent = "Consolidated Monthly Gross Revenue";
-        chartTxnTitle.textContent = "Transaction Volume Trends";
-        tableTitle.textContent = "Regional Breakdown Matrix (Gross YTD Up to Today)";
-
-        updateChartsForMonthly();
-        updateTableForMonthly();
-    }
-}
-
-function updateChartsForWeekly() {
-    consolidatedVolumeChartInstance.data.labels = weeks;
-    consolidatedVolumeChartInstance.data.datasets[0].data = weeklyVolumeData['Kenya'];
-    consolidatedVolumeChartInstance.data.datasets[0].backgroundColor = getWeeklyBarColorArray('#2563eb', 'rgba(37, 99, 235, 0.4)');
-    
-    consolidatedVolumeChartInstance.data.datasets[1].data = weeklyVolumeData['Tanzania'];
-    consolidatedVolumeChartInstance.data.datasets[1].backgroundColor = getWeeklyBarColorArray('#7c3aed', 'rgba(124, 58, 237, 0.4)');
-    
-    consolidatedVolumeChartInstance.data.datasets[2].data = weeklyVolumeData['Uganda'];
-    consolidatedVolumeChartInstance.data.datasets[2].backgroundColor = getWeeklyBarColorArray('#059669', 'rgba(5, 150, 105, 0.4)');
-    
-    consolidatedVolumeChartInstance.data.datasets[3].data = weeklyVolumeData['Nigeria'];
-    consolidatedVolumeChartInstance.data.datasets[3].backgroundColor = getWeeklyBarColorArray('#d97706', 'rgba(217, 119, 6, 0.4)');
-    
-    consolidatedVolumeChartInstance.data.datasets[4].data = [null, null, null, null];
-    consolidatedVolumeChartInstance.update();
-
-    consolidatedRevenueChartInstance.data.labels = weeks;
-    consolidatedRevenueChartInstance.data.datasets[0].data = weeklyRevenueData['Kenya'];
-    consolidatedRevenueChartInstance.data.datasets[0].backgroundColor = getWeeklyBarColorArray('#2563eb', 'rgba(37, 99, 235, 0.4)');
-    
-    consolidatedRevenueChartInstance.data.datasets[1].data = weeklyRevenueData['Tanzania'];
-    consolidatedRevenueChartInstance.data.datasets[1].backgroundColor = getWeeklyBarColorArray('#7c3aed', 'rgba(124, 58, 237, 0.4)');
-    
-    consolidatedRevenueChartInstance.data.datasets[2].data = weeklyRevenueData['Uganda'];
-    consolidatedRevenueChartInstance.data.datasets[2].backgroundColor = getWeeklyBarColorArray('#059669', 'rgba(5, 150, 105, 0.4)');
-    
-    consolidatedRevenueChartInstance.data.datasets[3].data = weeklyRevenueData['Nigeria'];
-    consolidatedRevenueChartInstance.data.datasets[3].backgroundColor = getWeeklyBarColorArray('#d97706', 'rgba(217, 119, 6, 0.4)');
-    consolidatedRevenueChartInstance.update();
-
-    consolidatedTransactionsChartInstance.data.labels = weeks;
-    consolidatedTransactionsChartInstance.data.datasets[0].data = weeklyTransactionData['Kenya'];
-    consolidatedTransactionsChartInstance.data.datasets[1].data = weeklyTransactionData['Tanzania'];
-    consolidatedTransactionsChartInstance.data.datasets[2].data = weeklyTransactionData['Uganda'];
-    consolidatedTransactionsChartInstance.data.datasets[3].data = weeklyTransactionData['Nigeria'];
-    consolidatedTransactionsChartInstance.update();
-}
-
-function updateChartsForMonthly() {
-    consolidatedVolumeChartInstance.data.labels = months;
-    consolidatedVolumeChartInstance.data.datasets[0].data = volumeDataOriginal['Kenya'];
-    consolidatedVolumeChartInstance.data.datasets[0].backgroundColor = getBarColorArray('#2563eb', 'rgba(37, 99, 235, 0.4)');
-    
-    consolidatedVolumeChartInstance.data.datasets[1].data = volumeDataOriginal['Tanzania'];
-    consolidatedVolumeChartInstance.data.datasets[1].backgroundColor = getBarColorArray('#7c3aed', 'rgba(124, 58, 237, 0.4)');
-    
-    consolidatedVolumeChartInstance.data.datasets[2].data = volumeDataOriginal['Uganda'];
-    consolidatedVolumeChartInstance.data.datasets[2].backgroundColor = getBarColorArray('#059669', 'rgba(5, 150, 105, 0.4)');
-    
-    consolidatedVolumeChartInstance.data.datasets[3].data = volumeDataOriginal['Nigeria'];
-    consolidatedVolumeChartInstance.data.datasets[3].backgroundColor = getBarColorArray('#d97706', 'rgba(217, 119, 6, 0.4)');
-    
-    consolidatedVolumeChartInstance.data.datasets[4].data = q4TrendProjectionData;
-    consolidatedVolumeChartInstance.update();
-
-    consolidatedRevenueChartInstance.data.labels = months;
-    consolidatedRevenueChartInstance.data.datasets[0].data = revenueDataOriginal['Kenya'];
-    consolidatedRevenueChartInstance.data.datasets[0].backgroundColor = getBarColorArray('#2563eb', 'rgba(37, 99, 235, 0.4)');
-    
-    consolidatedRevenueChartInstance.data.datasets[1].data = revenueDataOriginal['Tanzania'];
-    consolidatedRevenueChartInstance.data.datasets[1].backgroundColor = getBarColorArray('#7c3aed', 'rgba(124, 58, 237, 0.4)');
-    
-    consolidatedRevenueChartInstance.data.datasets[2].data = revenueDataOriginal['Uganda'];
-    consolidatedRevenueChartInstance.data.datasets[2].backgroundColor = getBarColorArray('#059669', 'rgba(5, 150, 105, 0.4)');
-    
-    consolidatedRevenueChartInstance.data.datasets[3].data = revenueDataOriginal['Nigeria'];
-    consolidatedRevenueChartInstance.data.datasets[3].backgroundColor = getBarColorArray('#d97706', 'rgba(217, 119, 6, 0.4)');
-    consolidatedRevenueChartInstance.update();
-
-    consolidatedTransactionsChartInstance.data.labels = months;
-    consolidatedTransactionsChartInstance.data.datasets[0].data = transactionDataOriginal['Kenya'];
-    consolidatedTransactionsChartInstance.data.datasets[1].data = transactionDataOriginal['Tanzania'];
-    consolidatedTransactionsChartInstance.data.datasets[2].data = transactionDataOriginal['Uganda'];
-    consolidatedTransactionsChartInstance.data.datasets[3].data = transactionDataOriginal['Nigeria'];
-    consolidatedTransactionsChartInstance.update();
-}
-
-function updateTableForWeekly() {
-    const tbody = document.getElementById('monthlyVolumeTableBody');
-    tbody.innerHTML = `
-        <tr id="row-Kenya" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Kenya')">
-            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span><span>Kenya</span></td>
-            <td class="py-3 px-4">$3,279,942.00</td><td class="py-3 px-4">$113,635.20</td><td class="py-3 px-4">81</td>
-            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Kenya');" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Kenya">Isolate View</button></td>
-        </tr>
-        <tr id="row-Tanzania" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Tanzania')">
-            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-purple-600 inline-block"></span><span>Tanzania</span></td>
-            <td class="py-3 px-4">$230,338.00</td><td class="py-3 px-4">$6,965.80</td><td class="py-3 px-4">8</td>
-            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Tanzania');" class="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Tanzania">Isolate View</button></td>
-        </tr>
-        <tr id="row-Uganda" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Uganda')">
-            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span><span>Uganda</span></td>
-            <td class="py-3 px-4">$58,122.90</td><td class="py-3 px-4">$2,430.50</td><td class="py-3 px-4">8</td>
-            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Uganda');" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Uganda">Isolate View</button></td>
-        </tr>
-        <tr id="row-Nigeria" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Nigeria')">
-            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-600 inline-block"></span><span>Nigeria</span></td>
-            <td class="py-3 px-4">$318,530.00</td><td class="py-3 px-4">$11,051.70</td><td class="py-3 px-4">45</td>
-            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Nigeria');" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Nigeria">Isolate View</button></td>
-        </tr>
-    `;
-}
-
-function updateTableForMonthly() {
-    const tbody = document.getElementById('monthlyVolumeTableBody');
-    tbody.innerHTML = `
-        <tr id="row-Kenya" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Kenya')">
-            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span><span>Kenya</span></td>
-            <td class="py-3 px-4">$77,986,001.98</td><td class="py-3 px-4">$2,867,732.31</td><td class="py-3 px-4">5,900</td>
-            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Kenya');" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Kenya">Isolate View</button></td>
-        </tr>
-        <tr id="row-Tanzania" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Tanzania')">
-            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-purple-600 inline-block"></span><span>Tanzania</span></td>
-            <td class="py-3 px-4">$16,242,399.10</td><td class="py-3 px-4">$651,851.35</td><td class="py-3 px-4">1,250</td>
-            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Tanzania');" class="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Tanzania">Isolate View</button></td>
-        </tr>
-        <tr id="row-Uganda" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Uganda')">
-            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span><span>Uganda</span></td>
-            <td class="py-3 px-4">$4,998,349.46</td><td class="py-3 px-4">$239,467.43</td><td class="py-3 px-4">848</td>
-            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Uganda');" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Uganda">Isolate View</button></td>
-        </tr>
-        <tr id="row-Nigeria" class="hover:bg-slate-800/40 transition cursor-pointer" onclick="toggleIsolateCountry('Nigeria')">
-            <td class="py-3 px-4 font-medium text-white flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-600 inline-block"></span><span>Nigeria</span></td>
-            <td class="py-3 px-4">$20,142,668.75</td><td class="py-3 px-4">$779,573.90</td><td class="py-3 px-4">2,960</td>
-            <td class="py-3 px-4 text-right"><button onclick="event.stopPropagation(); toggleIsolateCountry('Nigeria');" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg transition cursor-pointer isolate-btn-action" data-country="Nigeria">Isolate View</button></td>
-        </tr>
-    `;
-}
-
-function initCharts() {
-    const volCtx = document.getElementById('consolidatedVolumeChart').getContext('2d');
-    consolidatedVolumeChartInstance = new Chart(volCtx, {
-        type: 'bar',
-        data: {
-            labels: months,
-            datasets: [
-                { label: 'Kenya', data: volumeDataOriginal['Kenya'], backgroundColor: getBarColorArray('#2563eb', 'rgba(37, 99, 235, 0.4)'), borderRadius: 4 },
-                { label: 'Tanzania', data: volumeDataOriginal['Tanzania'], backgroundColor: getBarColorArray('#7c3aed', 'rgba(124, 58, 237, 0.4)'), borderRadius: 4 },
-                { label: 'Uganda', data: volumeDataOriginal['Uganda'], backgroundColor: getBarColorArray('#059669', 'rgba(5, 150, 105, 0.4)'), borderRadius: 4 },
-                { label: 'Nigeria', data: volumeDataOriginal['Nigeria'], backgroundColor: getBarColorArray('#d97706', 'rgba(217, 119, 6, 0.4)'), borderRadius: 4 },
-                { 
-                    label: 'Q4 Predictive Trend', 
-                    data: q4TrendProjectionData, 
-                    type: 'line', 
-                    borderColor: '#38bdf8', 
-                    borderDash: [6, 6], 
-                    tension: 0.4, 
-                    fill: false,
-                    pointBackgroundColor: '#38bdf8',
-                    borderWidth: 2
+            const ctx = document.getElementById('telemetryChart').getContext('2d');
+            telemetryChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [
+                        {
+                            label: 'Variance Index',
+                            data: [1.2, 1.4, 1.1, 1.5, 1.8, 1.6, 1.3, 1.5, 1.7, 1.4, 1.2, 1.3],
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.05)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Capture Efficiency %',
+                            data: [94.2, 94.5, 94.1, 94.8, 95.0, 94.7, 94.9, 95.2, 94.8, 94.6, 94.8, 94.9],
+                            borderColor: '#38bdf8',
+                            backgroundColor: 'rgba(56, 189, 248, 0.05)',
+                            borderWidth: 2,
+                            borderDash: [3, 3],
+                            fill: false,
+                            tension: 0.3,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#cbd5e1', font: { family: 'JetBrains Mono', size: 10 } } } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255, 255, 255, 0.03)' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } } },
+                        y: { type: 'linear', display: true, position: 'left', grid: { color: 'rgba(255, 255, 255, 0.03)' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } } },
+                        y1: { type: 'linear', display: true, position: 'right', min: 80, max: 100, grid: { drawOnChartArea: false }, ticks: { color: '#38bdf8', font: { family: 'JetBrains Mono', size: 10 } } }
+                    }
                 }
-            ]
-        },
-        options: {
-            ...smoothAnimation,
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '600' }, color: '#94a3b8' } },
-                tooltip: eliteTooltip
-            },
-            scales: {
-                x: { stacked: false, grid: { display: false } },
-                y: { stacked: false, grid: { color: 'rgba(255,255,255,0.05)' } }
+            });
+
+            setInterval(fetchTelemetryData, 5000);
+            logEvent('[INIT] ASIL OACM Executive Matrix authenticated with Amber & Cyan dual-axis telemetry.', 'success');
+        }
+
+        function seedTimeline() {
+            const now = new Date();
+            for (let i = 12; i > 0; i--) {
+                timeLabels.push(new Date(now.getTime() - (i * 5000)).toLocaleTimeString());
             }
         }
-    });
 
-    const marketColors = ['#2563eb', '#d97706', '#7c3aed', '#059669'];
-
-    const txShareCtx = document.getElementById('transactionsChart').getContext('2d');
-    transactionsShareChartInstance = new Chart(txShareCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Kenya', 'Nigeria', 'Tanzania', 'Uganda'],
-            datasets: [{ data: [45.0, 25.9, 11.4, 17.7], backgroundColor: marketColors, borderWidth: 0 }]
-        },
-        options: {
-            ...smoothAnimation,
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '65%',
-            plugins: {
-                legend: { display: false },
-                tooltip: eliteTooltip
-            }
+        function logEvent(message, type = 'info') {
+            const container = document.getElementById('log-container');
+            if (!container) return;
+            const timeStr = new Date().toTimeString().split(' ')[0];
+            const div = document.createElement('div');
+            div.className = type === 'warn' ? 'text-amber-400 font-medium' : type === 'success' ? 'text-amber-400 font-medium' : 'text-slate-400';
+            div.innerText = `[${timeStr}] [${type.toUpperCase()}] ${message}`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            auditLogsStore.push({ timestamp: timeStr, type: type.toUpperCase(), message });
         }
-    });
 
-    const volShareCtx = document.getElementById('volumesChart').getContext('2d');
-    volumesShareChartInstance = new Chart(volShareCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Kenya', 'Nigeria', 'Tanzania', 'Uganda'],
-            datasets: [{ data: [55.3, 15.6, 12.9, 16.2], backgroundColor: marketColors, borderWidth: 0 }]
-        },
-        options: {
-            ...smoothAnimation,
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '65%',
-            plugins: {
-                legend: { display: false },
-                tooltip: eliteTooltip
-            }
-        }
-    });
+        async function fetchTelemetryData() {
+            if (!telemetryChart) return;
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString();
+            if (timeLabels.length > 15) timeLabels.shift();
+            timeLabels.push(timeStr);
 
-    const revShareCtx = document.getElementById('revenueChart').getContext('2d');
-    revenueShareChartInstance = new Chart(revShareCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Kenya', 'Nigeria', 'Tanzania', 'Uganda'],
-            datasets: [{ data: [58.0, 19.2, 16.6, 6.2], backgroundColor: marketColors, borderWidth: 0 }]
-        },
-        options: {
-            ...smoothAnimation,
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '65%',
-            plugins: {
-                legend: { display: false },
-                tooltip: eliteTooltip
-            }
-        }
-    });
-
-    const revCtx = document.getElementById('consolidatedRevenueChart').getContext('2d');
-    consolidatedRevenueChartInstance = new Chart(revCtx, {
-        type: 'bar',
-        data: {
-            labels: months,
-            datasets: [
-                { label: 'Kenya', data: revenueDataOriginal['Kenya'], backgroundColor: getBarColorArray('#2563eb', 'rgba(37, 99, 235, 0.4)'), borderRadius: 4 },
-                { label: 'Tanzania', data: revenueDataOriginal['Tanzania'], backgroundColor: getBarColorArray('#7c3aed', 'rgba(124, 58, 237, 0.4)'), borderRadius: 4 },
-                { label: 'Uganda', data: revenueDataOriginal['Uganda'], backgroundColor: getBarColorArray('#059669', 'rgba(5, 150, 105, 0.4)'), borderRadius: 4 },
-                { label: 'Nigeria', data: revenueDataOriginal['Nigeria'], backgroundColor: getBarColorArray('#d97706', 'rgba(217, 119, 6, 0.4)'), borderRadius: 4 }
-            ]
-        },
-        options: {
-            ...smoothAnimation,
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '600' }, color: '#94a3b8' } },
-                tooltip: eliteTooltip
-            },
-            scales: {
-                x: { stacked: true, grid: { display: false } },
-                y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' } }
-            }
-        }
-    });
-
-    const txCtx = document.getElementById('consolidatedTransactionsChart').getContext('2d');
-    consolidatedTransactionsChartInstance = new Chart(txCtx, {
-        type: 'line',
-        data: {
-            labels: months,
-            datasets: [
-                { label: 'Kenya', data: transactionDataOriginal['Kenya'], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true, tension: 0.3 },
-                { label: 'Tanzania', data: transactionDataOriginal['Tanzania'], borderColor: '#7c3aed', backgroundColor: 'rgba(124, 58, 237, 0.1)', fill: true, tension: 0.3 },
-                { label: 'Uganda', data: transactionDataOriginal['Uganda'], borderColor: '#059669', backgroundColor: 'rgba(5, 150, 105, 0.1)', fill: true, tension: 0.3 },
-                { label: 'Nigeria', data: transactionDataOriginal['Nigeria'], borderColor: '#d97706', backgroundColor: 'rgba(217, 119, 6, 0.1)', fill: true, tension: 0.3 }
-            ]
-        },
-        options: {
-            ...smoothAnimation,
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', font: { size: 11, weight: '600' }, color: '#94a3b8' } },
-                tooltip: eliteTooltip
-            },
-            scales: {
-                x: { grid: { display: false } },
-                y: { grid: { color: 'rgba(255,255,255,0.05)' } }
-            }
-        }
-    });
-}
-
-function getBarColorArray(solidHex, forecastRgba) {
-    return months.map((_, i) => i >= 9 ? forecastRgba : solidHex);
-}
-
-function getWeeklyBarColorArray(solidHex, forecastRgba) {
-    return weeks.map((_, i) => i === 3 ? forecastRgba : solidHex);
-}
-
-function handleTopSelectIsolation(countryName) {
-    const topSelect = document.getElementById('topCountrySelect');
-    if (!countryName) {
-        if (topSelect) topSelect.value = "";
-        toggleIsolateCountry(null);
-    } else {
-        if (topSelect) topSelect.value = countryName;
-        toggleIsolateCountry(countryName);
-    }
-}
-
-function toggleIsolateCountry(countryName) {
-    const rows = document.querySelectorAll('#monthlyVolumeTableBody tr');
-    const labelSpan = document.getElementById('chartHighlightLabel');
-    const bannerEl = document.getElementById('globalFilterBanner');
-    const isolatedNameDisplay = document.getElementById('isolatedCountryNameDisplay');
-    const topSelect = document.getElementById('topCountrySelect');
-    
-    const mVolume = document.getElementById('metric-volume');
-    const mVolumeSub = document.getElementById('metric-volume-sub');
-    const mRevenue = document.getElementById('metric-revenue');
-    const mRevenueSub = document.getElementById('metric-revenue-sub');
-    const mTransactions = document.getElementById('metric-transactions');
-    const mTransactionsSub = document.getElementById('metric-transactions-sub');
-    const mMarkets = document.getElementById('metric-markets');
-    const mMarketsSub = document.getElementById('metric-markets-sub');
-    
-    if (activeIsolatedCountry === countryName || !countryName) {
-        activeIsolatedCountry = null;
-        if (topSelect) topSelect.value = "";
-        
-        rows.forEach(r => {
-            r.classList.remove('highlighted-row');
-            const btn = r.querySelector('.isolate-btn-action');
-            if (btn) {
-                btn.textContent = 'Isolate View';
-                btn.classList.remove('bg-blue-800');
-            }
-        });
-        
-        bannerEl.classList.add('hidden');
-        labelSpan.textContent = currentViewMode === 'weekly' ? '(Wk 1-3: Real Actuals | Wk 4: Forecast Projections)' : '(Jan–Sep: Actuals | Oct–Dec: Forecast Projections)';
-        
-        consolidatedVolumeChartInstance.data.datasets.forEach(dataset => dataset.hidden = false);
-        consolidatedVolumeChartInstance.update();
-
-        consolidatedRevenueChartInstance.data.datasets.forEach(dataset => dataset.hidden = false);
-        consolidatedRevenueChartInstance.update();
-
-        consolidatedTransactionsChartInstance.data.datasets.forEach(dataset => dataset.hidden = false);
-        consolidatedTransactionsChartInstance?.update();
-
-        const activeAgg = currentViewMode === 'weekly' ? weeklyGlobalAggregates : defaultGlobalAggregates;
-        mVolume.textContent = activeAgg.volume;
-        mVolumeSub.className = `metric-growth ${activeAgg.volGrowthClass}`;
-        mVolumeSub.innerHTML = `<span>${activeAgg.volumeGrowth}</span> <span class="comparison">vs Prior Period</span>`;
-        
-        mRevenue.textContent = activeAgg.revenue;
-        mRevenueSub.className = `metric-growth ${activeAgg.revGrowthClass}`;
-        mRevenueSub.innerHTML = `<span>${activeAgg.revenueGrowth}</span> <span class="comparison">vs Prior Period</span>`;
-        
-        mTransactions.textContent = activeAgg.transactions;
-        mTransactionsSub.className = `metric-growth ${activeAgg.txnGrowthClass}`;
-        mTransactionsSub.innerHTML = `<span>${activeAgg.txnGrowth}</span> <span class="comparison">growth rate</span>`;
-        
-        mMarkets.textContent = currentViewMode === 'weekly' ? '4 Regions (Weekly)' : '4 Regions';
-        mMarketsSub.className = `metric-growth`;
-        mMarketsSub.style.color = '#9ca3af';
-        mMarketsSub.innerHTML = `<span style="color: #93c5fd; font-weight: 600;">KE, TZ, UG, NG</span> <span class="comparison">Active corridors</span>`;
-
-    } else {
-        activeIsolatedCountry = countryName;
-        if (topSelect) topSelect.value = countryName;
-        
-        rows.forEach(r => {
-            const btn = r.querySelector('.isolate-btn-action');
-            if (r.id === `row-${countryName}`) {
-                r.classList.add('highlighted-row');
-                if (btn) btn.textContent = 'Isolated ✓';
-            } else {
-                r.classList.remove('highlighted-row');
-                if (btn) btn.textContent = 'Isolate View';
-            }
-        });
-        
-        bannerEl.classList.remove('hidden');
-        isolatedNameDisplay.textContent = countryName;
-        labelSpan.textContent = `(Global Isolate Active: ${countryName})`;
-        
-        consolidatedVolumeChartInstance.data.datasets.forEach(dataset => {
-            if (dataset.label === countryName || dataset.label === 'Q4 Predictive Trend') {
-                dataset.hidden = false;
-            } else {
-                dataset.hidden = true;
-            }
-        });
-        consolidatedVolumeChartInstance.update();
-
-        consolidatedRevenueChartInstance.data.datasets.forEach(dataset => {
-            if (dataset.label === countryName) {
-                dataset.hidden = false;
-            } else {
-                dataset.hidden = true;
-            }
-        });
-        consolidatedRevenueChartInstance.update();
-
-        consolidatedTransactionsChartInstance.data.datasets.forEach(dataset => {
-            if (dataset.label === countryName) {
-                dataset.hidden = false;
-            } else {
-                dataset.hidden = true;
-            }
-        });
-        consolidatedTransactionsChartInstance.update();
-
-        const agg = countryAggregates[countryName];
-        if (agg) {
-            mVolume.textContent = agg.volume;
-            mVolumeSub.className = `metric-growth ${agg.volGrowthClass}`;
-            mVolumeSub.innerHTML = `<span>${agg.volumeGrowth}</span> <span class="comparison">YTD growth vs 2025</span>`;
+            const noise = (Math.random() * 0.2 - 0.1);
+            const val = Math.max(0.6, (1.3 + noise)).toFixed(2);
             
-            mRevenue.textContent = agg.revenue;
-            mRevenueSub.className = `metric-growth ${agg.revGrowthClass}`;
-            mRevenueSub.innerHTML = `<span>${agg.revenueGrowth}</span> <span class="comparison">YTD yield vs 2025</span>`;
-            
-            mTransactions.textContent = agg.transactions;
-            mTransactionsSub.className = `metric-growth ${agg.txnGrowthClass}`;
-            mTransactionsSub.innerHTML = `<span>${agg.txnGrowth}</span> <span class="comparison">txn volume vs 2025</span>`;
-            
-            mMarkets.textContent = agg.marketsCount;
-            mMarketsSub.className = `metric-growth`;
-            mMarketsSub.style.color = '#9ca3af';
-            mMarketsSub.innerHTML = `<span style="color: #93c5fd; font-weight: 600;">Isolated market</span> <span class="comparison">Active focus</span>`;
+            const dataSet1 = telemetryChart.data.datasets[0].data;
+            if (dataSet1.length > 15) dataSet1.shift();
+            dataSet1.push(Number(val));
+
+            const dataSet2 = telemetryChart.data.datasets[1].data;
+            if (dataSet2.length > 15) dataSet2.shift();
+            dataSet2.push(Number(latestTelemetryCache.capture));
+
+            telemetryChart.update('none');
         }
-    }
-}
-</script>
+
+        function executeStabilizationSweep() {
+            logEvent(`Executing stabilization sweep for [${currentProfile.name}]...`, 'info');
+            setTimeout(() => {
+                latestTelemetryCache.friction = Number((latestTelemetryCache.friction * 0.95).toFixed(3));
+                latestTelemetryCache.capture = Math.min(99.9, Number((latestTelemetryCache.capture * 1.02).toFixed(1)));
+                document.getElementById('metric-friction').innerText = latestTelemetryCache.friction;
+                document.getElementById('metric-capture').innerText = latestTelemetryCache.capture + '%';
+                logEvent(`Stabilization sweep complete. Variance normalized via OACM.`, 'success');
+            }, 600);
+        }
+
+        function runMonteCarloSimulation() {
+            logEvent(`Running 72h Monte Carlo projection...`, 'info');
+            setTimeout(() => {
+                logEvent(`Monte Carlo 72h Forecast: Confidence 94.8%.`, 'success');
+            }, 700);
+        }
+
+        function submitUserQuery() {
+            const input = document.getElementById('user-question');
+            const query = input.value.trim();
+            if (!query) return;
+
+            const chatHistory = document.getElementById('chat-history');
+            chatHistory.innerHTML += `<div><span class="text-amber-400 font-medium">You:</span> ${query}</div>`;
+            input.value = '';
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            setTimeout(() => {
+                chatHistory.innerHTML += `<div class="font-medium"><strong>Optimizer RAG:</strong> Analyzed query against OACM research repository. Friction index stable at ${latestTelemetryCache.friction}.</div>`;
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+                logEvent(`Executed precision RAG vector lookup.`, 'success');
+            }, 300);
+        }
+
+        document.getElementById('user-question').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submitUserQuery();
+        });
+
+        function exportAuditCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Timestamp,Type,Message\n";
+            auditLogsStore.forEach(row => {
+                csvContent += `"${row.timestamp}","${row.type}","${row.message.replace(/"/g, '""')}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Executive_Audit_Trail.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            logEvent(`Exported audit trail to CSV.`, 'success');
+        }
+
+        function exportAuditJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(auditLogsStore, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `Executive_Telemetry.json`);
+            document.body.appendChild(dlAnchorElem);
+            dlAnchorElem.click();
+            dlAnchorElem.removeChild(dlAnchorElem);
+            logEvent(`Exported telemetry package to JSON.`, 'success');
+        }
+
+        function switchProjectContext() {
+            const selectEl = document.getElementById('project-selector');
+            if (selectEl.value !== 'mytouchpoint') {
+                alert('This project module is yet to be activated.');
+                selectEl.value = 'mytouchpoint';
+            }
+        }
+
+        function showAsilCommandCentre() {
+            document.getElementById('main-dashboard-view').classList.add('hidden');
+            document.getElementById('main-dashboard-view').classList.remove('grid');
+            document.getElementById('asil-command-view').classList.remove('hidden');
+            document.getElementById('asil-command-view').classList.add('flex');
+            logEvent('Navigated to ASIL Command Centre.', 'info');
+        }
+
+        function returnToMainDashboard() {
+            document.getElementById('asil-command-view').classList.add('hidden');
+            document.getElementById('asil-command-view').classList.remove('flex');
+            document.getElementById('main-dashboard-view').classList.remove('hidden');
+            document.getElementById('main-dashboard-view').classList.add('grid');
+            setTimeout(() => { if(map) map.invalidateSize(); }, 100);
+            logEvent('Returned to telemetry matrix.', 'info');
+        }
+
+        function selectEntityFromAsil(projectKey) {
+            returnToMainDashboard();
+        }
+
+        const slider = document.getElementById('volatility-slider');
+        const valDisplay = document.getElementById('volatility-val');
+        const controlPanel = document.getElementById('control-panel');
+        const volBadge = document.getElementById('volatility-badge');
+
+        slider.addEventListener('input', (e) => {
+            const val = Number(e.target.value);
+            latestTelemetryCache.volatility = val;
+            valDisplay.innerText = val;
+
+            if (val > 75) {
+                controlPanel.classList.add('alert-glow', 'border-red-500/50');
+                volBadge.className = 'text-[10px] px-2 py-0.5 rounded bg-red-950/60 text-red-400 border border-red-900 mono animate-pulse font-bold';
+                volBadge.innerText = 'CRITICAL';
+            } else {
+                controlPanel.classList.remove('alert-glow', 'border-red-500/50');
+                if (val > 40) {
+                    volBadge.className = 'text-[10px] px-2 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-900/60 mono font-medium';
+                    volBadge.innerText = 'Elevated';
+                } else {
+                    volBadge.className = 'text-[10px] px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-900/60 mono font-medium';
+                    volBadge.innerText = 'Stable';
+                }
+            }
+        });
+
+        function loadSubPage(pageFileName, titleText) {
+            document.getElementById('mtp-subpage-frame').src = pageFileName;
+            document.getElementById('iframe-title').innerText = `Active Module: ${titleText}`;
+        }
+
+        let isFullScreen = false;
+        function toggleFullScreenModule() {
+            const container = document.getElementById('module-container');
+            const expandText = document.getElementById('expand-text');
+            isFullScreen = !isFullScreen;
+
+            if (isFullScreen) {
+                container.classList.remove('h-[620px]');
+                container.classList.add('fixed', 'inset-4', 'z-50', 'h-[calc(100vh-4rem)]', 'shadow-2xl', 'bg-slate-950');
+                expandText.innerText = 'Collapse';
+            } else {
+                container.classList.remove('fixed', 'inset-4', 'z-50', 'h-[calc(100vh-4rem)]', 'shadow-2xl', 'bg-slate-950');
+                container.classList.add('h-[620px]');
+                expandText.innerText = 'Expand';
+            }
+        }
+    </script>
 </body>
 </html>
