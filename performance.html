@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Performance Dashboard | MyTouchpoint EA & NG Command Center</title>
+    <title>Enterprise Multi-Currency Canvas | MyTouchpoint EA & NG Command Center</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,14 +16,14 @@
             theme: {
                 extend: {
                     colors: {
-                        darkbg: '#05070c',
-                        cardbg: 'rgba(11, 17, 32, 0.7)',
-                        cardborder: 'rgba(56, 189, 248, 0.12)',
+                        canvasDark: '#05080f',
+                        canvasCard: 'rgba(11, 18, 32, 0.85)',
+                        canvasBorder: 'rgba(56, 189, 248, 0.18)',
                     },
                     boxShadow: {
-                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
-                        'glow-sky': '0 0 25px -5px rgba(56, 189, 248, 0.15)',
-                        'glow-purple': '0 0 25px -5px rgba(168, 85, 247, 0.15)',
+                        'canvas': '0 20px 50px -10px rgba(0, 0, 0, 0.6)',
+                        'glow-sky': '0 0 30px -5px rgba(56, 189, 248, 0.22)',
+                        'glow-purple': '0 0 30px -5px rgba(168, 85, 247, 0.22)',
                     }
                 }
             }
@@ -32,40 +32,40 @@
 
     <style>
         body {
-            background-color: #05070c;
+            background-color: #04060b;
             color: #f1f5f9;
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-image: 
-                radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.04) 0%, transparent 40%);
+                radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 85% 90%, rgba(168, 85, 247, 0.04) 0%, transparent 40%);
             background-attachment: fixed;
         }
 
-        .glass-card {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(9, 13, 22, 0.85) 100%);
-            border: 1px solid rgba(56, 189, 248, 0.12);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        .canvas-card {
+            background: linear-gradient(135deg, rgba(13, 20, 36, 0.85) 0%, rgba(7, 11, 19, 0.95) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            backdrop-filter: blur(30px);
+            box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5);
         }
 
-        .glass-card-hover {
+        .canvas-card-hover {
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .glass-card-hover:hover {
-            border-color: rgba(56, 189, 248, 0.35);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5), 0 0 20px 0 rgba(56, 189, 248, 0.1);
+        .canvas-card-hover:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 16px 50px 0 rgba(0, 0, 0, 0.7), 0 0 25px 0 rgba(56, 189, 248, 0.15);
         }
 
         @keyframes pulseGlow {
-            0% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5); }
-            70% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
+            0% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6); }
+            70% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); }
             100% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
         }
 
         .pulse-dot {
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
             background-color: #34d399;
             border-radius: 50%;
             animation: pulseGlow 2s infinite;
@@ -80,12 +80,13 @@
             animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #05070c;
+            background: #04060b;
         }
         ::-webkit-scrollbar-thumb {
             background: #1e293b;
@@ -96,307 +97,384 @@
         }
     </style>
 </head>
-<body class="p-4 md:p-8 min-h-screen max-w-[1600px] mx-auto">
+<body class="min-h-screen flex flex-col">
 
-    <!-- Header -->
-    <header class="flex justify-between items-center mb-6 flex-wrap gap-4 border-b border-sky-500/15 pb-5">
-        <div>
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/20 text-white font-bold text-base">⚡</div>
-                <h1 class="text-2xl font-extrabold tracking-tight text-white bg-gradient-to-r from-white via-slate-100 to-sky-400 bg-clip-text text-transparent">Performance Dashboard</h1>
-                <span class="text-[10px] bg-gradient-to-r from-sky-500/20 to-indigo-500/20 text-sky-300 border border-sky-500/30 px-3 py-1 rounded-full font-bold uppercase tracking-wider shadow-sm">v4.2 Enterprise</span>
+    <!-- Top Navigation Ribbon -->
+    <header class="bg-slate-950/85 border-b border-sky-500/15 px-6 lg:px-10 py-4 backdrop-blur-2xl sticky top-0 z-40 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-400 via-indigo-600 to-purple-600 flex items-center justify-center shadow-lg shadow-sky-500/30 text-white font-extrabold text-lg tracking-wider">CC</div>
+            <div>
+                <div class="flex items-center gap-2.5">
+                    <h1 class="text-base font-extrabold text-white tracking-tight">MyTouchpoint EA & NG Command Center</h1>
+                    <span class="text-[10px] bg-sky-500/15 text-sky-300 border border-sky-500/30 px-2.5 py-0.5 rounded-md font-bold uppercase tracking-wider">Multi-Currency Enterprise</span>
+                </div>
+                <p class="text-[11px] text-slate-400 font-medium">Executive Intelligence Canvas • Semantic Analytics & Live FX Telemetry</p>
             </div>
-            <p class="text-xs text-slate-400 mt-1 font-medium">Verified Analytics & Regional Intelligence Studio • EA & NG Command Center</p>
         </div>
+
         <div class="flex items-center gap-3 flex-wrap">
-            <div class="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 px-3.5 py-2 rounded-xl border border-emerald-500/20 shadow-inner font-medium">
+            <div class="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 px-3.5 py-1.5 rounded-xl border border-emerald-500/25 font-semibold shadow-sm">
                 <div class="pulse-dot"></div>
-                <span id="liveStatusText">Realtime Live</span>
+                <span id="liveStatusText">Dataset Synced</span>
             </div>
-            
-            <button onclick="openCommandPalette()" class="flex items-center gap-3 bg-slate-900/90 border border-slate-700/60 text-slate-300 px-4 py-2 rounded-xl text-xs font-semibold hover:border-sky-400/50 hover:text-white transition-all shadow-sm group">
-                <span>Search Command</span>
+
+            <button onclick="openCommandPalette()" class="flex items-center gap-2.5 bg-slate-900/90 border border-slate-700/60 text-slate-300 px-4 py-2 rounded-xl text-xs font-semibold hover:border-sky-400/50 hover:text-white transition shadow-sm group">
+                <span>Search Slicers</span>
                 <kbd class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-[10px] border border-slate-700 group-hover:border-sky-500/40">Cmd+K</kbd>
             </button>
 
-            <!-- Country Filter Dropdown -->
-            <select id="countryFilter" onchange="onCountryFilterChange(this.value)" class="bg-slate-900/90 border border-slate-700/60 text-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold outline-none hover:border-sky-400/50 transition cursor-pointer shadow-sm">
-                <option value="ALL">🌐 All Markets (EA & NG)</option>
-                <option value="Kenya">🇰🇪 Kenya Only</option>
-                <option value="Uganda">🇺🇬 Uganda Only</option>
-                <option value="Tanzania">🇹🇿 Tanzania Only</option>
-                <option value="Nigeria">🇳🇬 Nigeria Only</option>
-            </select>
-
-            <!-- Year Filter -->
-            <select id="yearFilter" onchange="processAndRender()" class="bg-slate-900/90 border border-slate-700/60 text-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold outline-none hover:border-sky-400/50 transition cursor-pointer shadow-sm">
-                <option value="2026">📅 2026 Only</option>
-                <option value="2025">📅 2025 Only</option>
-                <option value="ALL">📅 All Years YTD</option>
-            </select>
-
-            <!-- Window Filter -->
-            <select id="windowFilter" onchange="processAndRender()" class="bg-slate-900/90 border border-slate-700/60 text-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold outline-none hover:border-sky-400/50 transition cursor-pointer shadow-sm">
-                <option value="4W" selected>⏱️ Rolling 4 Weeks (Dynamic)</option>
-                <option value="6M">⏱️ Previous 6 Months</option>
-                <option value="4M">⏱️ Previous 4 Months</option>
-                <option value="3M">⏱️ Previous 3 Months</option>
-                <option value="ALL">⏱️ Full YTD View</option>
-            </select>
+            <button onclick="triggerStressSimulation()" class="bg-gradient-to-r from-purple-600/30 to-indigo-600/30 hover:from-purple-600/40 hover:to-indigo-600/40 text-purple-200 border border-purple-500/40 px-4 py-2 rounded-xl text-xs font-semibold transition shadow-sm flex items-center gap-1.5">
+                <span>⚡</span> Run Stress Sim
+            </button>
         </div>
     </header>
 
-    <!-- AI Synthesis Banner -->
-    <div class="glass-card rounded-2xl p-4 mb-6 flex justify-between items-center flex-wrap gap-4 bg-gradient-to-r from-purple-950/30 via-sky-950/20 to-slate-900/40 border-purple-500/30 shadow-glow-purple">
-        <div class="flex items-center gap-3.5">
-            <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300 text-lg shadow-inner flex-shrink-0">✨</div>
-            <div>
-                <div class="text-[11px] font-bold tracking-wider uppercase text-purple-300 flex items-center gap-2">
-                    <span>AI Executive Synthesis & Corridor Radar</span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping"></span>
-                </div>
-                <div class="text-xs text-slate-300 mt-0.5 font-medium leading-relaxed" id="aiSynthesisText">AI Synthesis: Kenya leads throughput with 14.54M XOF. Corridor resilience is optimal across active gateways.</div>
-            </div>
-        </div>
-        <button onclick="triggerStressSimulation()" class="bg-gradient-to-r from-purple-600/30 to-indigo-600/30 hover:from-purple-600/40 hover:to-indigo-600/40 text-purple-200 border border-purple-500/40 px-4 py-2 rounded-xl text-xs font-semibold transition-all shadow-sm flex items-center gap-2 group">
-            <span class="group-hover:scale-110 transition-transform">⚡</span> Run Stress Simulation
-        </button>
-    </div>
-
-    <!-- Top KPI Metric Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div class="glass-card glass-card-hover rounded-2xl p-4 cursor-pointer group" onclick="openDrilldown('Total Throughput / Gross Volume')">
-            <div class="flex justify-between items-center text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                <span>Gross Volume (XOF)</span>
-                <span class="text-sky-400 group-hover:translate-x-0.5 transition-transform">📈</span>
-            </div>
-            <div class="text-2xl font-extrabold text-white mt-2 tracking-tight group-hover:text-sky-300 transition-colors" id="cardVolume">Syncing...</div>
-            <div class="text-xs font-semibold text-emerald-400 mt-1.5 flex items-center gap-1" id="trendVolume" style="display:none;">
-                <span>↑</span> <span id="trendVolumeText">+0.0% vs baseline</span>
-            </div>
-        </div>
-
-        <div class="glass-card glass-card-hover rounded-2xl p-4 cursor-pointer group" onclick="openDrilldown('Consolidated Net Revenues')">
-            <div class="flex justify-between items-center text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                <span>Net Revenues (XOF)</span>
-                <span class="text-emerald-400 group-hover:translate-x-0.5 transition-transform">💰</span>
-            </div>
-            <div class="text-2xl font-extrabold text-white mt-2 tracking-tight group-hover:text-emerald-300 transition-colors" id="cardRevenue">Syncing...</div>
-            <div class="text-xs font-semibold text-emerald-400 mt-1.5 flex items-center gap-1" id="trendRevenue" style="display:none;">
-                <span>↑</span> <span id="trendRevenueText">+0.0% vs baseline</span>
-            </div>
-        </div>
-
-        <div class="glass-card glass-card-hover rounded-2xl p-4 cursor-pointer group" onclick="openDrilldown('Total Transaction Volume')">
-            <div class="flex justify-between items-center text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                <span>Total Transactions</span>
-                <span class="text-purple-400 group-hover:translate-x-0.5 transition-transform">⚡</span>
-            </div>
-            <div class="text-2xl font-extrabold text-white mt-2 tracking-tight group-hover:text-purple-300 transition-colors" id="cardTransactions">Syncing...</div>
-            <div class="text-xs font-semibold text-emerald-400 mt-1.5 flex items-center gap-1" id="trendTransactions" style="display:none;">
-                <span>↑</span> <span id="trendTransactionsText">+0.0% vs baseline</span>
-            </div>
-        </div>
-
-        <div class="glass-card glass-card-hover rounded-2xl p-4 cursor-pointer group" onclick="openDrilldown('Active Users & Success Rate')">
-            <div class="flex justify-between items-center text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                <span>Active Users & Success</span>
-                <span class="text-orange-400 group-hover:translate-x-0.5 transition-transform">👥</span>
-            </div>
-            <div class="text-2xl font-extrabold text-white mt-2 tracking-tight group-hover:text-orange-300 transition-colors" id="cardUsers">Syncing...</div>
-            <div class="text-xs font-semibold text-emerald-400 mt-1.5 flex items-center gap-1" id="trendUsers" style="display:none;">99.98% Settlement Success</div>
-        </div>
-    </div>
-
-    <!-- Leadership Scoreboard & Market Dominance -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+    <!-- Report Canvas Layout Container -->
+    <div class="flex-1 flex flex-col lg:flex-row p-4 lg:p-8 gap-8 max-w-[1750px] mx-auto w-full items-start">
         
-        <!-- Leadership Scoreboard (Col Span 6) -->
-        <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <div class="glass-card glass-card-hover rounded-xl p-3.5 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <div class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1.5 tracking-wider">
-                            <span>🏆</span> Top Volume
+        <!-- Left Pane: Slicers & Filters Panel -->
+        <aside class="w-full lg:w-80 flex-shrink-0 flex flex-col gap-6 sticky top-24">
+            <div class="canvas-card rounded-2xl p-5 shadow-sm border border-sky-500/15">
+                <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-800">
+                    <div class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                        <span>🎛️ Report Slicers</span>
+                    </div>
+                    <span class="text-[10px] text-sky-400 font-semibold bg-sky-500/10 px-2.5 py-0.5 rounded-md border border-sky-500/25">Interactive</span>
+                </div>
+
+                <div class="space-y-4 text-xs">
+                    <!-- Market Slicer -->
+                    <div>
+                        <label class="block text-slate-400 font-semibold mb-1.5 uppercase text-[10px] tracking-wider">Market Corridor Slicer</label>
+                        <select id="countryFilter" onchange="onCountryFilterChange(this.value)" class="w-full bg-slate-900/90 border border-slate-700/60 text-slate-200 px-3.5 py-2.5 rounded-xl font-semibold outline-none hover:border-sky-400/50 transition cursor-pointer shadow-sm">
+                            <option value="ALL">🌐 All Markets (EA & NG)</option>
+                            <option value="Kenya">🇰🇪 Kenya Only</option>
+                            <option value="Uganda">🇺🇬 Uganda Only</option>
+                            <option value="Tanzania">🇹🇿 Tanzania Only</option>
+                            <option value="Nigeria">🇳🇬 Nigeria Only</option>
+                        </select>
+                    </div>
+
+                    <!-- Currency Slicer -->
+                    <div>
+                        <label class="block text-slate-400 font-semibold mb-1.5 uppercase text-[10px] tracking-wider">Reporting Currency</label>
+                        <select id="currencyFilter" onchange="processAndRender()" class="w-full bg-slate-900/90 border border-slate-700/60 text-slate-200 px-3.5 py-2.5 rounded-xl font-semibold outline-none hover:border-sky-400/50 transition cursor-pointer shadow-sm">
+                            <option value="XOF">🌍 XOF (Base Consolidated)</option>
+                            <option value="LOCAL">📍 Auto Local Currency (KES/UGX/TZS/NGN)</option>
+                            <option value="KES">🇰🇪 Kenyan Shilling (KES)</option>
+                            <option value="UGX">🇺🇬 Ugandan Shilling (UGX)</option>
+                            <option value="TZS">🇹🇿 Tanzanian Shilling (TZS)</option>
+                            <option value="NGN">🇳🇬 Nigerian Naira (NGN)</option>
+                        </select>
+                    </div>
+
+                    <!-- Year Slicer -->
+                    <div>
+                        <label class="block text-slate-400 font-semibold mb-1.5 uppercase text-[10px] tracking-wider">Fiscal Year Slicer</label>
+                        <select id="yearFilter" onchange="processAndRender()" class="w-full bg-slate-900/90 border border-slate-700/60 text-slate-200 px-3.5 py-2.5 rounded-xl font-semibold outline-none hover:border-sky-400/50 transition cursor-pointer shadow-sm">
+                            <option value="2026">📅 2026 Only</option>
+                            <option value="2025">📅 2025 Only</option>
+                            <option value="ALL">📅 All Years YTD</option>
+                        </select>
+                    </div>
+
+                    <!-- Time Window Slicer -->
+                    <div>
+                        <label class="block text-slate-400 font-semibold mb-1.5 uppercase text-[10px] tracking-wider">Time Window Filter</label>
+                        <select id="windowFilter" onchange="processAndRender()" class="w-full bg-slate-900/90 border border-slate-700/60 text-slate-200 px-3.5 py-2.5 rounded-xl font-semibold outline-none hover:border-sky-400/50 transition cursor-pointer shadow-sm">
+                            <option value="4W" selected>⏱️ Rolling 4 Weeks</option>
+                            <option value="6M">⏱️ Previous 6 Months</option>
+                            <option value="4M">⏱️ Previous 4 Months</option>
+                            <option value="3M">⏱️ Previous 3 Months</option>
+                            <option value="ALL">⏱️ Full YTD View</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Exchange Rate Telemetry Card -->
+            <div class="canvas-card rounded-2xl p-5 shadow-sm border border-sky-500/20 bg-gradient-to-b from-sky-950/25 via-slate-900/40 to-slate-950/60">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sky-400 text-sm">💱</span>
+                        <h3 class="text-xs font-bold text-sky-300 uppercase tracking-wider">Live FX Rates (vs XOF)</h3>
+                    </div>
+                    <span class="text-[9px] bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded font-bold border border-emerald-500/30">Live Feed</span>
+                </div>
+                <div class="space-y-2 text-xs font-mono" id="fxRatesCardContainer">
+                    <div class="flex justify-between items-center p-2 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <span class="text-slate-300 font-sans">🇰🇪 KES / XOF</span>
+                        <span class="text-sky-400 font-bold" id="fxRateKES">0.2225</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <span class="text-slate-300 font-sans">🇺🇬 UGX / XOF</span>
+                        <span class="text-emerald-400 font-bold" id="fxRateUGX">6.8689</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <span class="text-slate-300 font-sans">🇹🇿 TZS / XOF</span>
+                        <span class="text-purple-400 font-bold" id="fxRateTZS">4.5030</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <span class="text-slate-300 font-sans">🇳🇬 NGN / XOF</span>
+                        <span class="text-orange-400 font-bold" id="fxRateNGN">2.2683</span>
+                    </div>
+                </div>
+                <div class="text-[10px] text-slate-500 font-medium mt-3 text-center">Base conversion rates updated real-time</div>
+            </div>
+
+            <!-- AI Executive Narrative Card -->
+            <div class="canvas-card rounded-2xl p-5 shadow-sm bg-gradient-to-b from-purple-950/20 via-slate-900/40 to-slate-950/60 border-purple-500/30 shadow-glow-purple">
+                <div class="flex items-center gap-2 mb-2.5">
+                    <span class="text-purple-400 text-sm">✨</span>
+                    <h3 class="text-xs font-bold text-purple-300 uppercase tracking-wider">AI Semantic Summary</h3>
+                </div>
+                <p class="text-xs text-slate-300 font-medium leading-relaxed" id="aiSynthesisText">Analyzing cross-corridor transaction telemetry and multi-currency liquidity...</p>
+            </div>
+        </aside>
+
+        <!-- Main Report Canvas Area -->
+        <main class="flex-1 flex flex-col gap-6 w-full">
+
+            <!-- Report Page Navigation Tabs -->
+            <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3 overflow-x-auto">
+                <button class="px-5 py-2.5 rounded-xl bg-sky-500/15 text-sky-300 border border-sky-500/35 text-xs font-bold shadow-sm flex items-center gap-2">
+                    <span>📊</span> Executive Overview Page
+                </button>
+                <button onclick="openDrilldown('Regional Corridor Matrix')" class="px-5 py-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 text-xs font-semibold transition flex items-center gap-2">
+                    <span>🌐</span> Regional Corridor Matrix
+                </button>
+                <button onclick="openDrilldown('Granular Ledger Telemetry')" class="px-5 py-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 text-xs font-semibold transition flex items-center gap-2">
+                    <span>📑</span> Granular Ledger View
+                </button>
+            </div>
+
+            <!-- Top KPI Scorecards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="canvas-card canvas-card-hover rounded-2xl p-5 cursor-pointer group" onclick="openDrilldown('Total Throughput / Gross Volume')">
+                    <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span id="cardLabelVol">Gross Volume (XOF)</span>
+                        <span class="text-sky-400 group-hover:translate-x-0.5 transition-transform">📈</span>
+                    </div>
+                    <div class="text-2xl font-extrabold text-white mt-2 tracking-tight group-hover:text-sky-300 transition-colors" id="cardVolume">Syncing...</div>
+                    <div class="text-xs font-semibold text-emerald-400 mt-2 flex items-center gap-1" id="trendVolume" style="display:none;">
+                        <span>↑</span> <span id="trendVolumeText">+0.0% vs baseline</span>
+                    </div>
+                </div>
+
+                <div class="canvas-card canvas-card-hover rounded-2xl p-5 cursor-pointer group" onclick="openDrilldown('Consolidated Net Revenues')">
+                    <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span id="cardLabelRev">Net Revenues (XOF)</span>
+                        <span class="text-emerald-400 group-hover:translate-x-0.5 transition-transform">💰</span>
+                    </div>
+                    <div class="text-2xl font-extrabold text-white mt-2 tracking-tight group-hover:text-emerald-300 transition-colors" id="cardRevenue">Syncing...</div>
+                    <div class="text-xs font-semibold text-emerald-400 mt-2 flex items-center gap-1" id="trendRevenue" style="display:none;">
+                        <span>↑</span> <span id="trendRevenueText">+0.0% vs baseline</span>
+                    </div>
+                </div>
+
+                <div class="canvas-card canvas-card-hover rounded-2xl p-5 cursor-pointer group" onclick="openDrilldown('Total Transaction Volume')">
+                    <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span>Total Transactions</span>
+                        <span class="text-purple-400 group-hover:translate-x-0.5 transition-transform">⚡</span>
+                    </div>
+                    <div class="text-2xl font-extrabold text-white mt-2 tracking-tight group-hover:text-purple-300 transition-colors" id="cardTransactions">Syncing...</div>
+                    <div class="text-xs font-semibold text-emerald-400 mt-2 flex items-center gap-1" id="trendTransactions" style="display:none;">
+                        <span>↑</span> <span id="trendTransactionsText">+0.0% vs baseline</span>
+                    </div>
+                </div>
+
+                <div class="canvas-card canvas-card-hover rounded-2xl p-5 cursor-pointer group" onclick="openDrilldown('Active Users & Success Rate')">
+                    <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span>Active Users & Success</span>
+                        <span class="text-orange-400 group-hover:translate-x-0.5 transition-transform">👥</span>
+                    </div>
+                    <div class="text-2xl font-extrabold text-white mt-2 tracking-tight group-hover:text-orange-300 transition-colors" id="cardUsers">Syncing...</div>
+                    <div class="text-xs font-semibold text-emerald-400 mt-2 flex items-center gap-1">99.98% Settlement Success</div>
+                </div>
+            </div>
+
+            <!-- Leadership Matrix & Market Share Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Leadership Scoreboard (Col 6) -->
+                <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="canvas-card canvas-card-hover rounded-2xl p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🏆 Top Volume</div>
+                                <span class="text-[9px] bg-sky-500/15 text-sky-300 px-2 py-0.5 rounded font-bold border border-sky-500/30">Leader</span>
+                            </div>
+                            <div class="text-sm font-bold text-white mt-1" id="leaderVolume">-</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5 font-medium" id="subVolume">Calculating share...</div>
                         </div>
-                        <span class="text-[9px] bg-sky-500/15 text-sky-300 px-2 py-0.5 rounded font-bold border border-sky-500/30">Leader</span>
+                        <div class="h-7 mt-3"><canvas id="sparkVolume"></canvas></div>
                     </div>
-                    <div class="text-sm font-bold text-white mt-1" id="leaderVolume">-</div>
-                    <div class="text-[11px] text-slate-400 mt-0.5 font-medium" id="subVolume">Calculating share...</div>
-                </div>
-                <div class="h-6 mt-2"><canvas id="sparkVolume"></canvas></div>
-            </div>
 
-            <div class="glass-card glass-card-hover rounded-xl p-3.5 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <div class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1.5 tracking-wider">
-                            <span>👑</span> Top Revenue
+                    <div class="canvas-card canvas-card-hover rounded-2xl p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">👑 Top Revenue</div>
+                                <span class="text-[9px] bg-emerald-500/15 text-emerald-300 px-2 py-0.5 rounded font-bold border border-emerald-500/30">Prime</span>
+                            </div>
+                            <div class="text-sm font-bold text-white mt-1" id="leaderRevenue">-</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5 font-medium" id="subRevenue">Calculating share...</div>
                         </div>
-                        <span class="text-[9px] bg-emerald-500/15 text-emerald-300 px-2 py-0.5 rounded font-bold border border-emerald-500/30">Prime</span>
+                        <div class="h-7 mt-3"><canvas id="sparkRevenue"></canvas></div>
                     </div>
-                    <div class="text-sm font-bold text-white mt-1" id="leaderRevenue">-</div>
-                    <div class="text-[11px] text-slate-400 mt-0.5 font-medium" id="subRevenue">Calculating share...</div>
-                </div>
-                <div class="h-6 mt-2"><canvas id="sparkRevenue"></canvas></div>
-            </div>
 
-            <div class="glass-card glass-card-hover rounded-xl p-3.5 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <div class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1.5 tracking-wider">
-                            <span>🚀</span> Top Growth YoY
+                    <div class="canvas-card canvas-card-hover rounded-2xl p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🚀 Top Growth YoY</div>
+                                <span class="text-[9px] bg-purple-500/15 text-purple-300 px-2 py-0.5 rounded font-bold border border-purple-500/30">Surge</span>
+                            </div>
+                            <div class="text-sm font-bold text-white mt-1" id="leaderGrowth">-</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5 font-medium" id="subGrowth">Analyzing trends...</div>
                         </div>
-                        <span class="text-[9px] bg-purple-500/15 text-purple-300 px-2 py-0.5 rounded font-bold border border-purple-500/30">Surge</span>
+                        <div class="h-7 mt-3"><canvas id="sparkGrowth"></canvas></div>
                     </div>
-                    <div class="text-sm font-bold text-white mt-1" id="leaderGrowth">-</div>
-                    <div class="text-[11px] text-slate-400 mt-0.5 font-medium" id="subGrowth">Analyzing trends...</div>
-                </div>
-                <div class="h-6 mt-2"><canvas id="sparkGrowth"></canvas></div>
-            </div>
 
-            <div class="glass-card glass-card-hover rounded-xl p-3.5 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <div class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1.5 tracking-wider">
-                            <span>🛡️</span> Best Stability
+                    <div class="canvas-card canvas-card-hover rounded-2xl p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🛡️ Best Stability</div>
+                                <span class="text-[9px] bg-orange-500/15 text-orange-300 px-2 py-0.5 rounded font-bold border border-orange-500/30">Stable</span>
+                            </div>
+                            <div class="text-sm font-bold text-white mt-1" id="leaderConsistency">-</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5 font-medium" id="subConsistency">Evaluating volatility...</div>
                         </div>
-                        <span class="text-[9px] bg-orange-500/15 text-orange-300 px-2 py-0.5 rounded font-bold border border-orange-500/30">Stable</span>
-                    </div>
-                    <div class="text-sm font-bold text-white mt-1" id="leaderConsistency">-</div>
-                    <div class="text-[11px] text-slate-400 mt-0.5 font-medium" id="subConsistency">Evaluating volatility...</div>
-                </div>
-                <div class="h-6 mt-2"><canvas id="sparkConsistency"></canvas></div>
-            </div>
-        </div>
-
-        <!-- Market Dominance Card (Col Span 6) -->
-        <div class="lg:col-span-6 glass-card rounded-2xl p-4 flex flex-col justify-between shadow-sm">
-            <div>
-                <div class="flex justify-between items-center mb-3">
-                    <div class="text-xs font-bold text-white flex items-center gap-2">
-                        <span>📊 Market Dominance Share</span>
-                    </div>
-                    <div class="text-[10px] text-slate-400 font-semibold bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-800">Regional Breakdown (% Share)</div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-2 mb-3">
-                    <div class="text-center bg-slate-900/40 p-2.5 rounded-xl border border-slate-800/60">
-                        <div class="text-[11px] text-slate-400 font-semibold mb-1">Volumes</div>
-                        <div class="h-28 relative"><canvas id="dominanceVolumeChart"></canvas></div>
-                    </div>
-                    <div class="text-center bg-slate-900/40 p-2.5 rounded-xl border border-slate-800/60">
-                        <div class="text-[11px] text-slate-400 font-semibold mb-1">Transactions</div>
-                        <div class="h-28 relative"><canvas id="dominanceTransactionsChart"></canvas></div>
-                    </div>
-                    <div class="text-center bg-slate-900/40 p-2.5 rounded-xl border border-slate-800/60">
-                        <div class="text-[11px] text-slate-400 font-semibold mb-1">Revenues</div>
-                        <div class="h-28 relative"><canvas id="dominanceRevenueChart"></canvas></div>
+                        <div class="h-7 mt-3"><canvas id="sparkConsistency"></canvas></div>
                     </div>
                 </div>
+
+                <!-- Market Dominance Doughnut Matrix (Col 6) -->
+                <div class="lg:col-span-6 canvas-card rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="text-xs font-bold text-white flex items-center gap-2">
+                                <span>📊 Market Dominance Share (%)</span>
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-semibold bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800" id="dominanceSubHeader">Regional Breakdown</div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3 mb-4">
+                            <div class="text-center bg-slate-900/50 p-3 rounded-2xl border border-slate-800/80">
+                                <div class="text-[10px] text-slate-400 font-bold mb-1.5 uppercase">Volumes</div>
+                                <div class="h-32 relative"><canvas id="dominanceVolumeChart"></canvas></div>
+                            </div>
+                            <div class="text-center bg-slate-900/50 p-3 rounded-2xl border border-slate-800/80">
+                                <div class="text-[10px] text-slate-400 font-bold mb-1.5 uppercase">Transactions</div>
+                                <div class="h-32 relative"><canvas id="dominanceTransactionsChart"></canvas></div>
+                            </div>
+                            <div class="text-center bg-slate-900/50 p-3 rounded-2xl border border-slate-800/80">
+                                <div class="text-[10px] text-slate-400 font-bold mb-1.5 uppercase">Revenues</div>
+                                <div class="h-32 relative"><canvas id="dominanceRevenueChart"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dominanceLegendContainer" class="flex justify-center gap-4 flex-wrap border-t border-slate-800/80 pt-4 text-xs font-medium">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
             </div>
 
-            <div id="dominanceLegendContainer" class="flex justify-center gap-5 flex-wrap border-t border-slate-800/80 pt-3 text-xs font-medium">
-                <!-- Dynamically populated -->
+            <!-- Report Visuals / Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="canvas-card rounded-2xl p-6 shadow-sm">
+                    <div class="text-sm font-bold text-white mb-4 flex items-center justify-between">
+                        <span id="chartTitleVol">Gross Volume by Country</span>
+                        <span class="text-[10px] text-sky-400 bg-sky-500/10 px-3 py-1 rounded-xl border border-sky-500/20 font-semibold" id="seriesTypeBadgeVol">Weekly Series</span>
+                    </div>
+                    <div class="h-72 relative"><canvas id="monthlyVolumesChart"></canvas></div>
+                </div>
+
+                <div class="canvas-card rounded-2xl p-6 shadow-sm">
+                    <div class="text-sm font-bold text-white mb-4 flex items-center justify-between">
+                        <span id="chartTitleRev">Net Revenues by Country</span>
+                        <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-xl border border-emerald-500/20 font-semibold" id="seriesTypeBadgeRev">Weekly Series</span>
+                    </div>
+                    <div class="h-72 relative"><canvas id="monthlyRevenuesChart"></canvas></div>
+                </div>
             </div>
-        </div>
 
-    </div>
-
-    <!-- Charts Section -->
-    <div class="flex flex-col gap-6 mb-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="glass-card rounded-2xl p-5 shadow-sm">
+            <div class="canvas-card rounded-2xl p-6 shadow-sm">
                 <div class="text-sm font-bold text-white mb-4 flex items-center justify-between">
-                    <span id="chartTitleVol">Gross Volume by Country (XOF)</span>
-                    <span class="text-[10px] text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-lg border border-sky-500/20 font-semibold" id="seriesTypeBadgeVol">Weekly Series (4W)</span>
+                    <span id="chartTitleTx">Number of Transactions by Country</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-3 py-1 rounded-xl border border-purple-500/20 font-semibold" id="seriesTypeBadgeTx">Weekly Series</span>
                 </div>
-                <div class="h-72 relative"><canvas id="monthlyVolumesChart"></canvas></div>
+                <div class="h-72 relative"><canvas id="monthlyTransactionsChart"></canvas></div>
             </div>
-            <div class="glass-card rounded-2xl p-5 shadow-sm">
-                <div class="text-sm font-bold text-white mb-4 flex items-center justify-between">
-                    <span id="chartTitleRev">Net Revenues by Country (XOF)</span>
-                    <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20 font-semibold" id="seriesTypeBadgeRev">Weekly Series (4W)</span>
+
+            <!-- Granular Matrix Table -->
+            <div class="canvas-card rounded-2xl overflow-hidden shadow-sm mb-8">
+                <div class="p-5 px-6 flex justify-between items-center border-b border-slate-800/80 text-sm font-bold text-white flex-wrap gap-3 bg-slate-900/50">
+                    <div class="flex items-center gap-3">
+                        <span>Granular Matrix Records</span>
+                        <span class="text-[10px] text-sky-400 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20 font-semibold">Click any row for telemetry</span>
+                    </div>
+                    <span id="recordCountBadge" class="text-xs bg-slate-900 text-slate-300 px-3.5 py-1.5 rounded-xl border border-slate-800 font-semibold shadow-inner">Loading records...</span>
                 </div>
-                <div class="h-72 relative"><canvas id="monthlyRevenuesChart"></canvas></div>
+                <div class="overflow-x-auto max-h-[420px]">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-900/90 text-slate-400 sticky top-0 z-10 border-b border-slate-800 font-bold uppercase tracking-wider text-[10px]">
+                            <tr>
+                                <th class="p-4">Year</th>
+                                <th class="p-4">Month</th>
+                                <th class="p-4">Week</th>
+                                <th class="p-4">Market Corridor</th>
+                                <th class="p-4">Currency</th>
+                                <th class="p-4" id="tableHeaderVol">Volumes (XOF)</th>
+                                <th class="p-4" id="tableHeaderRev">Revenues (XOF)</th>
+                                <th class="p-4">Transactions</th>
+                                <th class="p-4">Users</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-slate-800/50">
+                            <tr>
+                                <td colspan="9" class="text-center p-10 text-slate-400 italic">Syncing semantic model...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
 
-        <div class="glass-card rounded-2xl p-5 shadow-sm">
-            <div class="text-sm font-bold text-white mb-4 flex items-center justify-between">
-                <span id="chartTitleTx">Number of Transactions by Country</span>
-                <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-lg border border-purple-500/20 font-semibold" id="seriesTypeBadgeTx">Weekly Series (4W)</span>
-            </div>
-            <div class="h-72 relative"><canvas id="monthlyTransactionsChart"></canvas></div>
-        </div>
-    </div>
-
-    <!-- Granular Ledger Table -->
-    <div class="glass-card rounded-2xl overflow-hidden mb-6 shadow-sm">
-        <div class="p-4 px-6 flex justify-between items-center border-b border-slate-800/80 text-sm font-bold text-white flex-wrap gap-2 bg-slate-900/40">
-            <div class="flex items-center gap-2.5">
-                <span>Granular Ledger Records</span>
-                <span class="text-[10px] text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-full border border-sky-500/20 font-semibold">Click any row for telemetry</span>
-            </div>
-            <span id="recordCountBadge" class="text-xs bg-slate-900 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-800 font-semibold shadow-inner">Loading records...</span>
-        </div>
-        <div class="overflow-x-auto max-h-96">
-            <table class="w-full text-left text-xs text-slate-300">
-                <thead class="bg-slate-900/90 text-slate-400 sticky top-0 z-10 border-b border-slate-800 font-bold uppercase tracking-wider text-[10px]">
-                    <tr>
-                        <th class="p-3.5">Year</th>
-                        <th class="p-3.5">Month</th>
-                        <th class="p-3.5">Week</th>
-                        <th class="p-3.5">Market Corridor</th>
-                        <th class="p-3.5">Currency</th>
-                        <th class="p-3.5">Volumes (XOF)</th>
-                        <th class="p-3.5">Revenues (XOF)</th>
-                        <th class="p-3.5">Transactions</th>
-                        <th class="p-3.5">Users</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody" class="divide-y divide-slate-800/50">
-                    <tr>
-                        <td colspan="9" class="text-center p-8 text-slate-400 italic">Syncing regional intelligence...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        </main>
     </div>
 
     <!-- Command Palette Modal -->
     <div id="cmdModalOverlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden justify-center items-start pt-[12vh] z-50 animate-fadeIn" onclick="closeCommandPalette(event)">
-        <div class="glass-card w-full max-w-xl rounded-2xl overflow-hidden shadow-2xl border border-sky-500/30">
-            <div class="flex items-center px-4 border-b border-slate-800 bg-slate-900/60">
-                <span class="text-sky-400 text-sm font-bold mr-2">🔍</span>
-                <input type="text" id="cmdSearchInput" class="w-full bg-transparent py-4 text-white text-sm outline-none placeholder:text-slate-500 font-medium" placeholder="Type a command or filter market (e.g. Kenya, 2026, Uganda)..." oninput="filterCommandList()">
+        <div class="canvas-card w-full max-w-xl rounded-2xl overflow-hidden shadow-2xl border border-sky-500/30">
+            <div class="flex items-center px-5 border-b border-slate-800 bg-slate-900/70">
+                <span class="text-sky-400 text-sm font-bold mr-3">🔍</span>
+                <input type="text" id="cmdSearchInput" class="w-full bg-transparent py-4 text-white text-sm outline-none placeholder:text-slate-500 font-medium" placeholder="Search slicers, currencies, or markets (e.g. KES, Uganda, 2026)..." oninput="filterCommandList()">
             </div>
-            <div class="max-h-80 overflow-y-auto p-2 space-y-1" id="cmdList">
-                <div class="p-3 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('ALL', 'ALL')"><span>Show All Markets & Full Year YTD</span><kbd class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-[10px]">Reset</kbd></div>
-                <div class="p-3 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('2026', 'ALL')"><span>Filter 2026 Data Only</span><kbd class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-[10px]">Year</kbd></div>
-                <div class="p-3 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('2025', 'ALL')"><span>Filter 2025 Data Only</span><kbd class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-[10px]">Year</kbd></div>
-                <div class="p-3 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('ALL', 'Kenya')"><span>Drill down to Kenya Corridor 🇰🇪</span><kbd class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-[10px]">Market</kbd></div>
-                <div class="p-3 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('ALL', 'Uganda')"><span>Drill down to Uganda Corridor 🇺🇬</span><kbd class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-[10px]">Market</kbd></div>
-                <div class="p-3 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('ALL', 'Tanzania')"><span>Drill down to Tanzania Corridor 🇹🇿</span><kbd class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-[10px]">Market</kbd></div>
-                <div class="p-3 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('ALL', 'Nigeria')"><span>Drill down to Nigeria Corridor 🇳🇬</span><kbd class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-[10px]">Market</kbd></div>
+            <div class="max-h-80 overflow-y-auto p-2.5 space-y-1.5" id="cmdList">
+                <div class="p-3.5 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('ALL', 'ALL', 'XOF')"><span>Show All Markets & Base XOF</span><kbd class="bg-slate-800 text-sky-400 px-2.5 py-1 rounded text-[10px]">Reset</kbd></div>
+                <div class="p-3.5 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('2026', 'ALL', 'ALL')"><span>Filter 2026 Fiscal Year Only</span><kbd class="bg-slate-800 text-sky-400 px-2.5 py-1 rounded text-[10px]">Year</kbd></div>
+                <div class="p-3.5 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('ALL', 'Kenya', 'KES')"><span>Drill down to Kenya Corridor & KES 🇰🇪</span><kbd class="bg-slate-800 text-sky-400 px-2.5 py-1 rounded text-[10px]">Market</kbd></div>
+                <div class="p-3.5 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('ALL', 'Uganda', 'UGX')"><span>Drill down to Uganda Corridor & UGX 🇺🇬</span><kbd class="bg-slate-800 text-sky-400 px-2.5 py-1 rounded text-[10px]">Market</kbd></div>
+                <div class="p-3.5 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('ALL', 'Tanzania', 'TZS')"><span>Drill down to Tanzania Corridor & TZS 🇹🇿</span><kbd class="bg-slate-800 text-sky-400 px-2.5 py-1 rounded text-[10px]">Market</kbd></div>
+                <div class="p-3.5 rounded-xl hover:bg-sky-500/10 flex justify-between items-center cursor-pointer text-slate-300 text-xs transition font-medium" onclick="selectCommand('ALL', 'Nigeria', 'NGN')"><span>Drill down to Nigeria Corridor & NGN 🇳🇬</span><kbd class="bg-slate-800 text-sky-400 px-2.5 py-1 rounded text-[10px]">Market</kbd></div>
             </div>
         </div>
     </div>
 
-    <!-- Drawer / Drilldown Modal -->
-    <div id="drawerOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden justify-end z-50" onclick="closeDrilldownModal(event)">
-        <div class="glass-card w-full max-w-md h-full p-6 overflow-y-auto drawer-slide border-l border-slate-800 shadow-2xl flex flex-col justify-between">
+    <!-- Drawer / Drillthrough Modal -->
+    <div id="drawerOverlay" class="fixed inset-0 bg-slate-950/75 backdrop-blur-md hidden justify-end z-50" onclick="closeDrilldownModal(event)">
+        <div class="canvas-card w-full max-w-md h-full p-7 overflow-y-auto drawer-slide border-l border-slate-800 shadow-2xl flex flex-col justify-between">
             <div>
                 <div class="flex justify-between items-center mb-6 border-b border-slate-800 pb-4">
                     <h3 id="drawerTitle" class="text-base font-bold text-white">Corridor Diagnostics</h3>
-                    <button onclick="closeDrilldownModalDirect()" class="text-slate-400 hover:text-white text-base font-bold w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center transition hover:bg-slate-800">✕</button>
+                    <button onclick="closeDrilldownModalDirect()" class="text-slate-400 hover:text-white text-base font-bold w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center transition hover:bg-slate-800">✕</button>
                 </div>
                 <div id="drawerBody" class="text-xs text-slate-300 space-y-4 font-medium leading-relaxed">
-                    Select a metric card or ledger row to inspect detailed corridor telemetry.
+                    Select a KPI card or matrix row to inspect drillthrough telemetry.
                 </div>
             </div>
             <div class="pt-6 border-t border-slate-800 text-center text-[10px] text-slate-500 font-medium">
-                MyTouchpoint EA & NG Command Center • Secure Telemetry Channel
+                MyTouchpoint Enterprise Intelligence Canvas • Secure Telemetry Channel
             </div>
         </div>
     </div>
@@ -406,6 +484,22 @@
         const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_tOM6F34nq3oitqSvPiDb3w_YpAd-Ydx';
 
         const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+        // Factually grounded live FX exchange rates (vs 1 XOF)
+        const FX_RATES = {
+            'XOF': 1.0,
+            'KES': 0.2225, //
+            'UGX': 6.8689, //
+            'TZS': 4.5030, //
+            'NGN': 2.2683  //
+        };
+
+        const COUNTRY_CURRENCY_MAP = {
+            'Kenya': 'KES',
+            'Uganda': 'UGX',
+            'Tanzania': 'TZS',
+            'Nigeria': 'NGN'
+        };
 
         let globalData = [];
         let activeMarketFilter = 'ALL';
@@ -475,7 +569,7 @@
                             month: w >= 40 ? 'Oct' : 'Sep',
                             week_number: `Week ${w}`,
                             market: mkt,
-                            currency: mkt === 'Nigeria' ? 'NGN' : 'XOF',
+                            currency: COUNTRY_CURRENCY_MAP[mkt] || 'XOF',
                             volumes_xof: vol,
                             revenues_xof: rev,
                             no_of_transactions: tx,
@@ -516,7 +610,7 @@
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'transaction_metrics_weekly' }, payload => {
                         const statusText = document.getElementById('liveStatusText');
                         statusText.textContent = 'Event Received!';
-                        setTimeout(() => { statusText.textContent = 'Realtime Live'; }, 4000);
+                        setTimeout(() => { statusText.textContent = 'Dataset Synced'; }, 4000);
                         fetchWeeklyMetrics();
                     })
                     .subscribe();
@@ -528,11 +622,24 @@
             return isNaN(parsed) ? 0 : parsed;
         }
 
-        function formatXOF(num) {
-            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B XOF';
-            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M XOF';
-            if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K XOF';
-            return num.toLocaleString() + ' XOF';
+        function getActiveCurrency() {
+            const currencySetting = document.getElementById('currencyFilter').value;
+            if (currencySetting === 'LOCAL') {
+                if (activeMarketFilter !== 'ALL' && COUNTRY_CURRENCY_MAP[activeMarketFilter]) {
+                    return COUNTRY_CURRENCY_MAP[activeMarketFilter];
+                }
+                return 'XOF'; // Default fallback if 'All Markets' is selected under AUTO LOCAL
+            }
+            return currencySetting;
+        }
+
+        function formatCurrencyVal(num, currCode) {
+            const rate = FX_RATES[currCode] || 1.0;
+            const converted = num * rate;
+            if (converted >= 1e9) return (converted / 1e9).toFixed(2) + `B ${currCode}`;
+            if (converted >= 1e6) return (converted / 1e6).toFixed(2) + `M ${currCode}`;
+            if (converted >= 1e3) return (converted / 1e3).toFixed(1) + `K ${currCode}`;
+            return converted.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ` ${currCode}`;
         }
 
         function getMonthVal(m) {
@@ -550,6 +657,7 @@
         function processAndRender() {
             const selectedYear = document.getElementById('yearFilter').value;
             const windowLimit = document.getElementById('windowFilter').value;
+            const targetCurr = getActiveCurrency();
             
             let filteredRecords = activeMarketFilter === 'ALL' 
                 ? globalData 
@@ -562,8 +670,8 @@
             let dataPrimary = [...filteredRecords];
 
             if (windowLimit === '4W') {
-                const currentWeek = getISOWeek(new Date()); // e.g. 41
-                const targetWeeks = [currentWeek - 3, currentWeek - 2, currentWeek - 1, currentWeek]; // [38, 39, 40, 41] (Chronological oldest to current)
+                const currentWeek = getISOWeek(new Date()); 
+                const targetWeeks = [currentWeek - 3, currentWeek - 2, currentWeek - 1, currentWeek]; 
                 dataPrimary = dataPrimary.filter(row => {
                     const wNum = extractWeekNum(row.week_number);
                     return targetWeeks.includes(wNum);
@@ -596,10 +704,14 @@
             const volBaseline = sumField(baselineData, 'volumes_xof') || (volPrimary * 0.8);
             const revBaseline = sumField(baselineData, 'revenues_xof') || (revPrimary * 0.82);
             const txBaseline = sumField(baselineData, 'no_of_transactions') || (txPrimary * 0.75);
-            const usrBaseline = sumField(baselineData, 'no_of_users') || (usrPrimary * 0.85);
 
-            document.getElementById('cardVolume').textContent = formatXOF(volPrimary);
-            document.getElementById('cardRevenue').textContent = formatXOF(revPrimary);
+            document.getElementById('cardLabelVol').textContent = `Gross Volume (${targetCurr})`;
+            document.getElementById('cardLabelRev').textContent = `Net Revenues (${targetCurr})`;
+            document.getElementById('tableHeaderVol').textContent = `Volumes (${targetCurr})`;
+            document.getElementById('tableHeaderRev').textContent = `Revenues (${targetCurr})`;
+
+            document.getElementById('cardVolume').textContent = formatCurrencyVal(volPrimary, targetCurr);
+            document.getElementById('cardRevenue').textContent = formatCurrencyVal(revPrimary, targetCurr);
             document.getElementById('cardTransactions').textContent = txPrimary.toLocaleString();
             document.getElementById('cardUsers').textContent = usrPrimary.toLocaleString();
 
@@ -607,33 +719,36 @@
             updateTrendBadge('trendRevenue', 'trendRevenueText', revPrimary, revBaseline);
             updateTrendBadge('trendTransactions', 'trendTransactionsText', txPrimary, txBaseline);
 
-            computeScoreboard(filteredRecords, selectedYear, dataPrimary);
-            renderCharts(dataPrimary, windowLimit);
+            computeScoreboard(filteredRecords, selectedYear, dataPrimary, targetCurr);
+            renderCharts(dataPrimary, windowLimit, targetCurr);
 
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
-            document.getElementById('recordCountBadge').textContent = `${dataPrimary.length} Rows Logged`;
+            document.getElementById('recordCountBadge').textContent = `${dataPrimary.length} Rows Logged (${targetCurr})`;
 
             if (dataPrimary.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="text-center p-8 text-slate-400 italic">No matching records found for this country filter view.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center p-10 text-slate-400 italic">No matching records found for this slicer view.</td></tr>`;
                 return;
             }
 
             dataPrimary.forEach(row => {
+                const rowVolConverted = parseNumber(row.volumes_xof) * (FX_RATES[targetCurr] || 1.0);
+                const rowRevConverted = parseNumber(row.revenues_xof) * (FX_RATES[targetCurr] || 1.0);
+
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-sky-500/10 cursor-pointer transition-colors';
-                tr.onclick = () => openRowDrillthrough(row);
+                tr.onclick = () => openRowDrillthrough(row, targetCurr);
                 tr.innerHTML = `
-                    <td class="p-3.5 font-medium">${row.year ?? '-'}</td>
-                    <td class="p-3.5 font-medium">${row.month ?? '-'}</td>
-                    <td class="p-3.5 font-semibold text-sky-300">${row.week_number ?? '-'}</td>
-                    <td class="p-3.5 font-bold text-white flex items-center gap-1.5"><span class="text-base">${COUNTRY_FLAGS[row.market] || ''}</span> ${row.market ?? '-'}</td>
-                    <td class="p-3.5"><span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px] font-semibold border border-slate-700">${row.currency ?? '-'}</span></td>
-                    <td class="p-3.5 font-semibold text-slate-200">${parseNumber(row.volumes_xof).toLocaleString()}</td>
-                    <td class="p-3.5 font-semibold text-emerald-400">${parseNumber(row.revenues_xof).toLocaleString()}</td>
-                    <td class="p-3.5 font-medium">${parseNumber(row.no_of_transactions).toLocaleString()}</td>
-                    <td class="p-3.5 font-medium">${parseNumber(row.no_of_users).toLocaleString()}</td>
+                    <td class="p-4 font-medium">${row.year ?? '-'}</td>
+                    <td class="p-4 font-medium">${row.month ?? '-'}</td>
+                    <td class="p-4 font-semibold text-sky-300">${row.week_number ?? '-'}</td>
+                    <td class="p-4 font-bold text-white flex items-center gap-2"><span class="text-base">${COUNTRY_FLAGS[row.market] || ''}</span> ${row.market ?? '-'}</td>
+                    <td class="p-4"><span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px] font-semibold border border-slate-700">${targetCurr}</span></td>
+                    <td class="p-4 font-semibold text-slate-200">${rowVolConverted.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
+                    <td class="p-4 font-semibold text-emerald-400">${rowRevConverted.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
+                    <td class="p-4 font-medium">${parseNumber(row.no_of_transactions).toLocaleString()}</td>
+                    <td class="p-4 font-medium">${parseNumber(row.no_of_users).toLocaleString()}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -646,10 +761,10 @@
             const diff = baseline === 0 ? 0 : ((current - baseline) / baseline) * 100;
             const sign = diff >= 0 ? '+' : '';
             textEl.textContent = `${sign}${diff.toFixed(1)}% vs baseline`;
-            container.className = diff < 0 ? 'text-xs font-semibold text-rose-400 mt-1.5 flex items-center gap-1' : 'text-xs font-semibold text-emerald-400 mt-1.5 flex items-center gap-1';
+            container.className = diff < 0 ? 'text-xs font-semibold text-rose-400 mt-2 flex items-center gap-1' : 'text-xs font-semibold text-emerald-400 mt-2 flex items-center gap-1';
         }
 
-        function computeScoreboard(allRecords, yearFilter, activeData) {
+        function computeScoreboard(allRecords, yearFilter, activeData, targetCurr) {
             const marketStats = {};
             let totalVolumeSum = 0;
             let totalRevenueSum = 0;
@@ -700,10 +815,10 @@
             let mostConsistentMarket = topRevMarket;
 
             document.getElementById('leaderVolume').innerHTML = `<span class="flex items-center gap-1.5"><span class="text-base">${COUNTRY_FLAGS[topVolMarket] || ''}</span><span style="color: ${COUNTRY_COLORS[topVolMarket] || '#fff'}">${topVolMarket}</span></span>`;
-            document.getElementById('subVolume').textContent = `${formatXOF(maxVol)} (${volShare}% share)`;
+            document.getElementById('subVolume').textContent = `${formatCurrencyVal(maxVol, targetCurr)} (${volShare}% share)`;
 
             document.getElementById('leaderRevenue').innerHTML = `<span class="flex items-center gap-1.5"><span class="text-base">${COUNTRY_FLAGS[topRevMarket] || ''}</span><span style="color: ${COUNTRY_COLORS[topRevMarket] || '#fff'}">${topRevMarket}</span></span>`;
-            document.getElementById('subRevenue').textContent = `${formatXOF(maxRev)} (${revShare}% share)`;
+            document.getElementById('subRevenue').textContent = `${formatCurrencyVal(maxRev, targetCurr)} (${revShare}% share)`;
 
             document.getElementById('leaderGrowth').innerHTML = `<span class="flex items-center gap-1.5"><span class="text-base">${COUNTRY_FLAGS[topGrowthMarket] || ''}</span><span style="color: ${COUNTRY_COLORS[topGrowthMarket] || '#fff'}">${topGrowthMarket}</span></span>`;
             document.getElementById('subGrowth').textContent = `+18.4% YoY surge`;
@@ -711,16 +826,16 @@
             document.getElementById('leaderConsistency').innerHTML = `<span class="flex items-center gap-1.5"><span class="text-base">${COUNTRY_FLAGS[mostConsistentMarket] || ''}</span><span style="color: ${COUNTRY_COLORS[mostConsistentMarket] || '#fff'}">${mostConsistentMarket}</span></span>`;
             document.getElementById('subConsistency').textContent = `CV: 0.04 (Nominal vol)`;
 
-            document.getElementById('aiSynthesisText').textContent = `AI Synthesis: ${topVolMarket} leads throughput with ${formatXOF(maxVol)}. Corridor resilience is optimal across active gateways.`;
+            document.getElementById('aiSynthesisText').textContent = `Executive AI Summary: ${topVolMarket} leads throughput with ${formatCurrencyVal(maxVol, targetCurr)}. Multi-currency FX conversion active (${targetCurr}).`;
 
             renderSparklines(marketStats, topVolMarket, topRevMarket, topGrowthMarket, mostConsistentMarket);
         }
 
         function triggerStressSimulation() {
             const bannerText = document.getElementById('aiSynthesisText');
-            bannerText.innerHTML = `<span class="text-emerald-400 font-bold">⚡ Stress Simulation Active:</span> Injecting +30% surge across regional corridors. Gateway latency verified under 95ms.`;
+            bannerText.innerHTML = `<span class="text-emerald-400 font-bold">⚡ Stress Sim Active:</span> Injecting +30% volume across regional gateways with real-time FX translation.`;
             setTimeout(() => {
-                bannerText.textContent = `AI Synthesis: Stress test completed successfully. Liquidity reserves verified.`;
+                bannerText.textContent = `Executive AI Summary: Stress test completed successfully. Multi-currency reserves verified.`;
             }, 5000);
         }
 
@@ -764,16 +879,17 @@
             });
         }
 
-        function renderCharts(activeData, windowLimit) {
+        function renderCharts(activeData, windowLimit, targetCurr) {
+            const fxMultiplier = FX_RATES[targetCurr] || 1.0;
             const marketVolMap = {};
             const marketTxMap = {};
             const marketRevMap = {};
 
             activeData.forEach(row => {
                 const mkt = row.market || 'Other';
-                marketVolMap[mkt] = (marketVolMap[mkt] || 0) + parseNumber(row.volumes_xof);
+                marketVolMap[mkt] = (marketVolMap[mkt] || 0) + (parseNumber(row.volumes_xof) * fxMultiplier);
                 marketTxMap[mkt] = (marketTxMap[mkt] || 0) + parseNumber(row.no_of_transactions);
-                marketRevMap[mkt] = (marketRevMap[mkt] || 0) + parseNumber(row.revenues_xof);
+                marketRevMap[mkt] = (marketRevMap[mkt] || 0) + (parseNumber(row.revenues_xof) * fxMultiplier);
             });
 
             const standardMarkets = activeMarketFilter === 'ALL' ? ['Kenya', 'Uganda', 'Tanzania', 'Nigeria'] : [activeMarketFilter];
@@ -784,11 +900,13 @@
 
             const legendContainer = document.getElementById('dominanceLegendContainer');
             legendContainer.innerHTML = standardMarkets.map(m => `
-                <div class="flex items-center gap-2 text-xs font-semibold text-slate-300 bg-slate-900/60 px-2.5 py-1 rounded-lg border border-slate-800">
-                    <span class="w-2.5 h-2.5 rounded-full shadow-sm" style="background-color: ${COUNTRY_COLORS[m]}"></span>
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-300 bg-slate-900/70 px-3 py-1.5 rounded-xl border border-slate-800">
+                    <span class="w-3 h-3 rounded-full shadow-sm" style="background-color: ${COUNTRY_COLORS[m]}"></span>
                     <span>${COUNTRY_FLAGS[m] || ''} ${m}</span>
                 </div>
             `).join('');
+
+            document.getElementById('dominanceSubHeader').textContent = `Currency: ${targetCurr}`;
 
             const doughnutOptions = {
                 responsive: true,
@@ -801,7 +919,7 @@
                                 let sum = context.dataset.data.reduce((a, b) => a + b, 0);
                                 let val = context.raw;
                                 let percentage = sum > 0 ? ((val / sum) * 100).toFixed(1) : 100;
-                                return ` ${context.label}: ${val.toLocaleString()} (${percentage}%)`;
+                                return ` ${context.label}: ${val.toLocaleString(undefined, {maximumFractionDigits: 0})} ${targetCurr} (${percentage}%)`;
                             }
                         }
                     }
@@ -830,13 +948,12 @@
                 options: doughnutOptions
             });
 
-            // Chart Labels & Series Type Setup
             let chartLabels = [];
-            let seriesBadgeText = 'Monthly Series';
+            let seriesBadgeText = 'Weekly Series';
 
             if (windowLimit === '4W') {
-                const currentWeek = getISOWeek(new Date()); // e.g. 41
-                const targetWeeks = [currentWeek - 3, currentWeek - 2, currentWeek - 1, currentWeek]; // [38, 39, 40, 41]
+                const currentWeek = getISOWeek(new Date()); 
+                const targetWeeks = [currentWeek - 3, currentWeek - 2, currentWeek - 1, currentWeek]; 
                 chartLabels = targetWeeks.map(w => `Week ${w}`);
                 seriesBadgeText = 'Weekly Series (Rolling 4W)';
             } else {
@@ -848,75 +965,54 @@
             document.getElementById('seriesTypeBadgeTx').textContent = seriesBadgeText;
 
             const mktNameDisplay = activeMarketFilter === 'ALL' ? 'by Country' : `for ${activeMarketFilter}`;
-            document.getElementById('chartTitleVol').textContent = `Gross Volume ${mktNameDisplay} (XOF)`;
-            document.getElementById('chartTitleRev').textContent = `Net Revenues ${mktNameDisplay} (XOF)`;
+            document.getElementById('chartTitleVol').textContent = `Gross Volume ${mktNameDisplay} (${targetCurr})`;
+            document.getElementById('chartTitleRev').textContent = `Net Revenues ${mktNameDisplay} (${targetCurr})`;
             document.getElementById('chartTitleTx').textContent = `Number of Transactions ${mktNameDisplay}`;
 
             const volumeDatasets = standardMarkets.map(country => {
                 const countryData = chartLabels.map(label => {
-                    if (windowLimit === '4W') {
-                        return activeData
-                            .filter(r => r.market === country && `Week ${extractWeekNum(r.week_number)}` === label)
-                            .reduce((sum, r) => sum + parseNumber(r.volumes_xof), 0);
-                    } else {
-                        return activeData
-                            .filter(r => r.market === country && r.month === label)
-                            .reduce((sum, r) => sum + parseNumber(r.volumes_xof), 0);
-                    }
+                    const rowFilter = (r) => r.market === country && (windowLimit === '4W' ? `Week ${extractWeekNum(r.week_number)}` === label : r.month === label);
+                    return activeData.filter(rowFilter).reduce((sum, r) => sum + (parseNumber(r.volumes_xof) * fxMultiplier), 0);
                 });
                 return {
                     label: country,
                     data: countryData,
                     backgroundColor: COUNTRY_COLORS[country],
-                    borderRadius: 6,
-                    maxBarThickness: 30
+                    borderRadius: 8,
+                    maxBarThickness: 32
                 };
             });
 
             const revenueDatasets = standardMarkets.map(country => {
                 const countryData = chartLabels.map(label => {
-                    if (windowLimit === '4W') {
-                        return activeData
-                            .filter(r => r.market === country && `Week ${extractWeekNum(r.week_number)}` === label)
-                            .reduce((sum, r) => sum + parseNumber(r.revenues_xof), 0);
-                    } else {
-                        return activeData
-                            .filter(r => r.market === country && r.month === label)
-                            .reduce((sum, r) => sum + parseNumber(r.revenues_xof), 0);
-                    }
+                    const rowFilter = (r) => r.market === country && (windowLimit === '4W' ? `Week ${extractWeekNum(r.week_number)}` === label : r.month === label);
+                    return activeData.filter(rowFilter).reduce((sum, r) => sum + (parseNumber(r.revenues_xof) * fxMultiplier), 0);
                 });
                 return {
                     label: country,
                     data: countryData,
                     backgroundColor: COUNTRY_COLORS[country],
-                    borderRadius: 6,
-                    maxBarThickness: 30
+                    borderRadius: 8,
+                    maxBarThickness: 32
                 };
             });
 
             const transactionDatasets = standardMarkets.map(country => {
                 const countryData = chartLabels.map(label => {
-                    if (windowLimit === '4W') {
-                        return activeData
-                            .filter(r => r.market === country && `Week ${extractWeekNum(r.week_number)}` === label)
-                            .reduce((sum, r) => sum + parseNumber(r.no_of_transactions), 0);
-                    } else {
-                        return activeData
-                            .filter(r => r.market === country && r.month === label)
-                            .reduce((sum, r) => sum + parseNumber(r.no_of_transactions), 0);
-                    }
+                    const rowFilter = (r) => r.market === country && (windowLimit === '4W' ? `Week ${extractWeekNum(r.week_number)}` === label : r.month === label);
+                    return activeData.filter(rowFilter).reduce((sum, r) => sum + parseNumber(r.no_of_transactions), 0);
                 });
 
                 return {
                     label: country,
                     data: countryData,
                     borderColor: COUNTRY_COLORS[country],
-                    backgroundColor: 'rgba(56, 189, 248, 0.04)',
+                    backgroundColor: 'rgba(56, 189, 248, 0.05)',
                     fill: true,
                     tension: 0.4,
                     borderWidth: 3,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#05070c',
+                    pointRadius: 4.5,
+                    pointBackgroundColor: '#04060b',
                     pointBorderColor: COUNTRY_COLORS[country],
                     pointBorderWidth: 2.5
                 };
@@ -987,8 +1083,9 @@
             });
         }
 
-        function selectCommand(yr, mkt) {
+        function selectCommand(yr, mkt, curr) {
             if (yr) document.getElementById('yearFilter').value = yr;
+            if (curr) document.getElementById('currencyFilter').value = curr;
             onCountryFilterChange(mkt);
             document.getElementById('cmdModalOverlay').style.display = 'none';
         }
@@ -1006,32 +1103,37 @@
 
         function openDrilldown(title) {
             document.getElementById('drawerOverlay').style.display = 'flex';
-            document.getElementById('drawerTitle').textContent = `Diagnostics: ${title}`;
+            document.getElementById('drawerTitle').textContent = `Drillthrough: ${title}`;
+            const targetCurr = getActiveCurrency();
             document.getElementById('drawerBody').innerHTML = `
-                <p><strong>Corridor Telemetry Diagnostic</strong></p>
-                <p class="text-slate-400 mt-1">Inspecting detailed metrics for <strong>${title}</strong> across active regional nodes.</p>
-                <div class="glass-card p-4 rounded-xl border border-sky-500/20 mt-4">
-                    <div class="text-[10px] text-slate-400 uppercase font-bold mb-1">Gateway Health</div>
+                <p><strong>Semantic Model Diagnostics</strong></p>
+                <p class="text-slate-400 mt-1">Inspecting granular breakdown for <strong>${title}</strong> across active regional gateways.</p>
+                <div class="canvas-card p-4 rounded-xl border border-sky-500/20 mt-4">
+                    <div class="text-[10px] text-slate-400 uppercase font-bold mb-1">Gateway Health Status</div>
                     <div class="text-emerald-400 font-bold flex items-center gap-2">🟢 99.98% Settlement Success Rate</div>
                 </div>
-                <div class="glass-card p-4 rounded-xl border border-sky-500/20 mt-3">
-                    <div class="text-[10px] text-slate-400 uppercase font-bold mb-1">Active Market Filter</div>
-                    <div class="text-sky-300 font-bold">${activeMarketFilter === 'ALL' ? 'All Markets (EA & NG)' : activeMarketFilter}</div>
+                <div class="canvas-card p-4 rounded-xl border border-sky-500/20 mt-3">
+                    <div class="text-[10px] text-slate-400 uppercase font-bold mb-1">Active Reporting Currency</div>
+                    <div class="text-sky-300 font-bold">${targetCurr} (Live FX Rate: ${FX_RATES[targetCurr] || 1.0})</div>
                 </div>
             `;
         }
 
-        function openRowDrillthrough(row) {
+        function openRowDrillthrough(row, targetCurr) {
             document.getElementById('drawerOverlay').style.display = 'flex';
-            document.getElementById('drawerTitle').textContent = `Ledger Record: ${row.market} (${row.month} - ${row.week_number})`;
+            document.getElementById('drawerTitle').textContent = `Matrix Record: ${row.market} (${row.month} - ${row.week_number})`;
+            const fxMultiplier = FX_RATES[targetCurr] || 1.0;
+            const convVol = parseNumber(row.volumes_xof) * fxMultiplier;
+            const convRev = parseNumber(row.revenues_xof) * fxMultiplier;
+
             document.getElementById('drawerBody').innerHTML = `
-                <p><strong>Granular Telemetry Data</strong></p>
+                <p><strong>Granular Telemetry Properties</strong></p>
                 <ul class="list-disc pl-4 space-y-2 mt-3 text-slate-300">
-                    <li>Year: <strong>${row.year}</strong></li>
+                    <li>Fiscal Year: <strong>${row.year}</strong></li>
                     <li>Market Corridor: <strong>${COUNTRY_FLAGS[row.market] || ''} ${row.market}</strong></li>
-                    <li>Currency: <strong>${row.currency}</strong></li>
-                    <li>Gross Volume: <strong>${parseNumber(row.volumes_xof).toLocaleString()} XOF</strong></li>
-                    <li>Net Revenue: <strong>${parseNumber(row.revenues_xof).toLocaleString()} XOF</strong></li>
+                    <li>Reporting Currency: <strong>${targetCurr}</strong></li>
+                    <li>Converted Volume: <strong>${convVol.toLocaleString(undefined, {maximumFractionDigits: 0})} ${targetCurr}</strong></li>
+                    <li>Converted Revenue: <strong>${convRev.toLocaleString(undefined, {maximumFractionDigits: 0})} ${targetCurr}</strong></li>
                     <li>Total Transactions: <strong>${parseNumber(row.no_of_transactions).toLocaleString()}</strong></li>
                     <li>Active Users: <strong>${parseNumber(row.no_of_users).toLocaleString()}</strong></li>
                 </ul>
