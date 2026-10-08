@@ -3,44 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Backlog & Action Center - Operations Steering Dashboard</title>
+    <title>Executive Command Center - Operations Strategy & Backlog</title>
     <!-- Include Papa Parse for robust CSV/Excel-exported text parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <!-- Include Supabase JS Client Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root[data-theme="dark"] {
-            --bg-color: #05070c;
-            --card-bg: rgba(13, 20, 35, 0.75);
-            --card-hover: rgba(22, 33, 56, 0.85);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-glow: rgba(59, 130, 246, 0.3);
+            --bg-color: #020408;
+            --card-bg: rgba(10, 16, 28, 0.7);
+            --card-hover: rgba(18, 27, 46, 0.85);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(56, 189, 248, 0.35);
             --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text-muted: #64748b;
             --accent-red: #f43f5e;
             --accent-amber: #fbbf24;
-            --accent-green: #10b981;
-            --accent-blue: #3b82f6;
-            --accent-purple: #a855f7;
+            --accent-green: #34d399;
+            --accent-blue: #38bdf8;
+            --accent-purple: #a78bfa;
             --accent-cyan: #06b6d4;
-            --accent-gray: #64748b;
-            --glow-blue: rgba(59, 130, 246, 0.25);
-            --glow-red: rgba(244, 63, 94, 0.25);
-            --glow-green: rgba(16, 185, 129, 0.25);
-            --glow-amber: rgba(251, 191, 36, 0.25);
-            --glow-cyan: rgba(6, 182, 212, 0.25);
-            --glow-gray: rgba(100, 116, 139, 0.25);
-            --control-bg: rgba(8, 12, 22, 0.85);
-            --glass-blur: blur(16px);
+            --glow-blue: rgba(56, 189, 248, 0.15);
+            --glow-red: rgba(244, 63, 94, 0.15);
+            --glow-green: rgba(52, 211, 153, 0.15);
+            --glow-amber: rgba(251, 191, 36, 0.15);
+            --control-bg: rgba(6, 10, 18, 0.9);
+            --glass-blur: blur(20px);
         }
 
         :root[data-theme="light"] {
             --bg-color: #f8fafc;
             --card-bg: rgba(255, 255, 255, 0.8);
-            --card-hover: rgba(241, 245, 249, 0.9);
-            --border-color: rgba(0, 0, 0, 0.08);
-            --border-glow: rgba(37, 99, 235, 0.2);
-            --text-main: #0f172a;
+            --card-hover: rgba(241, 245, 249, 0.95);
+            --border-color: rgba(0, 0, 0, 0.06);
+            --border-glow: rgba(37, 99, 235, 0.25);
+            --text-main: #090d16;
             --text-muted: #64748b;
             --accent-red: #e11d48;
             --accent-amber: #d97706;
@@ -48,568 +45,482 @@
             --accent-blue: #2563eb;
             --accent-purple: #7c3aed;
             --accent-cyan: #0891b2;
-            --accent-gray: #475569;
-            --glow-blue: rgba(37, 99, 235, 0.15);
-            --glow-red: rgba(225, 29, 72, 0.15);
-            --glow-green: rgba(5, 150, 105, 0.15);
-            --glow-amber: rgba(217, 119, 6, 0.15);
-            --glow-cyan: rgba(8, 145, 178, 0.15);
-            --glow-gray: rgba(71, 85, 105, 0.15);
+            --glow-blue: rgba(37, 99, 235, 0.1);
+            --glow-red: rgba(225, 29, 72, 0.1);
+            --glow-green: rgba(5, 150, 105, 0.1);
+            --glow-amber: rgba(217, 119, 6, 0.1);
             --control-bg: rgba(241, 245, 249, 0.9);
-            --glass-blur: blur(16px);
+            --glass-blur: blur(20px);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            padding: 1rem 1.5rem;
+            padding: 28px 40px;
             line-height: 1.5;
             background-image: 
-                radial-gradient(circle at 10% 10%, var(--glow-green) 0%, transparent 45%),
-                radial-gradient(circle at 90% 90%, var(--glow-blue) 0%, transparent 45%),
-                radial-gradient(circle at 50% 50%, var(--glow-cyan) 0%, transparent 60%);
+                radial-gradient(circle at 15% 10%, rgba(52, 211, 153, 0.05) 0%, transparent 45%),
+                radial-gradient(circle at 85% 90%, rgba(56, 189, 248, 0.05) 0%, transparent 45%);
             background-attachment: fixed;
             min-height: 100vh;
         }
 
-        .header-actions-bar {
+        /* Top Executive Navigation */
+        .executive-topbar {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.75rem;
-            flex-wrap: wrap;
-            gap: 1rem;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand-identifier {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--accent-green);
+        }
+
+        .brand-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-weight: 800;
+            color: var(--text-muted);
         }
 
         .nav-links-group {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .nav-card {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
+        .nav-pill {
             background: var(--card-bg);
             backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--border-color);
-            padding: 0.6rem 1.25rem;
-            border-radius: 12px;
+            padding: 8px 16px;
+            border-radius: 10px;
             color: var(--text-main);
             text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 700;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .nav-card.dashboard-card {
-            border-color: rgba(16, 185, 129, 0.3);
-            box-shadow: 0 4px 20px var(--glow-green);
-        }
-
-        .nav-card.dashboard-card:hover {
-            color: var(--accent-green);
-            border-color: var(--accent-green);
-            box-shadow: 0 0 25px var(--glow-green);
-            transform: translateY(-2px);
-        }
-
-        .nav-card.crm-card {
-            border-color: rgba(59, 130, 246, 0.3);
-            box-shadow: 0 4px 20px var(--glow-blue);
-        }
-
-        .nav-card.crm-card:hover {
-            color: var(--accent-blue);
+        .nav-pill:hover {
             border-color: var(--accent-blue);
-            box-shadow: 0 0 25px var(--glow-blue);
-            transform: translateY(-2px);
+            color: var(--accent-blue);
+            box-shadow: 0 0 20px var(--glow-blue);
         }
 
+        /* Header Section */
         header {
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.75rem;
+            margin-bottom: 28px;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 20px;
         }
 
-        .header-left {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .current-page-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.75rem;
-            color: var(--accent-green);
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 0.2rem 0.6rem;
-            border-radius: 9999px;
-            width: fit-content;
-            font-weight: 600;
-            backdrop-filter: var(--glass-blur);
-            box-shadow: 0 0 15px var(--glow-green);
-        }
-
-        header h1 {
-            font-size: 1.5rem;
+        .header-title-block h1 {
+            font-size: 2rem;
             font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-main);
-            margin: 0;
-            background: linear-gradient(135deg, var(--text-main) 30%, var(--text-muted));
+            letter-spacing: -0.03em;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, var(--text-main) 30%, var(--text-muted) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px var(--glow-blue);
         }
 
-        header p {
+        .header-title-block p {
             color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+            font-size: 0.85rem;
         }
 
         .theme-toggle {
             background: var(--card-bg);
-            backdrop-filter: var(--glass-blur);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 0.4rem 0.8rem;
-            border-radius: 8px;
-            font-size: 0.75rem;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 6px;
         }
 
         .theme-toggle:hover {
             border-color: var(--accent-green);
             box-shadow: 0 0 15px var(--glow-green);
-            transform: translateY(-1px);
         }
 
-        .header-tag {
-            background: var(--card-bg);
-            backdrop-filter: var(--glass-blur);
-            color: var(--accent-green);
-            padding: 0.4rem 0.8rem;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 20px var(--glow-green);
-        }
-
-        section {
-            margin-bottom: 1.5rem;
-        }
-
-        h2 {
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-bottom: 0.75rem;
-            color: var(--text-muted);
-            border-left: 3px solid var(--accent-green);
-            padding-left: 0.75rem;
-            font-weight: 700;
-        }
-
-        .bento-grid {
+        /* Executive Telemetry Bento Grid */
+        .telemetry-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
-        .bento-card {
+        .telemetry-card {
             background: var(--card-bg);
             backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 1rem;
-            min-height: 120px;
-            box-shadow: 0 8px 25px -10px rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 12px 30px -10px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
-            gap: 0.3rem;
+            justify-content: space-between;
             position: relative;
             overflow: hidden;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .bento-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
-            opacity: 0.5;
-            transition: opacity 0.3s ease;
-        }
-
-        .bento-card:hover {
+        .telemetry-card:hover {
             transform: translateY(-3px);
             border-color: var(--border-glow);
-            box-shadow: 0 15px 35px -12px rgba(0,0,0,0.3), 0 0 20px var(--glow-blue);
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.4), 0 0 20px var(--glow-blue);
         }
 
-        .bento-card:hover::before {
-            opacity: 1;
+        .telemetry-card.alert:hover {
+            border-color: rgba(244, 63, 94, 0.5);
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.4), 0 0 20px var(--glow-red);
         }
 
-        .bento-card.p1:hover {
-            box-shadow: 0 15px 35px -12px rgba(0,0,0,0.3), 0 0 20px var(--glow-red);
-            border-color: rgba(244, 63, 94, 0.4);
+        .telemetry-card.success:hover {
+            border-color: rgba(52, 211, 153, 0.5);
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.4), 0 0 20px var(--glow-green);
         }
 
-        .bento-card.progress:hover {
-            box-shadow: 0 15px 35px -12px rgba(0,0,0,0.3), 0 0 20px var(--glow-amber);
-            border-color: rgba(251, 191, 36, 0.4);
-        }
-
-        .bento-card.complete:hover {
-            box-shadow: 0 15px 35px -12px rgba(0,0,0,0.3), 0 0 20px var(--glow-green);
-            border-color: rgba(16, 185, 129, 0.4);
-        }
-
-        .bento-label {
+        .telemetry-label {
             font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.15em;
             color: var(--text-muted);
             font-weight: 700;
         }
 
-        .bento-value {
-            font-size: 1.7rem;
+        .telemetry-value {
+            font-size: 2rem;
             font-weight: 800;
             color: var(--text-main);
-            letter-spacing: -0.5px;
+            letter-spacing: -0.03em;
+            margin: 8px 0;
         }
 
-        .bento-sub {
-            font-size: 0.7rem;
+        .telemetry-sub {
+            font-size: 0.72rem;
             color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
+            font-weight: 500;
         }
 
-        .dept-bento-grid {
+        /* Streamlined Department Matrix */
+        .matrix-section {
+            margin-bottom: 24px;
+        }
+
+        .section-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .matrix-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .dept-matrix-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 0.75rem;
-            margin-bottom: 1rem;
+            gap: 12px;
         }
 
-        .dept-bento-card {
+        .dept-matrix-card {
             background: var(--card-bg);
             backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 0.7rem;
+            padding: 14px;
             cursor: pointer;
             display: flex;
             flex-direction: column;
-            gap: 0.2rem;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            gap: 4px;
+            transition: all 0.25s ease;
         }
 
-        .dept-bento-card:hover {
+        .dept-matrix-card:hover {
             border-color: var(--accent-blue);
             transform: translateY(-2px);
             box-shadow: 0 8px 20px var(--glow-blue);
         }
 
-        .dept-bento-card.active {
+        .dept-matrix-card.active {
             border-color: var(--accent-green);
             background: var(--card-hover);
             box-shadow: 0 0 15px var(--glow-green);
         }
 
-        .dept-title {
-            font-size: 0.7rem;
+        .dept-name {
+            font-size: 0.78rem;
             font-weight: 700;
             color: var(--text-main);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.05em;
         }
 
-        .dept-badge {
-            font-size: 0.55rem;
-            background: var(--control-bg);
-            border: 1px solid var(--border-color);
-            padding: 0.1rem 0.3rem;
-            border-radius: 4px;
+        .dept-tag {
+            font-size: 0.6rem;
             color: var(--text-muted);
-            width: fit-content;
             font-weight: 600;
         }
 
-        .weekly-banner {
-            background: linear-gradient(135deg, rgba(244, 63, 94, 0.12), rgba(59, 130, 246, 0.12));
+        /* Action Command Center Banner */
+        .command-banner {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.1), rgba(56, 189, 248, 0.1));
             backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid rgba(244, 63, 94, 0.3);
-            border-radius: 14px;
-            padding: 0.8rem 1.2rem;
-            margin-bottom: 1rem;
+            border-radius: 16px;
+            padding: 18px 24px;
+            margin-bottom: 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 1rem;
-            box-shadow: 0 8px 25px rgba(244, 63, 94, 0.12);
+            gap: 16px;
         }
 
-        .weekly-banner-left {
-            display: flex;
-            flex-direction: column;
-            gap: 0.15rem;
-        }
-
-        .weekly-banner-title {
-            font-size: 0.9rem;
+        .command-banner-info h3 {
+            font-size: 0.95rem;
             font-weight: 800;
             text-transform: uppercase;
             color: var(--accent-red);
-            letter-spacing: 0.8px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
         }
 
-        .weekly-banner-desc {
-            font-size: 0.8rem;
+        .command-banner-info p {
+            font-size: 0.82rem;
             color: var(--text-muted);
         }
 
-        .weekly-toggle-btn {
+        .command-action-btn {
             background: var(--card-bg);
             border: 1px solid var(--accent-red);
             color: var(--accent-red);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.75rem;
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(244, 63, 94, 0.2);
             transition: all 0.2s ease;
         }
 
-        .weekly-toggle-btn:hover, .weekly-toggle-btn.active {
+        .command-action-btn:hover, .command-action-btn.active {
             background: var(--accent-red);
             color: white;
             box-shadow: 0 0 20px var(--glow-red);
-            transform: translateY(-1px);
         }
 
+        /* Master Table Container */
         .table-container {
             background: var(--card-bg);
             backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--border-color);
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3), 0 0 25px var(--glow-blue);
-            margin: 0 auto;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4), 0 0 25px var(--glow-blue);
         }
 
         .controls-bar {
             position: sticky;
             top: 0;
             z-index: 100;
-            padding: 1rem 1.25rem;
+            padding: 18px 24px;
             background: var(--control-bg);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             flex-wrap: wrap;
-            gap: 0.75rem;
+            gap: 12px;
             justify-content: space-between;
             align-items: center;
             backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
 
-        .status-tabs {
+        .status-pills-row {
             display: flex;
-            gap: 0.4rem;
+            gap: 6px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            padding: 0.25rem;
-            border-radius: 10px;
-            width: 100%;
+            padding: 4px;
+            border-radius: 12px;
             overflow-x: auto;
         }
 
-        .status-tab {
+        .status-pill-tab {
             background: transparent;
             border: none;
             color: var(--text-muted);
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.7rem;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.72rem;
             font-weight: 700;
             text-transform: uppercase;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.2s ease;
         }
 
-        .status-tab:hover {
+        .status-pill-tab:hover {
             color: var(--text-main);
             background: var(--card-hover);
         }
 
-        .status-tab.active {
+        .status-pill-tab.active {
             background: var(--accent-green);
-            color: #05070c;
+            color: #020408;
             box-shadow: 0 0 12px var(--glow-green);
         }
 
-        .search-wrapper {
+        .priority-filter-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .priority-filter-pill {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .priority-filter-pill:hover, .priority-filter-pill.active {
+            border-color: var(--accent-blue);
+            color: var(--text-main);
+            background: rgba(56, 189, 248, 0.12);
+            box-shadow: 0 0 10px var(--glow-blue);
+        }
+
+        .search-input-wrapper {
             position: relative;
             flex: 1;
             min-width: 240px;
         }
 
-        .search-wrapper input {
+        .search-input-wrapper input {
             width: 100%;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.6rem 1rem 0.6rem 2.25rem;
+            border-radius: 10px;
+            padding: 10px 14px 10px 36px;
             color: var(--text-main);
-            font-size: 0.8rem;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+            font-size: 0.82rem;
         }
 
-        .search-wrapper input:focus {
+        .search-input-wrapper input:focus {
             outline: none;
             border-color: var(--accent-green);
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1), 0 0 12px var(--glow-green);
+            box-shadow: 0 0 15px var(--glow-green);
         }
 
-        .search-wrapper svg {
+        .search-input-wrapper svg {
             position: absolute;
-            left: 0.75rem;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            width: 14px;
-            height: 14px;
+            width: 15px;
+            height: 15px;
             fill: var(--text-muted);
         }
 
-        .filter-group {
+        .action-group-buttons {
             display: flex;
-            gap: 0.5rem;
+            gap: 8px;
             align-items: center;
-            flex-wrap: wrap;
         }
 
-        .filter-select {
+        .action-btn {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.6rem 2rem 0.6rem 0.85rem;
-            color: var(--text-main);
-            font-size: 0.8rem;
-            appearance: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            cursor: pointer;
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--accent-green);
-            box-shadow: 0 0 12px var(--glow-green);
-        }
-
-        .csv-upload-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--accent-green);
-            color: var(--accent-green);
-            padding: 0.6rem 1rem;
-            border-radius: 8px;
-            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            box-shadow: 0 4px 12px var(--glow-green);
-            transition: all 0.2s ease;
+            gap: 6px;
         }
 
-        .csv-upload-btn:hover {
+        .action-btn.primary {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            box-shadow: 0 4px 12px var(--glow-green);
+        }
+
+        .action-btn.primary:hover {
             background: var(--accent-green);
-            color: #05070c;
-            transform: translateY(-1px);
+            color: #020408;
             box-shadow: 0 0 20px var(--glow-green);
         }
 
-        .reset-filter-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 0.6rem 1rem;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        .action-btn.secondary {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            box-shadow: 0 4px 12px var(--glow-blue);
         }
 
-        .reset-filter-btn:hover {
+        .action-btn.secondary:hover {
+            background: var(--accent-blue);
+            color: #020408;
+            box-shadow: 0 0 20px var(--glow-blue);
+        }
+
+        .action-btn:hover {
             color: var(--text-main);
-            border-color: var(--accent-green);
-            transform: translateY(-1px);
+            border-color: var(--text-muted);
         }
 
-        .table-scroll-wrapper {
+        /* Table Design */
+        .table-scroll-area {
             width: 100%;
             overflow-x: auto;
+            max-height: 620px;
         }
 
         table {
@@ -617,15 +528,14 @@
             border-collapse: collapse;
             text-align: left;
             table-layout: fixed;
-            min-width: 1100px;
+            min-width: 1150px;
         }
 
         th, td {
-            padding: 0.85rem 1rem;
+            padding: 14px 18px;
             border-bottom: 1px solid var(--border-color);
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             word-wrap: break-word;
-            overflow-wrap: break-word;
         }
 
         th:nth-child(1), td:nth-child(1) { width: 10%; }
@@ -646,20 +556,20 @@
             font-size: 0.7rem;
             text-transform: uppercase;
             color: var(--text-muted);
-            letter-spacing: 0.8px;
+            letter-spacing: 0.1em;
             cursor: pointer;
-            user-select: none;
-            position: relative;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         th:hover {
             color: var(--accent-green);
-            background: var(--card-hover);
         }
 
         th .sort-icon {
             font-size: 0.65rem;
-            margin-left: 0.3rem;
+            margin-left: 4px;
             opacity: 0.5;
         }
 
@@ -668,66 +578,55 @@
             color: var(--accent-green);
         }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr {
-            transition: background-color 0.2s ease, transform 0.2s ease;
-        }
-
         tr:hover td {
-            background: var(--card-hover);
+            background: rgba(56, 189, 248, 0.04);
+            color: var(--text-main);
         }
 
         .badge-p1 { 
-            background: rgba(244, 63, 94, 0.12); 
+            background: rgba(244, 63, 94, 0.15); 
             color: var(--accent-red); 
-            border: 1px solid rgba(244, 63, 94, 0.35); 
-            padding: 0.2rem 0.5rem; 
+            border: 1px solid rgba(244, 63, 94, 0.4); 
+            padding: 3px 8px; 
             border-radius: 6px; 
             font-weight: 700; 
-            font-size: 0.65rem; 
-            box-shadow: 0 0 10px rgba(244, 63, 94, 0.2); 
+            font-size: 0.7rem; 
             display: inline-block; 
             text-align: center; 
         }
 
         .badge-p2 { 
-            background: rgba(6, 182, 212, 0.12); 
+            background: rgba(6, 182, 212, 0.15); 
             color: var(--accent-cyan); 
-            border: 1px solid rgba(6, 182, 212, 0.35); 
-            padding: 0.2rem 0.5rem; 
+            border: 1px solid rgba(6, 182, 212, 0.4); 
+            padding: 3px 8px; 
             border-radius: 6px; 
             font-weight: 700; 
-            font-size: 0.65rem; 
-            box-shadow: 0 0 10px var(--glow-cyan); 
+            font-size: 0.7rem; 
             display: inline-block; 
             text-align: center; 
         }
 
         .badge-p3 { 
-            background: rgba(251, 191, 36, 0.12); 
+            background: rgba(251, 191, 36, 0.15); 
             color: var(--accent-amber); 
-            border: 1px solid rgba(251, 191, 36, 0.35); 
-            padding: 0.2rem 0.5rem; 
+            border: 1px solid rgba(251, 191, 36, 0.4); 
+            padding: 3px 8px; 
             border-radius: 6px; 
             font-weight: 700; 
-            font-size: 0.65rem; 
-            box-shadow: 0 0 10px rgba(251, 191, 36, 0.2); 
+            font-size: 0.7rem; 
             display: inline-block; 
             text-align: center; 
         }
 
         .badge-p4 { 
-            background: rgba(168, 85, 247, 0.12); 
+            background: rgba(167, 139, 250, 0.15); 
             color: var(--accent-purple); 
-            border: 1px solid rgba(168, 85, 247, 0.35); 
-            padding: 0.2rem 0.5rem; 
+            border: 1px solid rgba(167, 139, 250, 0.4); 
+            padding: 3px 8px; 
             border-radius: 6px; 
             font-weight: 700; 
-            font-size: 0.65rem; 
-            box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); 
+            font-size: 0.7rem; 
             display: inline-block; 
             text-align: center; 
         }
@@ -735,27 +634,24 @@
         .status-pill {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            font-size: 0.7rem;
+            gap: 6px;
+            font-size: 0.75rem;
             font-weight: 600;
-            padding: 0.25rem 0.6rem;
-            border-radius: 9999px;
-            width: fit-content;
+            padding: 4px 10px;
+            border-radius: 20px;
         }
 
         .status-pill::before {
             content: '';
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
-            display: inline-block;
         }
 
         .status-complete { 
-            background: rgba(16, 185, 129, 0.1); 
+            background: rgba(52, 211, 153, 0.12); 
             color: var(--accent-green); 
-            border: 1px solid rgba(16, 185, 129, 0.3); 
-            box-shadow: 0 0 8px var(--glow-green); 
+            border: 1px solid rgba(52, 211, 153, 0.35); 
         }
         .status-complete::before { background: var(--accent-green); box-shadow: 0 0 6px var(--accent-green); }
 
@@ -763,175 +659,173 @@
             background: rgba(251, 191, 36, 0.12); 
             color: var(--accent-amber); 
             border: 1px solid rgba(251, 191, 36, 0.35); 
-            box-shadow: 0 0 10px var(--glow-amber); 
         }
         .status-inprogress::before { background: var(--accent-amber); box-shadow: 0 0 6px var(--accent-amber); }
 
         .status-notstarted { 
             background: rgba(100, 116, 139, 0.15); 
-            color: var(--accent-gray); 
+            color: var(--text-muted); 
             border: 1px solid rgba(100, 116, 139, 0.4); 
-            box-shadow: 0 0 10px var(--glow-gray); 
         }
-        .status-notstarted::before { background: var(--accent-gray); box-shadow: 0 0 6px var(--accent-gray); }
+        .status-notstarted::before { background: var(--text-muted); }
 
         .status-blocked { 
-            background: rgba(244, 63, 94, 0.1); 
+            background: rgba(244, 63, 94, 0.12); 
             color: var(--accent-red); 
-            border: 1px solid rgba(244, 63, 94, 0.3); 
-            box-shadow: 0 0 8px var(--glow-red); 
+            border: 1px solid rgba(244, 63, 94, 0.35); 
         }
         .status-blocked::before { background: var(--accent-red); box-shadow: 0 0 6px var(--accent-red); }
 
         .mono-text {
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.03em;
         }
 
-        .bottom-nav-container {
-            margin-top: 2rem;
+        /* Footer */
+        .executive-footer {
+            margin-top: 32px;
+            padding-top: 24px;
             border-top: 1px solid var(--border-color);
-            padding-top: 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        footer {
-            color: var(--text-muted);
             font-size: 0.8rem;
+            color: var(--text-muted);
         }
 
-        footer .command-title {
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 700;
-            color: var(--text-main);
-            text-shadow: 0 0 12px var(--glow-green);
-        }
-
-        @media (max-width: 1024px) {
-            .bento-grid { grid-template-columns: repeat(2, 1fr); }
-            .dept-bento-grid { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 1100px) {
+            .telemetry-grid { grid-template-columns: repeat(2, 1fr); }
+            .dept-matrix-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
 <body>
 
-    <div class="header-actions-bar">
+    <!-- Executive Topbar -->
+    <div class="executive-topbar">
+        <div class="brand-identifier">
+            <div class="brand-dot"></div>
+            <span class="brand-title">Operations Command & Control</span>
+        </div>
         <div class="nav-links-group">
-            <a href="index.html" class="nav-card dashboard-card">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                Return to Dashboard
+            <a href="index.html" class="nav-pill">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Dashboard
             </a>
-            <a href="crossborder-benchmark.html" class="nav-card crm-card" style="border-color: rgba(6, 182, 212, 0.3); box-shadow: 0 4px 20px rgba(6, 182, 212, 0.2);">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                Fees & FX Benchmarks
+            <a href="crossborder-benchmark.html" class="nav-pill">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                FX Benchmarks
             </a>
-            <button class="nav-card crm-card" onclick="window.open('https://devwabaplatform.lafricamobile.com/chat','_blank')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                Open LAM
-            </button>
         </div>
     </div>
 
+    <!-- Header Block -->
     <header>
-        <div class="header-left">
-            <div class="current-page-indicator">
-                <span>✦</span> Backlog & Action Center
-            </div>
-            <h1>Backlog & Action Center</h1>
-            <p>Master Task Repository, Operational Remediation, and Action Item Tracking</p>
+        <div class="header-title-block">
+            <h1>Strategic Backlog & Action Center</h1>
+            <p>Real-time institutional oversight, operational triage, and execution velocity.</p>
         </div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()">
-                <span id="theme-icon">☀️</span> <span id="theme-text">Light Mode</span>
-            </button>
-     
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <span id="theme-icon">☀️</span> <span id="theme-text">Light Mode</span>
+        </button>
     </header>
 
+    <!-- Executive Telemetry Grid -->
     <section>
-        <div class="bento-grid">
-            <div class="bento-card" onclick="resetFiltersAndScroll()">
-                <span class="bento-label">Total Items</span>
-                <span class="bento-value mono-text" id="kpiTotal">0</span>
-                <span class="bento-sub"><span>📈</span> Full register scope</span>
+        <div class="telemetry-grid">
+            <div class="telemetry-card" onclick="resetFiltersAndScroll()">
+                <span class="telemetry-label">Total Repository</span>
+                <span class="telemetry-value mono-text" id="kpiTotal">0</span>
+                <span class="telemetry-sub">Registered operational items</span>
             </div>
-            <div class="bento-card p1" onclick="filterByPriority('P1')">
-                <span class="bento-label">P1 Critical</span>
-                <span class="bento-value mono-text" style="color: var(--accent-red);" id="kpiP1">0</span>
-                <span class="bento-sub"><span>⚡</span> High-priority triage</span>
+            <div class="telemetry-card alert" onclick="filterCriticalPending()">
+                <span class="telemetry-label">Critical & Pending</span>
+                <span class="telemetry-value mono-text" style="color: var(--accent-red);" id="kpiP1">0</span>
+                <span class="telemetry-sub">Uncompleted P1 execution block</span>
             </div>
-            <div class="bento-card progress" onclick="filterByStatus('In Progress')">
-                <span class="bento-label">In Progress</span>
-                <span class="bento-value mono-text" style="color: var(--accent-amber);" id="kpiProgress">0</span>
-                <span class="bento-sub"><span>⚙️</span> Active sprint items</span>
+            <div class="telemetry-card success" onclick="filterByStatus('In Progress')">
+                <span class="telemetry-label">Active Sprint</span>
+                <span class="telemetry-value mono-text" style="color: var(--accent-amber);" id="kpiProgress">0</span>
+                <span class="telemetry-sub">In-flight operational items</span>
             </div>
-            <div class="bento-card complete" onclick="filterByStatus('Complete')">
-                <span class="bento-label">Completed</span>
-                <span class="bento-value mono-text" style="color: var(--accent-green);" id="kpiComplete">0</span>
-                <span class="bento-sub"><span>✅</span> Remediated milestones</span>
-            </div>
-        </div>
-
-        <h2>Filter by Department</h2>
-        <div class="dept-bento-grid">
-            <div class="dept-bento-card" id="dept-tech" onclick="filterByDepartment('Technical Support')">
-                <span class="dept-title">Technical Support</span>
-                <span class="dept-badge">Systems</span>
-            </div>
-            <div class="dept-bento-card" id="dept-compliance" onclick="filterByDepartment('Compliance')">
-                <span class="dept-title">Compliance</span>
-                <span class="dept-badge">Legal</span>
-            </div>
-            <div class="dept-bento-card" id="dept-commercial" onclick="filterByDepartment('Commercial')">
-                <span class="dept-title">Commercial</span>
-                <span class="dept-badge">Growth</span>
-            </div>
-            <div class="dept-bento-card" id="dept-analytics" onclick="filterByDepartment('Analytics')">
-                <span class="dept-title">Analytics</span>
-                <span class="dept-badge">Data & BI</span>
-            </div>
-            <div class="dept-bento-card" id="dept-customer" onclick="filterByDepartment('Customer Support')">
-                <span class="dept-title">Customer Support</span>
-                <span class="dept-badge">Ops</span>
-            </div>
-            <div class="dept-bento-card" id="dept-partner" onclick="filterByDepartment('Partner Support')">
-                <span class="dept-title">Partner Support</span>
-                <span class="dept-badge">B2B</span>
+            <div class="telemetry-card" onclick="filterByStatus('Complete')">
+                <span class="telemetry-label">Remediated</span>
+                <span class="telemetry-value mono-text" style="color: var(--accent-green);" id="kpiComplete">0</span>
+                <span class="telemetry-sub">Fully closed milestones</span>
             </div>
         </div>
 
-        <div class="weekly-banner">
-            <div class="weekly-banner-left">
-                <span class="weekly-banner-title">
-                    <span>⚡</span> Weekly Follow-Up View Active
-                </span>
-                <span class="weekly-banner-desc">Showing P1 Critical Issues for executive review and operational sprint tracking.</span>
+        <!-- Department Matrix -->
+        <div class="matrix-section">
+            <div class="section-header-flex">
+                <span class="matrix-title">Departmental Oversight Matrix</span>
             </div>
-            <button id="weeklyToggleBtn" class="weekly-toggle-btn" onclick="toggleWeeklyFilter()">Show All Master Items</button>
+            <div class="dept-matrix-grid">
+                <div class="dept-matrix-card" id="dept-tech" onclick="filterByDepartment('Technical Support')">
+                    <span class="dept-name">Technical</span>
+                    <span class="dept-tag">Systems & Core</span>
+                </div>
+                <div class="dept-matrix-card" id="dept-compliance" onclick="filterByDepartment('Compliance')">
+                    <span class="dept-name">Compliance</span>
+                    <span class="dept-tag">Legal & Risk</span>
+                </div>
+                <div class="dept-matrix-card" id="dept-commercial" onclick="filterByDepartment('Commercial')">
+                    <span class="dept-name">Commercial</span>
+                    <span class="dept-tag">Growth & Sales</span>
+                </div>
+                <div class="dept-matrix-card" id="dept-analytics" onclick="filterByDepartment('Analytics')">
+                    <span class="dept-name">Analytics</span>
+                    <span class="dept-tag">Data & BI</span>
+                </div>
+                <div class="dept-matrix-card" id="dept-customer" onclick="filterByDepartment('Customer Support')">
+                    <span class="dept-name">Customer Ops</span>
+                    <span class="dept-tag">Support</span>
+                </div>
+                <div class="dept-matrix-card" id="dept-partner" onclick="filterByDepartment('Partner Support')">
+                    <span class="dept-name">Partner Ops</span>
+                    <span class="dept-tag">B2B Channels</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Command Alert Banner -->
+        <div class="command-banner">
+            <div class="command-banner-info">
+                <h3>Executive Triage Mode Active</h3>
+                <p class="weekly-banner-desc">Displaying uncompleted P1 critical tasks requiring immediate executive intervention.</p>
+            </div>
+            <button id="weeklyToggleBtn" class="command-action-btn active" onclick="toggleWeeklyFilter()">Show Full Repository</button>
         </div>
     </section>
 
+    <!-- Master Action Register Table -->
     <section id="masterRegisterSection">
-        <h2>Master Action & Backlog Register</h2>
         <div class="table-container">
-            <div class="controls-bar" id="stickyControlsBar">
-                <div class="status-tabs">
-                    <button class="status-tab active" onclick="setStatusTab('')">All Statuses</button>
-                    <button class="status-tab" onclick="setStatusTab('Complete')">Complete</button>
-                    <button class="status-tab" onclick="setStatusTab('In Progress')">In Progress</button>
-                    <button class="status-tab" onclick="setStatusTab('Not Started')">Not Started</button>
-                    <button class="status-tab" onclick="setStatusTab('Blocked')">Blocked</button>
+            <div class="controls-bar">
+                <div class="status-pills-row">
+                    <button class="status-pill-tab active" onclick="setStatusTab('')">All Status</button>
+                    <button class="status-pill-tab" onclick="setStatusTab('Complete')">Complete</button>
+                    <button class="status-pill-tab" onclick="setStatusTab('In Progress')">In Progress</button>
+                    <button class="status-pill-tab" onclick="setStatusTab('Not Started')">Not Started</button>
+                    <button class="status-pill-tab" onclick="setStatusTab('Blocked')">Blocked</button>
                 </div>
-                <div class="search-wrapper">
+
+                <div class="priority-filter-group">
+                    <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Priority:</span>
+                    <button class="priority-filter-pill active" onclick="filterByPriorityChip('', this)">All</button>
+                    <button class="priority-filter-pill" onclick="filterByPriorityChip('p1', this)">P1</button>
+                    <button class="priority-filter-pill" onclick="filterByPriorityChip('p2', this)">P2</button>
+                    <button class="priority-filter-pill" onclick="filterByPriorityChip('p3', this)">P3</button>
+                    <button class="priority-filter-pill" onclick="filterByPriorityChip('p4', this)">P4</button>
+                </div>
+
+                <div class="search-input-wrapper">
                     <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2"/></svg>
-                    <input type="text" id="searchInput" placeholder="Search backlog items, categories, or action plans...">
+                    <input type="text" id="searchInput" placeholder="Search tasks, action plans, or identifiers...">
                 </div>
-                <div class="filter-group">
-                    <select id="departmentFilter" class="filter-select">
+
+                <div class="action-group-buttons">
+                    <select id="departmentFilter" class="filter-select" style="display: none;">
                         <option value="">All Departments</option>
                         <option value="Technical Support">Technical Support</option>
                         <option value="Compliance">Compliance</option>
@@ -947,14 +841,21 @@
                         <option value="Not Started">Not Started</option>
                         <option value="Blocked">Blocked</option>
                     </select>
-                    <label for="csvFileInput" class="csv-upload-btn">
-                        📂 Upload Master CSV
+
+                    <label for="csvFileInput" class="action-btn primary">
+                        📂 Import CSV
                     </label>
                     <input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="handleCsvUpload(event)">
-                    <button class="reset-filter-btn" onclick="resetFilters()">Reset</button>
+
+                    <button class="action-btn secondary" onclick="exportFilteredCSV()">
+                        📥 Export
+                    </button>
+
+                    <button class="action-btn" onclick="resetFilters()">Reset</button>
                 </div>
             </div>
-            <div class="table-scroll-wrapper">
+
+            <div class="table-scroll-area">
                 <table id="backlogTable">
                     <thead>
                         <tr>
@@ -973,33 +874,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Dynamic rows loaded via Supabase -->
+                        <tr>
+                            <td colspan="12" style="text-align: center; padding: 40px; color: var(--text-muted);">Syncing secure intelligence from Supabase repository...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </section>
 
-    <div class="bottom-nav-container">
-        <footer>
-            <div>
-                <div class="command-title">Backlog & Action Center</div>
-            </div>
-            <div>
-                Sync Date: <strong class="mono-text" id="syncDate">-</strong>
-            </div>
-        </footer>
-        <div class="nav-links-group">
-            <a href="index.html" class="nav-card dashboard-card">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                Return to Dashboard
-            </a>
-            <button class="nav-card crm-card" onclick="window.open('https://devwabaplatform.lafricamobile.com/chat','_blank')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                Open LAM
-            </button>
+    <!-- Executive Footer -->
+    <footer class="executive-footer">
+        <div>
+            <strong>Operations Command & Control</strong> — Executive Governance Suite
         </div>
-    </div>
+        <div>
+            Telemetry Sync: <strong class="mono-text" id="syncDate">-</strong>
+        </div>
+    </footer>
 
     <script>
         const SUPABASE_URL = 'https://vgphzwnqktmikpuqsonu.supabase.co';
@@ -1030,7 +922,8 @@
         const departmentFilter = document.getElementById('departmentFilter');
         const statusFilter = document.getElementById('statusFilter');
         let tableRows = [];
-        let weeklyModeActive = false;
+        let weeklyModeActive = true; 
+        let activePriorityChip = '';
 
         async function fetchSupabaseData() {
             try {
@@ -1040,6 +933,12 @@
 
                 if (error) {
                     console.error('Error fetching from Supabase:', error.message);
+                    renderEmptyState("Database connection error: " + error.message);
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    renderEmptyState("No backlog records found in repository.");
                     return;
                 }
 
@@ -1047,7 +946,13 @@
                 document.getElementById('syncDate').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
             } catch (err) {
                 console.error('Connection exception:', err);
+                renderEmptyState("Failed to establish secure connection with Supabase.");
             }
+        }
+
+        function renderEmptyState(msg) {
+            const tbody = document.querySelector('#backlogTable tbody');
+            tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 50px; color: var(--accent-red); font-weight: 600;">${msg}</td></tr>`;
         }
 
         function populateTableFromData(records) {
@@ -1086,8 +991,17 @@
                 else if (statusLower.includes('not started') || statusLower.includes('planned')) statusClass = 'status-notstarted';
                 else if (statusLower.includes('blocked')) statusClass = 'status-blocked';
 
+                let numericProgress = 0;
+                const cleanPct = String(pctDone).replace('%', '').trim();
+                if (!isNaN(cleanPct) && cleanPct !== '') {
+                    numericProgress = Number(cleanPct);
+                    if (numericProgress > 0 && numericProgress <= 1) numericProgress *= 100;
+                }
+
                 const row = document.createElement('tr');
                 row.setAttribute('data-priority', priorityKey);
+                row.setAttribute('data-progress', numericProgress);
+                row.setAttribute('data-status', statusLower);
                 row.innerHTML = `
                     <td><strong>${dept}</strong></td>
                     <td>${category}</td>
@@ -1112,21 +1026,24 @@
 
         function updateKPIs() {
             let total = tableRows.length;
-            let p1Count = 0;
+            let criticalPendingCount = 0;
             let progressCount = 0;
             let completeCount = 0;
 
             tableRows.forEach(row => {
                 const priority = row.getAttribute('data-priority');
-                const statusText = row.cells[10].textContent.toLowerCase();
+                const progress = parseFloat(row.getAttribute('data-progress') || 0);
+                const statusText = row.getAttribute('data-status') || '';
 
-                if (priority === 'p1') p1Count++;
+                if (priority === 'p1' && progress < 100 && !statusText.includes('complete')) {
+                    criticalPendingCount++;
+                }
                 if (statusText.includes('in progress')) progressCount++;
                 if (statusText.includes('complete')) completeCount++;
             });
 
             document.getElementById('kpiTotal').textContent = total;
-            document.getElementById('kpiP1').textContent = p1Count;
+            document.getElementById('kpiP1').textContent = criticalPendingCount;
             document.getElementById('kpiProgress').textContent = progressCount;
             document.getElementById('kpiComplete').textContent = completeCount;
         }
@@ -1144,20 +1061,23 @@
             tableRows.forEach(row => {
                 const departmentText = row.cells[0].textContent.toLowerCase();
                 const rowText = row.textContent.toLowerCase();
-                const statusText = row.cells[10].textContent.toLowerCase();
+                const statusText = row.getAttribute('data-status') || '';
                 const priorityAttr = row.getAttribute('data-priority');
+                const progress = parseFloat(row.getAttribute('data-progress') || 0);
 
                 const matchesSearch = rowText.includes(searchTerm);
                 const matchesDept = selectedDept === "" || departmentText.includes(selectedDept);
                 const matchesStatus = selectedStatus === "" || statusText.includes(selectedStatus);
-                const matchesWeekly = !weeklyModeActive || (priorityAttr === 'p1');
+                const matchesChip = activePriorityChip === "" || priorityAttr === activePriorityChip;
+                const matchesWeekly = !weeklyModeActive || (priorityAttr === 'p1' && progress < 100 && !statusText.includes('complete'));
 
-                if (matchesSearch && matchesDept && matchesStatus && matchesWeekly) {
+                if (matchesSearch && matchesDept && matchesStatus && matchesChip && matchesWeekly) {
                     row.style.display = "";
                 } else {
                     row.style.display = "none";
                 }
             });
+
             updateDeptCardActiveState();
             updateTabActiveState();
         }
@@ -1168,22 +1088,66 @@
             scrollToTable();
         }
 
+        function filterByPriorityChip(chipVal, btnEl) {
+            activePriorityChip = chipVal;
+            document.querySelectorAll('.priority-filter-pill').forEach(c => c.classList.remove('active'));
+            btnEl.classList.add('active');
+            filterTable();
+        }
+
         function toggleWeeklyFilter() {
             weeklyModeActive = !weeklyModeActive;
             const btn = document.getElementById('weeklyToggleBtn');
             const bannerDesc = document.querySelector('.weekly-banner-desc');
+            const bannerTitle = document.querySelector('.command-banner-info h3');
             
             if (weeklyModeActive) {
-                btn.textContent = "Show All Master Items";
+                btn.textContent = "Show Full Repository";
                 btn.classList.add('active');
-                bannerDesc.textContent = "Showing P1 Critical Issues for executive review and operational sprint tracking.";
+                bannerTitle.textContent = "Executive Triage Mode Active";
+                bannerDesc.textContent = "Displaying uncompleted P1 critical tasks requiring immediate executive intervention.";
             } else {
-                btn.textContent = "Switch to Weekly P1 View";
+                btn.textContent = "Switch to Executive Triage";
                 btn.classList.remove('active');
-                bannerDesc.textContent = "Showing complete master backlog register across all priorities and departments.";
+                bannerTitle.textContent = "Master Repository View Active";
+                bannerDesc.textContent = "Displaying complete corporate backlog register across all departments and priority tiers.";
             }
             filterTable();
             scrollToTable();
+        }
+
+        function filterCriticalPending() {
+            weeklyModeActive = true;
+            const btn = document.getElementById('weeklyToggleBtn');
+            const bannerDesc = document.querySelector('.weekly-banner-desc');
+            const bannerTitle = document.querySelector('.command-banner-info h3');
+            btn.textContent = "Show Full Repository";
+            btn.classList.add('active');
+            bannerTitle.textContent = "Executive Triage Mode Active";
+            bannerDesc.textContent = "Displaying uncompleted P1 critical tasks requiring immediate executive intervention.";
+            
+            filterTable();
+            scrollToTable();
+        }
+
+        function exportFilteredCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Department,Category,Country,Task/Problem,Task Description,Action Plan,Support,PR,Ticket,Ticket No,Status,Done\r\n";
+
+            tableRows.forEach(row => {
+                if (row.style.display !== "none") {
+                    const cols = Array.from(row.cells).map(td => `"${td.textContent.replace(/"/g, '""').trim()}"`);
+                    csvContent += cols.join(",") + "\r\n";
+                }
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "executive_backlog_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function handleCsvUpload(event) {
@@ -1232,8 +1196,17 @@
                             else if (statusLower.includes('not started') || statusLower.includes('planned')) statusClass = 'status-notstarted';
                             else if (statusLower.includes('blocked')) statusClass = 'status-blocked';
 
+                            let numericProgress = 0;
+                            const cleanPct = String(pctDone).replace('%', '').trim();
+                            if (!isNaN(cleanPct) && cleanPct !== '') {
+                                numericProgress = Number(cleanPct);
+                                if (numericProgress > 0 && numericProgress <= 1) numericProgress *= 100;
+                            }
+
                             const row = document.createElement('tr');
                             row.setAttribute('data-priority', priorityKey);
+                            row.setAttribute('data-progress', numericProgress);
+                            row.setAttribute('data-status', statusLower);
                             row.innerHTML = `
                                 <td><strong>${dept}</strong></td>
                                 <td>${category}</td>
@@ -1256,10 +1229,10 @@
                     updateKPIs();
                     filterTable();
                     scrollToTable();
-                    alert("Master backlog successfully updated!");
+                    alert("Repository successfully synchronized via CSV upload!");
                 },
                 error: function(err) {
-                    alert("Error parsing file: " + err.message);
+                    alert("Error parsing CSV file: " + err.message);
                 }
             });
         }
@@ -1268,15 +1241,8 @@
             if (departmentFilter.value === deptName) {
                 departmentFilter.value = "";
             } else {
-                departmentFilter.value = "";
                 departmentFilter.value = deptName;
             }
-            filterTable();
-            scrollToTable();
-        }
-
-        function filterByPriority(priorityVal) {
-            searchInput.value = priorityVal;
             filterTable();
             scrollToTable();
         }
@@ -1296,12 +1262,17 @@
             searchInput.value = "";
             departmentFilter.value = "";
             statusFilter.value = "";
+            activePriorityChip = "";
+            document.querySelectorAll('.priority-filter-pill').forEach((c, idx) => {
+                if(idx === 0) c.classList.add('active');
+                else c.classList.remove('active');
+            });
             filterTable();
         }
 
         function updateDeptCardActiveState() {
             const val = departmentFilter.value.toLowerCase();
-            document.querySelectorAll('.dept-bento-card').forEach(card => card.classList.remove('active'));
+            document.querySelectorAll('.dept-matrix-card').forEach(card => card.classList.remove('active'));
             if (val.includes('technical')) document.getElementById('dept-tech').classList.add('active');
             if (val.includes('compliance')) document.getElementById('dept-compliance').classList.add('active');
             if (val.includes('commercial')) document.getElementById('dept-commercial').classList.add('active');
@@ -1312,7 +1283,7 @@
 
         function updateTabActiveState() {
             const val = statusFilter.value.toLowerCase();
-            document.querySelectorAll('.status-tab').forEach(tab => {
+            document.querySelectorAll('.status-pill-tab').forEach(tab => {
                 const tabText = tab.textContent.toLowerCase();
                 if (val === "" && tabText.includes('all')) {
                     tab.classList.add('active');
