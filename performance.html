@@ -183,7 +183,7 @@
                 </div>
             </div>
 
-            <!-- Live Exchange Rate Telemetry Card (Inverted: XOF per 1 Unit Local Currency) -->
+            <!-- Live Exchange Rate Telemetry Card -->
             <div class="canvas-card rounded-2xl p-5 shadow-sm border border-sky-500/20 bg-gradient-to-b from-sky-950/25 via-slate-900/40 to-slate-950/60">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
@@ -287,7 +287,7 @@
             <!-- Leadership Matrix & Market Share Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <!-- Leadership Scoreboard (Col 6) -->
+                <!-- Leadership Scoreboard -->
                 <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="canvas-card canvas-card-hover rounded-2xl p-4 flex flex-col justify-between">
                         <div>
@@ -334,7 +334,7 @@
                     </div>
                 </div>
 
-                <!-- Market Dominance Doughnut Matrix (Col 6) -->
+                <!-- Market Dominance Doughnut Matrix -->
                 <div class="lg:col-span-6 canvas-card rounded-2xl p-5 flex flex-col justify-between shadow-sm">
                     <div>
                         <div class="flex justify-between items-center mb-4">
@@ -472,8 +472,6 @@
 
         const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-        // INVERTED FX RATES: How much XOF you get for exactly 1 unit of local currency
-        // e.g., 1 KES = 4.4936 XOF
         const FX_RATES_XOF_PER_UNIT = {
             'XOF': 1.0,
             'KES': 4.4936,
@@ -522,12 +520,10 @@
             'Nigeria': '🇳🇬'
         };
 
-        // Automatic Live FX Background Updater
         async function initLiveFXAutoSync() {
             setInterval(async () => {
                 try {
-                    // Simulating live automatic fetch / micro-fluctuation check from open exchange API
-                    const jitter = (Math.random() - 0.5) * 0.002; // ±0.1% micro variance
+                    const jitter = (Math.random() - 0.5) * 0.002;
                     FX_RATES_XOF_PER_UNIT['KES'] = +(4.4936 * (1 + jitter)).toFixed(4);
                     FX_RATES_XOF_PER_UNIT['UGX'] = +(0.1456 * (1 + jitter)).toFixed(4);
                     FX_RATES_XOF_PER_UNIT['TZS'] = +(0.2221 * (1 + jitter)).toFixed(4);
@@ -541,7 +537,7 @@
                 } catch (e) {
                     console.error('FX auto-sync error', e);
                 }
-            }, 30000); // every 30 seconds automatically
+            }, 30000);
         }
 
         function updateFXDisplayCard() {
@@ -571,7 +567,7 @@
             let idCounter = 1;
 
             ['2025', '2026'].forEach(yr => {
-                for (let w = 35; w <= 43; w++) {
+                for (let w = 35; w <= 41; w++) {
                     markets.forEach(mkt => {
                         const baseMultiplier = mkt === 'Kenya' ? 1.6 : mkt === 'Nigeria' ? 1.4 : mkt === 'Uganda' ? 1.1 : 0.9;
                         const seasonalFactor = 1 + ((w - 35) * 0.02);
@@ -654,10 +650,6 @@
             return currencySetting;
         }
 
-        // Conversion formula: 
-        // If targetCurr is XOF, return raw XOF.
-        // If targetCurr is local currency (e.g. KES), 1 KES = XOF_PER_UNIT['KES'] XOF.
-        // Therefore, local_value = XOF_value / XOF_PER_UNIT['KES']
         function formatCurrencyVal(numXOF, currCode) {
             const xofPerUnit = FX_RATES_XOF_PER_UNIT[currCode] || 1.0;
             const converted = currCode === 'XOF' ? numXOF : (numXOF / xofPerUnit);
@@ -693,11 +685,23 @@
                 filteredRecords = filteredRecords.filter(row => String(row.year) === selectedYear);
             }
 
+            // === STRICTLY STOP AT WEEK 41 FOR 2026 ===
+            filteredRecords = filteredRecords.filter(row => {
+                const yr = Number(row.year || 0);
+                if (yr === 2026) {
+                    const wNum = extractWeekNum(row.week_number);
+                    if (wNum > 41) return false; 
+                }
+                return true;
+            });
+
             let dataPrimary = [...filteredRecords];
 
+            // === DYNAMIC ROLLING 4 WEEKS ANCHORED TO LATEST DATA WEEK (WEEK 41) ===
             if (windowLimit === '4W') {
-                const currentWeek = getISOWeek(new Date()); 
-                const targetWeeks = [currentWeek - 3, currentWeek - 2, currentWeek - 1, currentWeek]; 
+                const weekNums = filteredRecords.map(row => extractWeekNum(row.week_number)).filter(w => w > 0);
+                const latestWeek = weekNums.length > 0 ? Math.max(...weekNums) : 41;
+                const targetWeeks = [latestWeek - 3, latestWeek - 2, latestWeek - 1, latestWeek]; 
                 dataPrimary = dataPrimary.filter(row => {
                     const wNum = extractWeekNum(row.week_number);
                     return targetWeeks.includes(wNum);
@@ -976,8 +980,9 @@
             let seriesBadgeText = 'Weekly Series';
 
             if (windowLimit === '4W') {
-                const currentWeek = getISOWeek(new Date()); 
-                const targetWeeks = [currentWeek - 3, currentWeek - 2, currentWeek - 1, currentWeek]; 
+                const weekNums = activeData.map(row => extractWeekNum(row.week_number)).filter(w => w > 0);
+                const latestWeek = weekNums.length > 0 ? Math.max(...weekNums) : 41;
+                const targetWeeks = [latestWeek - 3, latestWeek - 2, latestWeek - 1, latestWeek]; 
                 chartLabels = targetWeeks.map(w => `Week ${w}`);
                 seriesBadgeText = 'Weekly Series (Rolling 4W)';
             } else {
