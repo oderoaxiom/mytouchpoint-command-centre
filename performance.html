@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
@@ -1049,17 +1050,35 @@
                 };
             });
 
+            // Shared Datalabels Plugin Configuration
+            const datalabelsConfig = {
+                color: '#ffffff',
+                anchor: 'end',
+                align: 'top',
+                font: { family: 'Plus Jakarta Sans', size: 10, weight: 'bold' },
+                formatter: function(value) {
+                    if (value >= 1e9) return (value / 1e9).toFixed(1) + 'B';
+                    if (value >= 1e6) return (value / 1e6).toFixed(1) + 'M';
+                    if (value >= 1e3) return (value / 1e3).toFixed(0) + 'K';
+                    return value;
+                }
+            };
+
             if (volumesChartInstance) volumesChartInstance.destroy();
             volumesChartInstance = new Chart(document.getElementById('monthlyVolumesChart').getContext('2d'), {
                 type: 'bar',
                 data: { labels: chartLabels, datasets: volumeDatasets },
+                plugins: [ChartDataLabels],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', weight: '600', size: 11 } } } },
+                    plugins: { 
+                        legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', weight: '600', size: 11 } } },
+                        datalabels: datalabelsConfig
+                    },
                     scales: {
                         x: { ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } }, grid: { color: 'rgba(30, 41, 59, 0.4)' } },
-                        y: { ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } }, grid: { color: 'rgba(30, 41, 59, 0.4)' } }
+                        y: { display: false, grid: { display: false } }
                     }
                 }
             });
@@ -1068,13 +1087,17 @@
             revenuesChartInstance = new Chart(document.getElementById('monthlyRevenuesChart').getContext('2d'), {
                 type: 'bar',
                 data: { labels: chartLabels, datasets: revenueDatasets },
+                plugins: [ChartDataLabels],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', weight: '600', size: 11 } } } },
+                    plugins: { 
+                        legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', weight: '600', size: 11 } } },
+                        datalabels: datalabelsConfig
+                    },
                     scales: {
                         x: { ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } }, grid: { color: 'rgba(30, 41, 59, 0.4)' } },
-                        y: { ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } }, grid: { color: 'rgba(30, 41, 59, 0.4)' } }
+                        y: { display: false, grid: { display: false } }
                     }
                 }
             });
@@ -1083,13 +1106,17 @@
             transactionsChartInstance = new Chart(document.getElementById('monthlyTransactionsChart').getContext('2d'), {
                 type: 'line',
                 data: { labels: chartLabels, datasets: transactionDatasets },
+                plugins: [ChartDataLabels],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', weight: '600', size: 11 } } } },
+                    plugins: { 
+                        legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', weight: '600', size: 11 } } },
+                        datalabels: datalabelsConfig
+                    },
                     scales: {
                         x: { ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } }, grid: { color: 'rgba(30, 41, 59, 0.4)' } },
-                        y: { ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } }, grid: { color: 'rgba(30, 41, 59, 0.4)' } }
+                        y: { display: false, grid: { display: false } }
                     }
                 }
             });
