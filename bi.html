@@ -80,6 +80,7 @@
       display: flex;
       gap: 14px;
       margin-bottom: 28px;
+      flex-wrap: wrap;
     }
     .tab-btn {
       background: rgba(255, 255, 255, 0.03);
@@ -166,7 +167,154 @@
     .badge-red { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
     .badge-blue { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
     .badge-purple { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
-    .badge-amber { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+
+    /* Flowchart / Diagram Styling */
+    .flow-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 20px;
+    }
+    @media (max-width: 1024px) {
+      .flow-container { grid-template-columns: 1fr; }
+    }
+    .flow-box {
+      background: rgba(11, 18, 32, 0.95);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .flow-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 12px;
+    }
+    .flow-step {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .flow-step.loss { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05); }
+    .flow-step.guard { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05); }
+    .step-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .step-title { font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .step-badge { font-size: 10px; font-family: monospace; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+    .step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .step-desc b { color: #f8fafc; font-weight: 600; }
+    .sub-card {
+      background: rgba(0, 0, 0, 0.3);
+      border-left: 2px solid #3b82f6;
+      padding: 8px 12px;
+      margin-top: 8px;
+      border-radius: 0 6px 6px 0;
+      font-size: 11.5px;
+      color: #cbd5e1;
+    }
+    .arrow {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 16px;
+      margin: 6px 0;
+    }
+
+    /* D3 Chart Container */
+    .chart-container {
+      background: rgba(11, 18, 32, 0.95);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 16px;
+      padding: 32px;
+      margin-top: 28px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .chart-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .chart-subtitle { font-size: 12.5px; color: var(--text-muted); margin: 0; }
+    
+    svg { width: 100%; height: 320px; overflow: visible; }
+    .line { fill: none; stroke: url(#line-gradient); stroke-width: 3px; }
+    .optimum-dot { fill: #10b981; stroke: #fff; stroke-width: 2px; filter: drop-shadow(0 0 8px rgba(16,185,129,0.8)); transition: all 0.5s ease; }
+    .axis line { stroke: rgba(255, 255, 255, 0.08); }
+    .axis path { stroke: rgba(255, 255, 255, 0.15); }
+    .axis text { fill: var(--text-muted); font-size: 11px; font-family: inherit; }
+
+    /* Executive Decision Card */
+    .executive-decision-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      border-radius: 16px;
+      padding: 32px;
+      margin-top: 28px;
+      box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
+    }
+    .executive-decision-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #c4b5fd;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+    @media (max-width: 900px) {
+      .decision-grid { grid-template-columns: 1fr; }
+    }
+    .decision-option {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+    .decision-option:hover {
+      border-color: rgba(59, 130, 246, 0.5);
+      background: rgba(59, 130, 246, 0.05);
+    }
+    .decision-option.selected {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+    }
+    .option-header {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .option-rates {
+      font-size: 18px;
+      font-weight: 800;
+      color: #34d399;
+      margin-bottom: 8px;
+    }
+    .option-body {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
 
     /* Interactive Simulator */
     .sim-card {
@@ -301,9 +449,12 @@
     <button class="tab-btn" onclick="switchTab('tab3', this)">
       ⚡ Tab 3: Strategic FX vs. Fee Elasticity & Revenue Simulator
     </button>
+    <button class="tab-btn" onclick="switchTab('tab4', this)">
+      📉 Tab 4: Corridor Settlement & FX Risk Architecture
+    </button>
   </div>
 
-  <!-- ================= TAB 1: COMPETITOR MACRO BENCHMARK (COMPLETE COVERAGE) ================= -->
+  <!-- ================= TAB 1: COMPETITOR MACRO BENCHMARK ================= -->
   <div id="tab1" class="tab-content active">
     <div class="section">
       <h2>🌐 Global MTOs, Multi-Currency Fintechs & Pan-African Settlement Infrastructure</h2>
@@ -800,7 +951,7 @@
     </div>
   </div>
 
-  <!-- ================= TAB 3: STRATEGIC FX & FEE SIMULATOR ================= -->
+  <!-- ================= TAB 3: SIMULATOR ================= -->
   <div id="tab3" class="tab-content">
     <div class="sim-card">
       <div class="sim-header">
@@ -869,6 +1020,183 @@
     </div>
   </div>
 
+  <!-- ================= TAB 4: CORRIDOR SETTLEMENT & FX RISK ARCHITECTURE ================= -->
+  <div id="tab4" class="tab-content">
+    <div class="section">
+      <h2>📉 Corridor Settlement & FX Risk Architecture: Operational Loss vs. Guard Shield</h2>
+      <p>Detailed architectural breakdown illustrating exactly how operational loss is incurred under the legacy flat fee model, contrasted against how profitability is fully secured under the proposed dual-yield hybrid model.</p>
+      
+      <div class="flow-container">
+        <!-- CURRENT MODEL FLOW (OPERATIONAL LOSS PIPELINE) -->
+        <div class="flow-box">
+          <div class="flow-title" style="color: #ef4444;">
+            <span>🔴 Current Model: Operational Loss Pipeline</span>
+          </div>
+          
+          <div class="flow-step loss">
+            <div class="step-header">
+              <span class="step-title" style="color: #ef4444;">Stage 1: Upfront Fee Collection</span>
+              <span class="step-badge" style="background: rgba(239,68,68,0.2); color: #ef4444;">5.0% Flat Fee</span>
+            </div>
+            <div class="step-desc">
+              Customer initiates a transaction of <b>1,052.63 KES</b> gross volume. The platform captures a 5.0% flat fee amounting to <b>52.63 KES</b> upfront, leaving a net conversion pool of <b>1,000.00 KES</b>.
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+
+          <div class="flow-step loss">
+            <div class="step-header">
+              <span class="step-title" style="color: #ef4444;">Stage 2: Payout Execution & Variance</span>
+              <span class="step-badge" style="background: rgba(239,68,68,0.2); color: #ef4444;">-40.33 KES Drag</span>
+            </div>
+            <div class="step-desc">
+              To deliver <b>28,765 UGX</b> (procured by multiplying the 1,000 KES net conversion pool by the applied customer rate of <b>28.76 UGX/KES</b>), the platform executes local partner payout.
+              <div class="sub-card">
+                <b>FX Loss Calculation:</b> At the true market baseline rate of <b>27.65 UGX/KES</b>, procuring that exact 28,765 UGX payout requires <b>1,040.33 KES</b> in Cost of Sales (28,765 / 27.65). Subtracting the available 1,000.00 KES net conversion pool from the 1,040.33 KES Cost of Sales results in an <b>FX variance loss of -40.33 KES</b>.
+              </div>
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+
+          <div class="flow-step loss">
+            <div class="step-header">
+              <span class="step-title" style="color: #ef4444;">Stage 3: Razor-Thin Margin Buffer</span>
+              <span class="step-badge" style="background: rgba(239,68,68,0.2); color: #ef4444;">+12.30 KES Net</span>
+            </div>
+            <div class="step-desc">
+              Gross fee revenue (<b>52.63 KES</b>) minus the FX settlement slippage (<b>40.33 KES</b>) leaves an extremely vulnerable initial net profit margin buffer of only <b>+12.30 KES</b>.
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+
+          <div class="flow-step loss" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.12);">
+            <div class="step-header">
+              <span class="step-title" style="color: #ef4444;">Stage 4: Treasury Repatriation Wipeout</span>
+              <span class="step-badge" style="background: rgba(239,68,68,0.5); color: #fff;">NET DEFICIT (-0.30 KES)</span>
+            </div>
+            <div class="step-desc">
+              Accumulated revenue pooled in Dakar (Senegal) must be wired back to Kenya in KES.
+              <div class="sub-card" style="border-left-color: #ef4444;">
+                <b>Mathematical Breakdown of the Wipeout:</b><br>
+                • <b>What the 1.2% represents:</b> The 1.2% wire fee is charged on the base settlement pool (<b>1,000.00 KES</b> pool or transferred base).<br>
+                • <b>The Exact Calculation:</b> 1.2% of the 1,000.00 KES base pool equals exactly <b>12.00 KES</b>.<br>
+                • <b>The Final Wipeout:</b> Subtracting this <b>12.00 KES</b> repatriation wire fee from the slim <b>+12.30 KES</b> profit buffer leaves a remaining net profit of only <b>+0.30 KES</b> per transaction. When factoring in standard bank wire handling charges or flat intermediate banking switching fees, the margin is entirely wiped out into a net operational loss or near-zero deficit, rendering high-frequency retail corridor expansion unsustainable.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROPOSED MODEL FLOW (GUARD SHIELD ARCHITECTURE) -->
+        <div class="flow-box">
+          <div class="flow-title" style="color: #34d399;">
+            <span>🟢 Proposed Model: Guard Shield Architecture</span>
+          </div>
+          
+          <div class="flow-step guard">
+            <div class="step-header">
+              <span class="step-title" style="color: #34d399;">Stage 1: Reduced Upfront Fee</span>
+              <span class="step-badge" style="background: rgba(16,185,129,0.2); color: #34d399;">2.5% Fee</span>
+            </div>
+            <div class="step-desc">
+              Customer-facing flat fee is halved to <b>2.5%</b>. This drastically lowers psychological sticker shock, effectively removing user acquisition barriers and driving higher transaction velocity.
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+
+          <div class="flow-step guard">
+            <div class="step-header">
+              <span class="step-title" style="color: #34d399;">Stage 2: Embedded FX Markup</span>
+              <span class="step-badge" style="background: rgba(16,185,129,0.2); color: #34d399;">1.8% Spread</span>
+            </div>
+            <div class="step-desc">
+              A controlled <b>1.8% internal FX spread markup</b> is dynamically embedded into the applied customer exchange rate during conversion, capturing conversion margin transparently.
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+
+          <div class="flow-step guard">
+            <div class="step-header">
+              <span class="step-title" style="color: #34d399;">Stage 3: Protected Blended Yield</span>
+              <span class="step-badge" style="background: rgba(16,185,129,0.2); color: #34d399;">4.3% Total Yield</span>
+            </div>
+            <div class="step-desc">
+              Combining the 2.5% upfront fee and 1.8% FX spread delivers a robust <b>4.3% blended gross margin</b>, completely shielding the platform from market rate execution variance.
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+
+          <div class="flow-step guard" style="border-color: #10b981; background: rgba(16, 185, 129, 0.12);">
+            <div class="step-header">
+              <span class="step-title" style="color: #34d399;">Stage 4: Fully Covered Repatriation</span>
+              <span class="step-badge" style="background: rgba(16,185,129,0.5); color: #fff;">NET PROFITABLE</span>
+            </div>
+            <div class="step-desc">
+              The 4.3% blended yield is precisely calibrated to comfortably cover local payout expenses and the <b>1.2% Dakar-to-Kenya treasury wire fee</b>, ensuring <b>100% net-positive settlements</b> arriving safely in the Kenyan bank account.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D3 Chart: Optimum FX Fees + FX Spread Curve -->
+      <div class="chart-container">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">📈 Optimum Yield Curve: Blended Fee & FX Spread Optimization</div>
+            <p class="chart-subtitle">D3 econometric modeling identifying the optimal balance between customer acquisition (fee) and revenue capture (spread).</p>
+          </div>
+          <div id="chartBadge" class="sim-pill" style="background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.4); color: #34d399;">SWEET SPOT: 4.3% BLENDED YIELD</div>
+        </div>
+        <svg id="yieldChart"></svg>
+      </div>
+
+      <!-- Tough Question / Executive Strategic Decision Section -->
+      <div class="executive-decision-card">
+        <div class="executive-decision-title">
+          <span>🏛️ Strategic Executive Decision: Preferred Pricing Architecture</span>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 16px 0;">
+          Based on the corridor macroeconomic analysis and repatriation drag models, select your target commercial fee structure:
+        </p>
+
+        <div class="decision-grid">
+          <div class="decision-option" onclick="selectDecision(this, 3.5, 'Option A: Volume Growth (3.5% Yield)')">
+            <div class="option-header">
+              <span>Option A: Volume Growth</span>
+              <span class="badge badge-blue">Aggressive</span>
+            </div>
+            <div class="option-rates">2.0% Fee + 1.5% FX Spread</div>
+            <div class="option-body">
+              <b>3.5% Total Yield.</b> Maximizes merchant acquisition velocity. Requires +22% higher corridor volume to offset treasury repatriation drag completely.
+            </div>
+          </div>
+
+          <div class="decision-option selected" onclick="selectDecision(this, 4.3, 'Option B: Guard Shield (4.3% Yield)')">
+            <div class="option-header">
+              <span>Option B: Guard Shield</span>
+              <span class="badge badge-green">Recommended</span>
+            </div>
+            <div class="option-rates">2.5% Fee + 1.8% FX Spread</div>
+            <div class="option-body">
+              <b>4.3% Total Yield.</b> Optimal econometric equilibrium. Completely guards against payout slippage and covers Dakar 1.2% repatriation wires cleanly.
+            </div>
+          </div>
+
+          <div class="decision-option" onclick="selectDecision(this, 5.0, 'Option C: Max Margin (5.0% Yield)')">
+            <div class="option-header">
+              <span>Option C: Max Margin</span>
+              <span class="badge badge-purple">High Yield</span>
+            </div>
+            <div class="option-rates">3.0% Fee + 2.0% FX Spread</div>
+            <div class="option-body">
+              <b>5.0% Total Yield.</b> High margin capture per transfer, but risks slight merchant sticker shock in high-competition corridors like Kenya ⇄ Uganda.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -877,6 +1205,20 @@
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
     btnElement.classList.add('active');
+
+    // Trigger chart render if switching to tab 4
+    if (tabId === 'tab4') {
+      setTimeout(() => renderYieldChart(4.3), 100);
+    }
+  }
+
+  let currentSelectedRate = 4.3;
+
+  function selectDecision(element, rate, labelText) {
+    document.querySelectorAll('.decision-option').forEach(opt => opt.classList.remove('selected'));
+    element.classList.add('selected');
+    currentSelectedRate = rate;
+    renderYieldChart(rate, labelText);
   }
 
   const principalSlider = document.getElementById("simPrincipalSlider");
@@ -918,6 +1260,146 @@
     fxSlider.addEventListener("input", updateAdvancedSim);
     updateAdvancedSim();
   }
+
+  // D3 Yield & Optimum Curve Chart with Smooth Transitions
+  function renderYieldChart(targetRate = 4.3, labelText = "Option B: Guard Shield (4.3% Yield)") {
+    const svgEl = d3.select("#yieldChart");
+    svgEl.selectAll("*").remove();
+
+    const containerWidth = svgEl.node().getBoundingClientRect().width || 800;
+    const margin = { top: 30, right: 40, bottom: 50, left: 60 };
+    const width = containerWidth - margin.left - margin.right;
+    const height = 280 - margin.top - margin.bottom;
+
+    const svg = svgEl.append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const data = [];
+    for (let x = 1.0; x <= 8.0; x += 0.2) {
+      let baseProfit = (x * 43);
+      let elasticityPenalty = Math.pow(x - 2.5, 2) * 15;
+      let netVal = baseProfit - elasticityPenalty;
+      data.push({ rate: Number(x.toFixed(1)), profit: netVal });
+    }
+
+    const x = d3.scaleLinear()
+      .domain([1.0, 8.0])
+      .range([0, width]);
+
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d.profit) * 1.15])
+      .range([height, 0]);
+
+    // Add X axis
+    svg.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .attr("class", "axis")
+      .call(d3.axisBottom(x).ticks(8).tickFormat(d => d + "%"))
+      .selectAll("text")
+      .style("fill", "#94a3b8");
+
+    // Add Y axis
+    svg.append("g")
+      .attr("class", "axis")
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d => "$" + d))
+      .selectAll("text")
+      .style("fill", "#94a3b8");
+
+    // Axis Labels
+    svg.append("text")
+      .attr("transform", `translate(${width / 2}, ${height + 40})`)
+      .style("text-anchor", "middle")
+      .style("fill", "#94a3b8")
+      .style("font-size", "11.5px")
+      .text("Blended Take Rate (Upfront Fee % + FX Spread %)");
+
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -45)
+      .attr("x", -height / 2)
+      .style("text-anchor", "middle")
+      .style("fill", "#94a3b8")
+      .style("font-size", "11.5px")
+      .text("Net Platform Revenue / Profit ($)");
+
+    // Gradient definitions
+    const defs = svg.append("defs");
+    const gradient = defs.append("linearGradient")
+      .attr("id", "line-gradient")
+      .attr("gradientUnits", "userSpaceOnUse")
+      .attr("x1", x(1.0)).attr("y1", 0)
+      .attr("x2", x(8.0)).attr("y2", 0);
+
+    gradient.append("stop").attr("offset", "0%").attr("stop-color", "#3b82f6");
+    gradient.append("stop").attr("offset", "50%").attr("stop-color", "#10b981");
+    gradient.append("stop").attr("offset", "100%").attr("stop-color", "#ef4444");
+
+    // Area under curve
+    const area = d3.area()
+      .x(d => x(d.rate))
+      .y0(height)
+      .y1(d => y(d.profit))
+      .curve(d3.curveMonotoneX);
+
+    svg.append("path")
+      .datum(data)
+      .attr("fill", "rgba(16, 185, 129, 0.08)")
+      .attr("d", area);
+
+    // Line generator
+    const valueline = d3.line()
+      .x(d => x(d.rate))
+      .y(d => y(d.profit))
+      .curve(d3.curveMonotoneX);
+
+    svg.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d", valueline);
+
+    // Find target profit for the selected rate
+    const targetProfit = data.reduce((prev, curr) => 
+      Math.abs(curr.rate - targetRate) < Math.abs(prev.rate - targetRate) ? curr : prev
+    ).profit;
+
+    // Add target point with smooth transition
+    const dot = svg.append("circle")
+      .attr("class", "optimum-dot")
+      .attr("cx", x(targetRate))
+      .attr("cy", height) // start at bottom for entrance animation
+      .attr("r", 7);
+
+    dot.transition()
+      .duration(800)
+      .ease(d3.easeCubicOut)
+      .attr("cy", y(targetProfit));
+
+    // Annotation for selected point
+    const annotation = svg.append("text")
+      .attr("x", x(targetRate))
+      .attr("y", height)
+      .style("text-anchor", "middle")
+      .style("fill", "#34d399")
+      .style("font-weight", "700")
+      .style("font-size", "12px")
+      .style("opacity", 0)
+      .text(`★ Selected: ${labelText} (${targetRate}% Take Rate)`);
+
+    annotation.transition()
+      .duration(800)
+      .ease(d3.easeCubicOut)
+      .attr("y", y(targetProfit) - 16)
+      .style("opacity", 1);
+
+    // Update top badge text
+    document.getElementById("chartBadge").innerText = `ACTIVE SELECTION: ${targetRate}% BLENDED YIELD`;
+  }
+
+  window.addEventListener("resize", () => {
+    if (document.getElementById("tab4").classList.contains("active")) {
+      renderYieldChart(currentSelectedRate);
+    }
+  });
 </script>
 
 </body>
