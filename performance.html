@@ -568,10 +568,10 @@
             let idCounter = 1;
 
             ['2025', '2026'].forEach(yr => {
-                for (let w = 39; w <= 42; w++) {
+                for (let w = 40; w <= 43; w++) {
                     markets.forEach(mkt => {
                         const baseMultiplier = mkt === 'Kenya' ? 1.6 : mkt === 'Nigeria' ? 1.4 : mkt === 'Uganda' ? 1.1 : 0.9;
-                        const seasonalFactor = 1 + ((w - 39) * 0.02);
+                        const seasonalFactor = 1 + ((w - 40) * 0.02);
                         const vol = Math.round(1800000 * baseMultiplier * seasonalFactor * (1 + (Math.random() * 0.2 - 0.1)));
                         const rev = Math.round(vol * 0.085);
                         const tx = Math.round(vol / 4500);
@@ -686,22 +686,22 @@
                 filteredRecords = filteredRecords.filter(row => String(row.year) === selectedYear);
             }
 
-            // === STRICTLY STOP AT WEEK 42 FOR 2026 ===
+            // === STRICTLY STOP AT WEEK 43 FOR 2026 ===
             filteredRecords = filteredRecords.filter(row => {
                 const yr = Number(row.year || 0);
                 if (yr === 2026) {
                     const wNum = extractWeekNum(row.week_number);
-                    if (wNum > 42) return false; 
+                    if (wNum > 43) return false; 
                 }
                 return true;
             });
 
             let dataPrimary = [...filteredRecords];
 
-            // === DYNAMIC ROLLING 4 WEEKS ANCHORED TO LATEST DATA WEEK (WEEK 42) ===
+            // === DYNAMIC ROLLING 4 WEEKS ANCHORED TO LATEST DATA WEEK (WEEK 43) ===
             if (windowLimit === '4W') {
                 const weekNums = filteredRecords.map(row => extractWeekNum(row.week_number)).filter(w => w > 0);
-                const latestWeek = weekNums.length > 0 ? Math.max(...weekNums) : 42;
+                const latestWeek = weekNums.length > 0 ? Math.max(...weekNums) : 43;
                 const targetWeeks = [latestWeek - 3, latestWeek - 2, latestWeek - 1, latestWeek]; 
                 dataPrimary = dataPrimary.filter(row => {
                     const wNum = extractWeekNum(row.week_number);
@@ -982,7 +982,7 @@
 
             if (windowLimit === '4W') {
                 const weekNums = activeData.map(row => extractWeekNum(row.week_number)).filter(w => w > 0);
-                const latestWeek = weekNums.length > 0 ? Math.max(...weekNums) : 42;
+                const latestWeek = weekNums.length > 0 ? Math.max(...weekNums) : 43;
                 const targetWeeks = [latestWeek - 3, latestWeek - 2, latestWeek - 1, latestWeek]; 
                 chartLabels = targetWeeks.map(w => `Week ${w}`);
                 seriesBadgeText = 'Weekly Series (Rolling 4W)';
